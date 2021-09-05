@@ -17,6 +17,7 @@ const Tab1: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Tab 1 page" />
+        <p className="text-red-500">If this text is red, tailwind css is working.</p>
       </IonContent>
     </IonPage>
   );
