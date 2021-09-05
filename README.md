@@ -1,6 +1,6 @@
 # Habits
 
-Track your habits, one by one.
+Track your habits, one by one. A simple habit tracker application.
 
 ## Why?
 
