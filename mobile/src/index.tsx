@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import './index.css';
+import { App } from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+
+// Axios config
+axios.defaults.withCredentials = true; // uses Laravel Sanctum token
+axios.defaults.baseURL = 'http://localhost:8000';
 
 ReactDOM.render(
   <React.StrictMode>
