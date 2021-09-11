@@ -4,6 +4,7 @@ import { App } from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
+import { AuthProvider } from './utils/useAuth';
 
 // Axios config
 axios.defaults.withCredentials = true; // uses Laravel Sanctum token
@@ -11,7 +12,9 @@ axios.defaults.baseURL = 'http://localhost:8000';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

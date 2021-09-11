@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import {
   IonButton,
   IonContent,
@@ -10,22 +9,13 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { login, logout } from '../utils/auth';
+import { useAuth } from '../utils/useAuth';
 
 export const Home: React.FC = () => {
+  const {user, authenticated, login, logout} = useAuth();
+
   const [email, setEmail] = useState('john@example.com');
   const [password, setPassword] = useState('password');
-
-  const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState<{} | null>({});
-
-  useEffect(() => {
-    authenticated &&
-      (async () => {
-        const user = await axios.get('/api/user');
-        setUser(user.data);
-      })();
-  }, [authenticated]);
 
   return (
     <IonPage>
@@ -70,7 +60,6 @@ export const Home: React.FC = () => {
                 expand='block'
                 onClick={async () => {
                   await login(email, password);
-                  setAuthenticated(true);
                 }}
               >
                 Login
@@ -81,8 +70,6 @@ export const Home: React.FC = () => {
               expand='block'
               onClick={async () => {
                 await logout();
-                setAuthenticated(false);
-                setUser(null);
               }}
             >
               Logout
