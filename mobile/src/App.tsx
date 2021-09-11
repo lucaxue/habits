@@ -72,4 +72,3 @@ export const App: React.FC = () => (
     </IonReactRouter>
   </IonApp>
 );
-

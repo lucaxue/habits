@@ -22,7 +22,7 @@ Track your habits, one by one. A simple habit tracker application.
 
 ## UI
 
-- [Free Pixel True Habit Builder UI kit](https://www.pixeltrue.com/free-ui-kits/habit-builder-ui-kit)
+- [Habit Tracker UI Figma](https://www.figma.com/file/pb17Z38bRh18K74mVPmXAX/Pixel-True---Habit-Builder-UI-Kit?node-id=0%3A1) ([source](https://www.pixeltrue.com/free-ui-kits/habit-builder-ui-kit))
 
 ## Tech Stack
 
