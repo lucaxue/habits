@@ -26,4 +26,12 @@ class HabitNameSpec extends ObjectBehavior
         $this->__toString()->shouldBe('Name');
         $this->jsonSerialize()->shouldBe('Name');
     }
+
+    function it_can_determine_equality()
+    {
+        $this->beConstructedWith('Name');
+
+        $this->equals(new HabitName('Name'))->shouldBe(true);
+        $this->equals(new HabitName('Different'))->shouldBe(false);
+    }
 }

@@ -25,4 +25,9 @@ class HabitName implements JsonSerializable
     {
         return $this->toString();
     }
+
+    public function equals(HabitName $candidate): bool
+    {
+        return $this->toString() === $candidate->toString();
+    }
 }
