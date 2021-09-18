@@ -1,0 +1,6 @@
+suites:
+  HabitTracking:
+    namespace: HabitTracking
+    src_path: src/
+    spec_path: tests/Unit
+    spec_prefix: 'Spec'
