@@ -1,21 +1,8 @@
 <?php
 
-namespace Tests\Integration;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+// uses(RefreshDatabase::class);
 
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function test_example()
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-}
+test('example', function () {
+    $this->get('/')->assertStatus(200);
+});
