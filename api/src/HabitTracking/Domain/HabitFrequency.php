@@ -2,9 +2,7 @@
 
 namespace HabitTracking\Domain;
 
-use JsonSerializable;
-
-class HabitFrequency implements JsonSerializable
+class HabitFrequency implements \JsonSerializable
 {
     public function __construct(
         private bool $mon,
@@ -15,6 +13,45 @@ class HabitFrequency implements JsonSerializable
         private bool $sat,
         private bool $sun,
     ) {
+    }
+
+    public static function weekends(): self
+    {
+        return new self(...[
+            'mon' => false,
+            'tue' => false,
+            'wed' => false,
+            'thu' => false,
+            'fri' => false,
+            'sat' => true,
+            'sun' => true
+        ]);
+    }
+
+    public static function weekdays(): self
+    {
+        return new self(...[
+            'mon' => true,
+            'tue' => true,
+            'wed' => true,
+            'thu' => true,
+            'fri' => true,
+            'sat' => false,
+            'sun' => false
+        ]);
+    }
+
+    public static function daily(): self
+    {
+        return new self(...[
+            'mon' => true,
+            'tue' => true,
+            'wed' => true,
+            'thu' => true,
+            'fri' => true,
+            'sat' => true,
+            'sun' => true
+        ]);
     }
 
     public static function fromInactiveDays(
@@ -83,5 +120,18 @@ class HabitFrequency implements JsonSerializable
             'activeDays' => $this->activeDays(),
             'inactiveDays' => $this->inactiveDays(),
         ];
+    }
+
+    public function hasTodayAsActive(): bool
+    {
+        return in_array(
+            strtolower(now()->format('D')),
+            $this->activeDays()
+        );
+    }
+
+    public function hasTodayAsInactive(): bool
+    {
+        return ! $this->hasTodayAsActive();
     }
 }
