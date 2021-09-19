@@ -55,4 +55,15 @@ class HabitStreaksSpec extends ObjectBehavior
         $this->amount()->shouldBe(0);
         $this->lastAdded()->shouldBe($yesterday->toDateString());
     }
+
+    function it_can_be_serialized()
+    {
+        $this->increment();
+
+        $this->shouldImplement(\JsonSerializable::class);
+        $this->jsonSerialize()->shouldBe([
+            'amount' => 1,
+            'last_added' => now()->toDateString()
+        ]);
+    }
 }

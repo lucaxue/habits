@@ -2,7 +2,7 @@
 
 namespace HabitTracking\Domain;
 
-class HabitStreaks
+class HabitStreaks implements \JsonSerializable
 {
     private ?string $lastAdded;
 
@@ -37,5 +37,13 @@ class HabitStreaks
     public function reset(): void
     {
         $this->amount = 0;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'amount' => $this->amount(),
+            'last_added' => $this->lastAdded()
+        ];
     }
 }
