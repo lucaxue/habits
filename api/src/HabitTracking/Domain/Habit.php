@@ -2,6 +2,7 @@
 
 namespace HabitTracking\Domain;
 
+use HabitTracking\Domain\Exceptions\InactiveHabitDay;
 use HabitTracking\Domain\Exceptions\HabitHasNotStarted;
 
 class Habit
@@ -25,6 +26,19 @@ class Habit
         return new self($id, $name, $startDate, $frequency);
     }
 
+    public function markAsComplete(): void
+    {
+        if ($this->startDate()->isFuture()) {
+            throw new HabitHasNotStarted($this->startDate());
+        }
+
+        if (! $this->frequency()->hasTodayAsActive()) {
+            throw new InactiveHabitDay($this->frequency());
+        }
+
+        $this->streaks++;
+    }
+
     public function id(): HabitId
     {
         return $this->id;
@@ -43,20 +57,6 @@ class Habit
     public function frequency(): HabitFrequency
     {
         return $this->frequency;
-    }
-
-    public function markAsComplete(): void
-    {
-        if ($this->startDate()->isFuture()) {
-            throw new HabitHasNotStarted($this->startDate());
-        }
-
-        // if (! $this->frequency()->hasTodayAsActive()) {
-        //     throw new HabitDoesNotIncludeToday($this->startDate());
-        // }
-
-        $this->streaks++;
-        // $this->frequency()->mark();
     }
 
     public function streaks(): int
