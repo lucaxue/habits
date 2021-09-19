@@ -3,10 +3,9 @@
 namespace HabitTracking\Domain;
 
 use Assert\Assertion;
-use JsonSerializable;
 use Illuminate\Support\Str;
 
-abstract class Uuid implements JsonSerializable
+abstract class Uuid implements \JsonSerializable
 {
     private string $id;
 

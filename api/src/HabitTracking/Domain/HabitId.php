@@ -1,5 +1,5 @@
 <?php
 
-use HabitTracking\Domain\Uuid;
+namespace HabitTracking\Domain;
 
 class HabitId extends Uuid {}

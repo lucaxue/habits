@@ -2,9 +2,7 @@
 
 namespace HabitTracking\Domain;
 
-use JsonSerializable;
-
-class HabitName implements JsonSerializable
+class HabitName implements \JsonSerializable
 {
     public function __construct(
         private string $name

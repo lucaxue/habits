@@ -13,7 +13,6 @@ class HabitStartDate extends CarbonImmutable
 
     public function equals(HabitStartDate $candidate): bool
     {
-        return $this->toDateString()
-            === $candidate->toDateString();
+        return $this->toDateString() === $candidate->toDateString();
     }
 }
