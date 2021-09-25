@@ -5,6 +5,7 @@ namespace Spec\HabitTracking\Domain;
 use PhpSpec\ObjectBehavior;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 
 class HabitSpec extends ObjectBehavior
@@ -147,5 +148,24 @@ class HabitSpec extends ObjectBehavior
                     'frequency' => $notFrequency,
                 ]);
         }
+    }
+
+    function it_can_be_serialized()
+    {
+        $this->beConstructedThrough('start', [
+            $id = HabitId::generate(),
+            'Read a book',
+            $frequency = new HabitFrequency('daily'),
+        ]);
+
+        $this->shouldImplement(\JsonSerializable::class);
+
+        $this->jsonSerialize()->shouldBe([
+            'id' => $id,
+            'name' => 'Read a book',
+            'frequency' => $frequency,
+            'streak' => $this->streak(),
+            'completed' => false,
+        ]);
     }
 }

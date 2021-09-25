@@ -5,7 +5,7 @@ namespace HabitTracking\Domain;
 use Carbon\CarbonImmutable;
 use HabitTracking\Domain\HabitId;
 
-class Habit
+class Habit implements \JsonSerializable
 {
     private ?CarbonImmutable $lastCompleted = null;
     private ?CarbonImmutable $lastIncompleted = null;
@@ -98,5 +98,16 @@ class Habit
 
         $this->name = $payload['name'];
         $this->frequency = $payload['frequency'];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id(),
+            'name' => $this->name(),
+            'frequency' => $this->frequency(),
+            'streak' => $this->streak(),
+            'completed' => $this->completed(),
+        ];
     }
 }
