@@ -31,28 +31,28 @@ it('retrieves all habits', function () {
             'name' => 'Read Book',
             'frequency' => [
                 'type' => 'daily',
-                'on' => null,
+                'days' => null,
             ]
         ], [
             'id' => 2,
             'name' => 'Learning Arabic',
             'frequency' => [
                 'type' => 'weekly',
-                'on' => [1, 2, 3],
+                'days' => [1, 2, 3],
             ]
         ], [
             'id' => 3,
             'name' => 'Morning Run',
             'frequency' => [
                 'type' => 'daily',
-                'on' => null,
+                'days' => null,
             ]
         ], [
             'id' => 3,
             'name' => 'Call Mum',
             'frequency' => [
                 'type' => 'weekly',
-                'on' => [6],
+                'days' => [6],
             ]
         ]]);
 });
@@ -64,7 +64,7 @@ it('can retrieve a habit', function () {
         'streak' => 'P0Y0M0D',
         'frequency' => [
             'type' => 'daily',
-            'on' => null,
+            'days' => null,
         ]
     ];
 
@@ -77,7 +77,7 @@ it('can retrieve a habit', function () {
             'streak' => 'P0Y0M0D',
             'frequency' => [
                 'type' => 'daily',
-                'on' => null,
+                'days' => null,
             ]
         ]);
 });
@@ -87,7 +87,7 @@ it('can start a new habit', function () {
         'name' => 'Practice Shutdown Ritual',
         'frequency' => [
             'type' => 'weekly',
-            'on' => [1, 2, 3, 4, 5],
+            'days' => [1, 2, 3, 4, 5],
         ]
     ]);
 
@@ -139,7 +139,7 @@ it('can edit a habit', function () {
         'name' => 'Learning Arabic',
         'frequency' => [
             'type' => 'weekly',
-            'on' => [1, 2, 3]
+            'days' => [1, 2, 3]
         ]
     ];
 
@@ -147,7 +147,7 @@ it('can edit a habit', function () {
         'name' => 'Learning Chinese',
         'frequency' => [
             'type' => 'daily',
-            'on' => null
+            'days' => null
         ]
     ]);
     $response
@@ -157,7 +157,7 @@ it('can edit a habit', function () {
             'name' => 'Learning Chinese',
             'frequency' => [
                 'type' => 'daily',
-                'on' => null
+                'days' => null
             ]
         ]);
 });
