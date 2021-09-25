@@ -7,6 +7,7 @@ use HabitTracking\Domain\HabitId;
 
 class Habit implements \JsonSerializable
 {
+    private bool $stopped = false;
     private ?CarbonImmutable $lastCompleted = null;
     private ?CarbonImmutable $lastIncompleted = null;
     private HabitStreak $streak;
@@ -50,19 +51,28 @@ class Habit implements \JsonSerializable
         $this->streak()->decrement();
     }
 
-    public function completed(): bool
+    public function edit(array $payload): void
     {
-        if (!$this->lastCompleted) {
-            return false;
+        if (
+            !array_key_exists('name', $payload) ||
+            !array_key_exists('frequency', $payload) ||
+            !is_string($payload['name']) ||
+            !($payload['frequency'] instanceof HabitFrequency)
+        ) {
+            throw new \InvalidArgumentException;
         }
 
-        if (!$this->lastIncompleted) {
-            return $this->lastCompleted->isToday();
+        $this->name = $payload['name'];
+        $this->frequency = $payload['frequency'];
+    }
+
+    public function stop(): void
+    {
+        if ($this->stopped()) {
+            throw new \Exception;
         }
 
-        return
-            $this->lastCompleted->isToday() &&
-            $this->lastCompleted->gt($this->lastIncompleted);
+        $this->stopped = true;
     }
 
     public function id(): HabitId
@@ -85,19 +95,24 @@ class Habit implements \JsonSerializable
         return $this->streak;
     }
 
-    public function edit(array $payload): void
+    public function completed(): bool
     {
-        if (
-            !array_key_exists('name', $payload) ||
-            !array_key_exists('frequency', $payload) ||
-            !is_string($payload['name']) ||
-            !($payload['frequency'] instanceof HabitFrequency)
-        ) {
-            throw new \InvalidArgumentException;
+        if (!$this->lastCompleted) {
+            return false;
         }
 
-        $this->name = $payload['name'];
-        $this->frequency = $payload['frequency'];
+        if (!$this->lastIncompleted) {
+            return $this->lastCompleted->isToday();
+        }
+
+        return
+            $this->lastCompleted->isToday() &&
+            $this->lastCompleted->gt($this->lastIncompleted);
+    }
+
+    public function stopped(): bool
+    {
+        return $this->stopped;
     }
 
     public function jsonSerialize(): array
@@ -108,6 +123,7 @@ class Habit implements \JsonSerializable
             'frequency' => $this->frequency(),
             'streak' => $this->streak(),
             'completed' => $this->completed(),
+            'stopped' => $this->stopped(),
         ];
     }
 }

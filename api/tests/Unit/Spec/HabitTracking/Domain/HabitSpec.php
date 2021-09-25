@@ -24,6 +24,8 @@ class HabitSpec extends ObjectBehavior
         $this->name()->shouldBe($name);
         $this->frequency()->shouldBe($frequency);
         $this->streak()->isEmpty()->shouldBe(true);
+        $this->completed()->shouldBe(false);
+        $this->stopped()->shouldBe(false);
     }
 
     function it_can_be_marked_as_complete()
@@ -97,6 +99,32 @@ class HabitSpec extends ObjectBehavior
         $this->frequency()->shouldBe($frequency);
     }
 
+    function it_can_be_stopped()
+    {
+        $this->beConstructedThrough('start', [
+            HabitId::generate(),
+            'Read a book',
+            new HabitFrequency('daily'),
+        ]);
+
+        $this->stop();
+        $this->stopped()->shouldBe(true);
+    }
+
+    function it_cannot_stop_an_already_stopped_habit()
+    {
+        $this->beConstructedThrough('start', [
+            HabitId::generate(),
+            'Read a book',
+            new HabitFrequency('daily'),
+        ]);
+
+        $this->stop();
+
+        $this->shouldThrow(\Exception::class)
+            ->duringStop();
+    }
+
     function it_requires_the_name_and_frequency_to_be_edited()
     {
         $this->beConstructedThrough('start', [
@@ -166,6 +194,7 @@ class HabitSpec extends ObjectBehavior
             'frequency' => $frequency,
             'streak' => $this->streak(),
             'completed' => false,
+            'stopped' => false,
         ]);
     }
 }
