@@ -55,6 +55,14 @@ class HabitStreak implements \JsonSerializable
         return $this->days;
     }
 
+    public function isEmpty(): bool
+    {
+        return
+            $this->years() === 0 &&
+            $this->months() === 0 &&
+            $this->days() === 0;
+    }
+
     public function increment(): void
     {
         if ($this->isEndOfYear()) {
@@ -107,14 +115,6 @@ class HabitStreak implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->toString();
-    }
-
-    private function isEmpty(): bool
-    {
-        return
-            $this->years() === 0 &&
-            $this->months() === 0 &&
-            $this->days() === 0;
     }
 
     private function isStartOfYear(): bool

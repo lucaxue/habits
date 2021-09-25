@@ -2,68 +2,67 @@
 
 namespace HabitTracking\Domain;
 
-use HabitTracking\Domain\Exceptions\InactiveHabitDay;
-use HabitTracking\Domain\Exceptions\HabitHasNotStarted;
-use HabitTracking\Domain\Exceptions\HabitCompletedConsecutively;
-use HabitTracking\Domain\Exceptions\HabitStreaksIncrementedConsecutively;
+use Carbon\CarbonImmutable;
+use HabitTracking\Domain\HabitId;
 
 class Habit
 {
+    private ?CarbonImmutable $lastCompleted = null;
+    private ?CarbonImmutable $lastIncompleted = null;
+    private HabitStreak $streak;
+
     private function __construct(
         private HabitId $id,
-        private HabitName $name,
-        private HabitStartDate $startDate,
+        private string $name,
         private HabitFrequency $frequency,
-        private HabitStreaks $streaks,
-        private ?string $lastCompleted = null
+        ?HabitStreak $streak = null,
     ) {
+
+        $this->streak = $streak ?? new HabitStreak;
     }
 
-    public static function plan(
+    public static function start(
         HabitId $id,
-        HabitName $name,
-        HabitStartDate $startDate,
-        HabitFrequency $frequency,
+        string $name,
+        HabitFrequency $frequency
     ): self {
 
-        return new self(
-            $id,
-            $name,
-            $startDate,
-            $frequency,
-            new HabitStreaks
-        );
+        return new self($id, $name, $frequency);
     }
 
-    public function setStreaks(HabitStreaks $streaks): void
-    {
-        $this->streaks = $streaks;
-        $this->lastCompleted = $streaks->lastAdded()->toDateString();
-    }
-
-    /** @throws HabitCompletedConsecutively */
     public function markAsComplete(): void
     {
-        if ($this->startDate()->isFuture()) {
-            throw new HabitHasNotStarted($this->startDate());
+        if ($this->completed()) {
+            throw new \Exception;
         }
 
-        if (!$this->frequency()->hasTodayAsActive()) {
-            throw new InactiveHabitDay($this->frequency());
-        }
-
-        try {
-            $this->streaks()->increment();
-        } catch (HabitStreaksIncrementedConsecutively $e) {
-            throw new HabitCompletedConsecutively;
-        } finally {
-            $this->lastCompleted = now()->toDateString();
-        }
+        $this->lastCompleted = new CarbonImmutable;
+        $this->streak()->increment();
     }
 
     public function markAsIncomplete(): void
     {
-        $this->streaks()->reset();
+        if (!$this->completed()) {
+            throw new \Exception;
+        }
+
+        $this->lastIncompleted = new CarbonImmutable;
+        $this->streak()->decrement();
+    }
+
+    public function completed(): bool
+    {
+        if (!$this->lastCompleted) {
+            return false;
+        }
+
+        if (!$this->lastIncompleted) {
+            return $this->lastCompleted->isToday();
+        }
+
+        return
+            $this->lastCompleted->isToday() &&
+            $this->lastCompleted->gt($this->lastIncompleted);
     }
 
     public function id(): HabitId
@@ -71,14 +70,9 @@ class Habit
         return $this->id;
     }
 
-    public function name(): HabitName
+    public function name(): string
     {
         return $this->name;
-    }
-
-    public function startDate(): HabitStartDate
-    {
-        return $this->startDate;
     }
 
     public function frequency(): HabitFrequency
@@ -86,13 +80,23 @@ class Habit
         return $this->frequency;
     }
 
-    public function streaks(): HabitStreaks
+    public function streak(): HabitStreak
     {
-        return $this->streaks;
+        return $this->streak;
     }
 
-    public function lastCompleted(): ?string
+    public function edit(array $payload): void
     {
-        return $this->lastCompleted;
+        if (
+            !array_key_exists('name', $payload) ||
+            !array_key_exists('frequency', $payload) ||
+            !is_string($payload['name']) ||
+            !($payload['frequency'] instanceof HabitFrequency)
+        ) {
+            throw new \InvalidArgumentException;
+        }
+
+        $this->name = $payload['name'];
+        $this->frequency = $payload['frequency'];
     }
 }

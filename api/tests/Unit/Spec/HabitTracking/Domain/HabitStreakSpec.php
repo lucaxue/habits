@@ -11,6 +11,7 @@ class HabitStreakSpec extends ObjectBehavior
     {
         $this->shouldBeAnInstanceOf(HabitStreak::class);
 
+        $this->isEmpty()->shouldBe(true);
         $this->years()->shouldBe(0);
         $this->months()->shouldBe(0);
         $this->days()->shouldBe(0);
@@ -22,6 +23,7 @@ class HabitStreakSpec extends ObjectBehavior
 
         $this->shouldBeAnInstanceOf(HabitStreak::class);
 
+        $this->isEmpty()->shouldBe(false);
         $this->years()->shouldBe(1);
         $this->months()->shouldBe(2);
         $this->days()->shouldBe(3);
@@ -33,6 +35,7 @@ class HabitStreakSpec extends ObjectBehavior
 
         $this->shouldBeAnInstanceOf(HabitStreak::class);
 
+        $this->isEmpty()->shouldBe(false);
         $this->years()->shouldBe(1);
         $this->months()->shouldBe(2);
         $this->days()->shouldBe(3);
@@ -48,7 +51,8 @@ class HabitStreakSpec extends ObjectBehavior
 
         foreach ($invalidFormats as $invalidFormat) {
             $this->beConstructedThrough('fromString', [$invalidFormat]);
-            $this->shouldThrow(\InvalidArgumentException::class);
+            $this->shouldThrow(\InvalidArgumentException::class)
+                ->duringInstantiation();
         }
     }
 
