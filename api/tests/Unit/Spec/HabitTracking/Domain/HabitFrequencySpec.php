@@ -2,123 +2,47 @@
 
 namespace Spec\HabitTracking\Domain;
 
-use Carbon\Carbon;
 use PhpSpec\ObjectBehavior;
 use HabitTracking\Domain\HabitFrequency;
-use Illuminate\Foundation\Testing\Concerns\InteractsWithTime;
 
 class HabitFrequencySpec extends ObjectBehavior
 {
-    use InteractsWithTime;
-
-    function it_can_be_initialized()
+    function it_can_be_initialized_with_daily()
     {
-        // Omit `array_values` for actual usage,
-        // see php 8 named arguments:
-        // https://stitcher.io/blog/php-8-named-arguments
-        $this->beConstructedWith(...array_values([
-            'mon' => true,
-            'tue' => true,
-            'wed' => true,
-            'thu' => true,
-            'fri' => true,
-            'sat' => false,
-            'sun' => false,
-        ]));
+        $this->beConstructedWith('daily');
 
         $this->shouldBeAnInstanceOf(HabitFrequency::class);
 
-        $this->activeDays()->shouldBe(['mon', 'tue', 'wed', 'thu', 'fri']);
-        $this->inactiveDays()->shouldBe(['sat', 'sun']);
+        $this->type()->shouldBe('daily');
+        $this->days()->shouldBe(null);
     }
 
-    function it_can_be_initialized_for_daily()
+    function it_can_be_initialized_with_weekly()
     {
-        $this->beConstructedThrough('daily');
+        $this->beConstructedWith('weekly', [1, 2, 3]);
 
         $this->shouldBeAnInstanceOf(HabitFrequency::class);
 
-        $this->activeDays()->shouldBe([
-            'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'
-        ]);
-        $this->inactiveDays()->shouldBe([]);
+        $this->type()->shouldBe('weekly');
+        $this->days()->shouldBe([1, 2, 3]);
     }
 
-    function it_can_be_initialized_for_weekdays()
+    function it_requires_days_when_initializing_with_weekly()
     {
-        $this->beConstructedThrough('weekdays');
+        $this->beConstructedWith('weekly');
 
-        $this->shouldBeAnInstanceOf(HabitFrequency::class);
-
-        $this->activeDays()->shouldBe(['mon', 'tue', 'wed', 'thu', 'fri']);
-        $this->inactiveDays()->shouldBe(['sat', 'sun']);
-    }
-
-    function it_can_be_initialized_for_weekends()
-    {
-        $this->beConstructedThrough('weekends');
-
-        $this->shouldBeAnInstanceOf(HabitFrequency::class);
-
-        $this->activeDays()->shouldBe(['sat', 'sun']);
-        $this->inactiveDays()->shouldBe(['mon', 'tue', 'wed', 'thu', 'fri']);
-    }
-
-    function it_can_be_initialized_from_active_days()
-    {
-        $this->beConstructedThrough('fromActiveDays', [
-            ['mon', 'tue', 'wed', 'thu', 'fri']
-        ]);
-
-        $this->shouldBeAnInstanceOf(HabitFrequency::class);
-
-        $this->activeDays()->shouldBe(['mon', 'tue', 'wed', 'thu', 'fri']);
-        $this->inactiveDays()->shouldBe(['sat', 'sun']);
-    }
-
-    function it_can_be_initialized_from_inactive_days()
-    {
-        $this->beConstructedThrough('fromInactiveDays', [
-            ['sat', 'sun']
-        ]);
-
-        $this->shouldBeAnInstanceOf(HabitFrequency::class);
-
-        $this->activeDays()->shouldBe(['mon', 'tue', 'wed', 'thu', 'fri']);
-        $this->inactiveDays()->shouldBe(['sat', 'sun']);
-    }
-
-    function it_can_determine_if_today_is_active_or_not()
-    {
-        $this->beConstructedThrough('weekdays');
-
-        $this->travelTo(Carbon::createFromFormat('D', 'Mon'));
-        $this->hasTodayAsActive()->shouldBe(true);
-        $this->hasTodayAsInactive()->shouldBe(false);
-
-        $this->travelTo(Carbon::createFromFormat('D', 'Sat'));
-        $this->hasTodayAsActive()->shouldBe(false);
-        $this->hasTodayAsInactive()->shouldBe(true);
+        $this->shouldThrow(\InvalidArgumentException::class)
+            ->duringInstantiation();
     }
 
     function it_can_be_serialized()
     {
-        $frequency = [
-            'mon' => true,
-            'tue' => true,
-            'wed' => true,
-            'thu' => true,
-            'fri' => true,
-            'sat' => false,
-            'sun' => false,
-        ];
-
-        $this->beConstructedWith(...array_values($frequency));
+        $this->beConstructedWith('weekly', [1, 2, 3]);
 
         $this->shouldImplement(\JsonSerializable::class);
         $this->jsonSerialize()->shouldBe([
-            'activeDays' => ['mon', 'tue', 'wed', 'thu', 'fri'],
-            'inactiveDays' => ['sat', 'sun']
+            'type' => 'weekly',
+            'days' => [1, 2, 3],
         ]);
     }
 }
