@@ -4,8 +4,8 @@ use HabitTracking\Domain\Habit;
 use Tests\Support\HabitFactory;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use HabitTracking\Infrastructure\Habit as EloquentHabit;
-use HabitTracking\Infrastructure\EloquentHabitRepository;
+use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
+use HabitTracking\Infrastructure\Eloquent\HabitRepository as EloquentHabitRepository;
 
 uses(RefreshDatabase::class);
 
@@ -27,9 +27,7 @@ it('cannot find a non existent habit', function () {
     $this->login();
 
     expect(function () {
-
         (new EloquentHabitRepository)->find(HabitId::generate());
-
     })->toThrow(\Exception::class);
 });
 
@@ -38,9 +36,7 @@ it("cannot find another user's habit", function () {
     $habit = EloquentHabit::factory()->forUser()->create();
 
     expect(function () use ($habit) {
-
         (new EloquentHabitRepository)->find(HabitId::fromString($habit->id));
-
     })->toThrow(\Exception::class);
 });
 

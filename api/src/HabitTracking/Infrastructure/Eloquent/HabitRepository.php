@@ -1,16 +1,16 @@
 <?php
 
-namespace HabitTracking\Infrastructure;
+namespace HabitTracking\Infrastructure\Eloquent;
 
 use ReflectionObject;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\HabitRepository;
-use HabitTracking\Infrastructure\Habit as EloquentHabit;
+use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
+use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 
-class EloquentHabitRepository implements HabitRepository
+class HabitRepository implements HabitRepositoryInterface
 {
     public function all(): array
     {
@@ -25,7 +25,7 @@ class EloquentHabitRepository implements HabitRepository
     {
         $habit = EloquentHabit::findOrFail($id);
 
-        if(auth()->id() !== $habit->user->id) {
+        if (auth()->id() !== $habit->user->id) {
             throw new \Exception;
         }
 

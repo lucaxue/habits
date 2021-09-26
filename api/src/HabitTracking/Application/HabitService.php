@@ -5,7 +5,7 @@ namespace HabitTracking\Application;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\HabitRepository;
+use HabitTracking\Domain\Contracts\HabitRepository;
 
 class HabitService
 {

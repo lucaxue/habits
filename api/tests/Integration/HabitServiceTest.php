@@ -4,7 +4,7 @@ use HabitTracking\Domain\Habit;
 use Tests\Support\HabitFactory;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\HabitRepository;
+use HabitTracking\Domain\Contracts\HabitRepository;
 use HabitTracking\Application\HabitService;
 
 beforeEach(function () {

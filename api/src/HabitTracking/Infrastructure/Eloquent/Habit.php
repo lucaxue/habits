@@ -1,6 +1,6 @@
 <?php
 
-namespace HabitTracking\Infrastructure;
+namespace HabitTracking\Infrastructure\Eloquent;
 
 use App\Models\User;
 use Database\Factories\HabitFactory;
