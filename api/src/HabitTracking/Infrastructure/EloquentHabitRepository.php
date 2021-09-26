@@ -14,7 +14,7 @@ class EloquentHabitRepository implements HabitRepository
 {
     public function all(): array
     {
-        $habits = EloquentHabit::all();
+        $habits = EloquentHabit::where('user_id', auth()->id())->get();
 
         return $habits
             ->map(fn ($habit) => $this->transformIntoHabit($habit))
@@ -23,7 +23,11 @@ class EloquentHabitRepository implements HabitRepository
 
     public function find(HabitId $id): Habit
     {
-        $habit = EloquentHabit::find($id);
+        $habit = EloquentHabit::findOrFail($id);
+
+        if(auth()->id() !== $habit->user->id) {
+            throw new \Exception;
+        }
 
         return $this->transformIntoHabit($habit);
     }
