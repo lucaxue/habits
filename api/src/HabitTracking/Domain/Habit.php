@@ -116,7 +116,8 @@ class Habit implements \JsonSerializable
             'name' => $this->name(),
             'frequency' => $this->frequency(),
             'streak' => $this->streak(),
-            'completed' => $this->completed(),
+            'last_completed' => $this->lastCompleted,
+            'last_incompleted' => $this->lastIncompleted,
             'stopped' => $this->stopped(),
         ];
     }
