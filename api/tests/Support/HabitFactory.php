@@ -10,7 +10,7 @@ use HabitTracking\Domain\HabitFrequency;
 class HabitFactory
 {
     public static function start(
-        array $overrides
+        array $overrides = []
     ): Habit {
 
         $faker = Faker::create();
@@ -38,5 +38,33 @@ class HabitFactory
         $habit->markAsComplete();
 
         return $habit;
+    }
+
+    public static function count(
+        int $count
+    ) {
+        return new class($count) {
+            public function __construct(
+                private int $count
+            ) {
+            }
+
+            /**
+             * @param array $overrides
+             * @return Habit[]
+             */
+            public function start(
+                array $overrides = []
+            ): array {
+
+                $habits = [];
+
+                for ($i = 0; $i < $this->count; $i++) {
+                    $habits[] = HabitFactory::start($overrides);
+                }
+
+                return $habits;
+            }
+        };
     }
 }
