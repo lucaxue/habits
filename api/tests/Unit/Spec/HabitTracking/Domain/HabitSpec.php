@@ -140,8 +140,7 @@ class HabitSpec extends ObjectBehavior
             'name' => 'Read a book',
             'frequency' => $frequency,
             'streak' => $this->streak(),
-            'last_completed' => null,
-            'last_incompleted' => null,
+            'completed' => false,
             'stopped' => false,
         ]);
     }

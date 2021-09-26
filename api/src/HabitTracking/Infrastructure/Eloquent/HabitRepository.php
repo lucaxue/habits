@@ -34,12 +34,21 @@ class HabitRepository implements HabitRepositoryInterface
 
     public function save(Habit $habit): void
     {
-        $payload = json_decode(json_encode($habit), true);
+        $reflection = Reflection::for($habit);
 
-        EloquentHabit::create(array_merge(
-            $payload,
-            ['user_id' => auth()->id()]
-        ));
+        $lastCompleted = $reflection->get('lastCompleted');
+        $lastIncompleted = $reflection->get('lastIncompleted');
+
+        EloquentHabit::create([
+            'id' => $habit->id(),
+            'name' => $habit->name(),
+            'streak' => $habit->streak(),
+            'frequency' => $habit->frequency(),
+            'last_completed' => $lastCompleted,
+            'last_incompleted' => $lastIncompleted,
+            'stopped' => $habit->stopped(),
+            'user_id' => auth()->id()
+        ]);
     }
 
     private function transformIntoHabit(
@@ -55,7 +64,7 @@ class HabitRepository implements HabitRepositoryInterface
             ),
         );
 
-        PropertyMutator::for($instance)
+        Reflection::for($instance)
             ->mutate('lastCompleted', $habit->lastCompleted)
             ->mutate('lastIncompleted', $habit->lastIncompleted)
             ->mutate('streak', HabitStreak::fromString($habit->streak));
@@ -64,7 +73,7 @@ class HabitRepository implements HabitRepositoryInterface
     }
 }
 
-class PropertyMutator
+class Reflection
 {
     private function __construct(
         private ReflectionObject $reflection,
@@ -85,7 +94,16 @@ class PropertyMutator
         $property = $this->reflection->getProperty($name);
         $property->setAccessible(true);
         $property->setValue($this->instance, $value);
+        // $property->setAccessible(false);
 
         return $this;
+    }
+
+    public function get(string $name): mixed
+    {
+        $property = $this->reflection->getProperty($name);
+        $property->setAccessible(true);
+
+        return $property->getValue($this->instance);
     }
 }
