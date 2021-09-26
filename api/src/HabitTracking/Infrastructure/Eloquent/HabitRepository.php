@@ -2,13 +2,13 @@
 
 namespace HabitTracking\Infrastructure\Eloquent;
 
-use ReflectionObject;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
+use HabitTracking\Infrastructure\Reflection;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
+use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
 class HabitRepository implements HabitRepositoryInterface
 {
@@ -39,8 +39,9 @@ class HabitRepository implements HabitRepositoryInterface
         $lastCompleted = $reflection->get('lastCompleted');
         $lastIncompleted = $reflection->get('lastIncompleted');
 
-        EloquentHabit::create([
-            'id' => $habit->id(),
+        EloquentHabit::updateOrCreate([
+            'id' => $habit->id()
+        ], [
             'name' => $habit->name(),
             'streak' => $habit->streak(),
             'frequency' => $habit->frequency(),
@@ -70,40 +71,5 @@ class HabitRepository implements HabitRepositoryInterface
             ->mutate('streak', HabitStreak::fromString($habit->streak));
 
         return $instance;
-    }
-}
-
-class Reflection
-{
-    private function __construct(
-        private ReflectionObject $reflection,
-        private object $instance,
-    ) {
-    }
-
-    public static function for(object $instance): self
-    {
-        return new self(
-            new ReflectionObject($instance),
-            $instance,
-        );
-    }
-
-    public function mutate(string $name, mixed $value): self
-    {
-        $property = $this->reflection->getProperty($name);
-        $property->setAccessible(true);
-        $property->setValue($this->instance, $value);
-        // $property->setAccessible(false);
-
-        return $this;
-    }
-
-    public function get(string $name): mixed
-    {
-        $property = $this->reflection->getProperty($name);
-        $property->setAccessible(true);
-
-        return $property->getValue($this->instance);
     }
 }

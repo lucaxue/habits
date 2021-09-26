@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HabitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', fn (Request $request) => $request->user());
+
+    Route::get('habits', [HabitController::class, 'index']);
+    Route::post('habits', [HabitController::class, 'start']);
+    Route::get('habits/{id}', [HabitController::class, 'retrieve']);
+    Route::put('habits/{id}/complete', [HabitController::class, 'complete']);
+    Route::put('habits/{id}/incomplete', [HabitController::class, 'complete']);
 });

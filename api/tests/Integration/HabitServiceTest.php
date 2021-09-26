@@ -1,7 +1,7 @@
 <?php
 
 use HabitTracking\Domain\Habit;
-use Tests\Support\HabitFactory;
+use Tests\Support\HabitInstanceFactory;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Contracts\HabitRepository;
@@ -13,7 +13,7 @@ beforeEach(function () {
 });
 
 it('can retrieve all habits', function () {
-    $habits = HabitFactory::count(10)->start();
+    $habits = HabitInstanceFactory::count(10)->start();
 
     $this->repository
         ->expects($this->once())
@@ -23,6 +23,21 @@ it('can retrieve all habits', function () {
     $retrievedHabits = $this->service->retrieveHabits();
 
     expect($retrievedHabits)->toEqualCanonicalizing($habits);
+});
+
+it('can retrieve a habit', function () {
+	$habit = HabitInstanceFactory::start([
+		'id' => $id = HabitId::generate()
+	]);
+
+    $this->repository
+        ->expects($this->once())
+        ->method('find')->with($id)
+        ->willReturn($habit);
+
+    $retrievedHabit = $this->service->retrieveHabit($id->toString());
+
+    expect($retrievedHabit)->toBe($habit);
 });
 
 it('can start a habit', function () {
@@ -43,7 +58,7 @@ it('can start a habit', function () {
 });
 
 it('can mark a habit as complete', function () {
-    $habit = HabitFactory::start([
+    $habit = HabitInstanceFactory::start([
         'id' => $id = HabitId::generate()
     ]);
 
@@ -66,7 +81,7 @@ it('can mark a habit as complete', function () {
 });
 
 it('can mark a habit as incomplete', function () {
-    $habit = HabitFactory::completed([
+    $habit = HabitInstanceFactory::completed([
         'id' => $id = HabitId::generate()
     ]);
 
@@ -89,7 +104,7 @@ it('can mark a habit as incomplete', function () {
 });
 
 it('can edit a habit', function () {
-    $habit = HabitFactory::start([
+    $habit = HabitInstanceFactory::start([
         'id' => $id = HabitId::generate(),
         'name' => 'Read a book',
         'frequency' => new HabitFrequency('weekly', [1])
@@ -118,7 +133,7 @@ it('can edit a habit', function () {
 });
 
 it('can stop a habit', function () {
-    $habit = HabitFactory::start([
+    $habit = HabitInstanceFactory::start([
         'id' => $id = HabitId::generate()
     ]);
 

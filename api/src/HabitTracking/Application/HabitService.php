@@ -20,6 +20,11 @@ class HabitService
         return $this->repository->all();
     }
 
+    public function retrieveHabit(string $id): Habit
+    {
+        return $this->repository->find(HabitId::fromString($id));
+    }
+
     public function startHabit(
         string $name,
         array $frequency

@@ -2,10 +2,10 @@
 
 namespace Tests\Support;
 
-use Faker\Factory as Faker;
 use HabitTracking\Domain\Habit;
-use HabitTracking\Domain\HabitId;
-use HabitTracking\Domain\HabitFrequency;
+use Tests\Support\HabitInstanceFactory;
+use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Infrastructure\Reflection;
 
 class HabitFactory
 {
@@ -13,37 +13,56 @@ class HabitFactory
         array $overrides = []
     ): Habit {
 
-        $faker = Faker::create();
+        $instanceOverrides = array_diff_key($overrides, [
+            'streak' => null,
+            'completed' => null
+        ]);
 
-        $defaults = [
-            'id' => HabitId::generate(),
-            'name' => $faker->sentence(),
-            'frequency' => $faker->randomElement([
-                new HabitFrequency('daily'),
-                new HabitFrequency('weekly', [1, 2, 3])
-            ])
-        ];
+        $habit = HabitInstanceFactory::start($instanceOverrides);
 
-        $attributes = array_merge($defaults, $overrides);
+        if (array_key_exists('streaks', $overrides)) {
+            Reflection::for($habit)
+                ->mutate('streak', $overrides['streak']);
+        }
 
-        return Habit::start(...$attributes);
-    }
+        if (array_key_exists('completed', $overrides)) {
+            Reflection::for($habit)
+                ->mutate(
+                    'lastCompleted',
+                    $overrides['completed'] ? now() : null
+                );
+        }
 
-    public static function completed(
-        array $overrides
-    ): Habit {
-
-        $habit = self::start($overrides);
-
-        $habit->markAsComplete();
+        resolve(HabitRepository::class)->save($habit);
 
         return $habit;
     }
 
-    public static function count(
-        int $count
-    ) {
-        return new class($count) {
+    public static function many()
+    {
+        return new class
+        {
+            /**
+             * @param array $manyOverrides
+             * @return Habit[]
+             */
+            public function start(array $manyOverrides): array
+            {
+                $habits = [];
+
+                foreach ($manyOverrides as $overrides) {
+                    $habits[] = HabitFactory::start($overrides);
+                }
+
+                return $habits;
+            }
+        };
+    }
+
+    public static function count(int $count)
+    {
+        return new class($count)
+        {
             public function __construct(
                 private int $count
             ) {
@@ -57,10 +76,10 @@ class HabitFactory
                 array $overrides = []
             ): array {
 
-                $habits = [];
+                $habits = HabitInstanceFactory::count($this->count)->start($overrides);
 
-                for ($i = 0; $i < $this->count; $i++) {
-                    $habits[] = HabitFactory::start($overrides);
+                foreach ($habits as $habit) {
+                    resolve(HabitRepository::class)->save($habit);
                 }
 
                 return $habits;
