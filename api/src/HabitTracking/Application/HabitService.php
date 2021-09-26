@@ -14,6 +14,12 @@ class HabitService
     ) {
     }
 
+    /** @return Habit[] */
+    public function retrieveHabits(): array
+    {
+        return $this->repository->all();
+    }
+
     public function startHabit(
         string $name,
         array $frequency

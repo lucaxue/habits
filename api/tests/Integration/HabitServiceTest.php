@@ -12,6 +12,19 @@ beforeEach(function () {
     $this->service = new HabitService($this->repository);
 });
 
+it('can retrieve all habits', function () {
+    $habits = HabitFactory::count(10)->start();
+
+    $this->repository
+        ->expects($this->once())
+        ->method('all')
+        ->willReturn($habits);
+
+    $retrievedHabits = $this->service->retrieveHabits();
+
+    expect($retrievedHabits)->toEqualCanonicalizing($habits);
+});
+
 it('can start a habit', function () {
     $this->repository
         ->expects($this->once())
