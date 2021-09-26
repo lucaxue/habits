@@ -90,10 +90,10 @@ class HabitSpec extends ObjectBehavior
             new HabitFrequency('daily'),
         ]);
 
-        $this->edit([
-            'name' => 'Read two books',
-            'frequency' => $frequency = new HabitFrequency('weekly', [1])
-        ]);
+        $this->edit(
+            'Read two books',
+            $frequency = new HabitFrequency('weekly', [1])
+        );
 
         $this->name()->shouldBe('Read two books');
         $this->frequency()->shouldBe($frequency);
@@ -123,59 +123,6 @@ class HabitSpec extends ObjectBehavior
 
         $this->shouldThrow(\Exception::class)
             ->duringStop();
-    }
-
-    function it_requires_the_name_and_frequency_to_be_edited()
-    {
-        $this->beConstructedThrough('start', [
-            HabitId::generate(),
-            'Read a book',
-            new HabitFrequency('daily'),
-        ]);
-
-        $this->shouldThrow(\InvalidArgumentException::class)
-            ->duringEdit(['name' => 'Read two books']);
-
-        $this->shouldThrow(\InvalidArgumentException::class)
-            ->duringEdit(['frequency' => new HabitFrequency('weekly', [1])]);
-    }
-
-    function it_requires_the_name_to_be_a_string()
-    {
-        $this->beConstructedThrough('start', [
-            HabitId::generate(),
-            'Read a book',
-            new HabitFrequency('daily'),
-        ]);
-
-        $notStrings = [1, null, 2.5, new \stdClass(), []];
-
-        foreach ($notStrings as $notString) {
-            $this->shouldThrow(\InvalidArgumentException::class)
-                ->duringEdit([
-                    'name' => $notString,
-                    'frequency' => new HabitFrequency('weekly', [1])
-                ]);
-        }
-    }
-
-    function it_requires_the_frequency_to_be_an_instance_of_HabitFrequency()
-    {
-        $this->beConstructedThrough('start', [
-            HabitId::generate(),
-            'Read a book',
-            new HabitFrequency('daily'),
-        ]);
-
-        $notFrequencies = [1, null, 2.5, new \stdClass(), []];
-
-        foreach ($notFrequencies as $notFrequency) {
-            $this->shouldThrow(\InvalidArgumentException::class)
-                ->duringEdit([
-                    'name' => 'Read two books',
-                    'frequency' => $notFrequency,
-                ]);
-        }
     }
 
     function it_can_be_serialized()

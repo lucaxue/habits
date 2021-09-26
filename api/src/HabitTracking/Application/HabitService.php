@@ -14,10 +14,79 @@ class HabitService
     ) {
     }
 
-    public function startHabit()
-    {
-        // make a new habit object
-        // persist with repo
-        // return habit
+    public function startHabit(
+        string $name,
+        array $frequency
+    ): Habit {
+
+        $habit = Habit::start(
+            HabitId::generate(),
+            $name,
+            new HabitFrequency(
+                $frequency['type'],
+                $frequency['days']
+            ),
+        );
+
+        $this->repository->save($habit);
+
+        return $habit;
+    }
+
+    public function markHabitAsComplete(
+        string $id
+    ): Habit {
+
+        $habit = $this->repository->find(HabitId::fromString($id));
+
+        $habit->markAsComplete();
+
+        $this->repository->save($habit);
+
+        return $habit;
+    }
+
+    public function markHabitAsIncomplete(
+        string $id
+    ): Habit {
+
+        $habit = $this->repository->find(HabitId::fromString($id));
+
+        $habit->markAsIncomplete();
+
+        $this->repository->save($habit);
+
+        return $habit;
+    }
+
+    public function editHabit(
+        string $id,
+        string $name,
+        array $frequency,
+    ): Habit {
+
+        $habit = $this->repository->find(HabitId::fromString($id));
+
+        $habit->edit($name, new HabitFrequency(
+            $frequency['type'],
+            $frequency['days']
+        ));
+
+        $this->repository->save($habit);
+
+        return $habit;
+    }
+
+    public function stopHabit(
+        string $id
+    ): Habit {
+
+        $habit = $this->repository->find(HabitId::fromString($id));
+
+        $habit->stop();
+
+        $this->repository->save($habit);
+
+        return $habit;
     }
 }

@@ -51,19 +51,13 @@ class Habit implements \JsonSerializable
         $this->streak()->decrement();
     }
 
-    public function edit(array $payload): void
-    {
-        if (
-            !array_key_exists('name', $payload) ||
-            !array_key_exists('frequency', $payload) ||
-            !is_string($payload['name']) ||
-            !($payload['frequency'] instanceof HabitFrequency)
-        ) {
-            throw new \InvalidArgumentException;
-        }
+    public function edit(
+        string $name,
+        HabitFrequency $frequency
+    ): void {
 
-        $this->name = $payload['name'];
-        $this->frequency = $payload['frequency'];
+        $this->name = $name;
+        $this->frequency = $frequency;
     }
 
     public function stop(): void
