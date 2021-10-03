@@ -20,6 +20,16 @@ class HabitService
         return $this->repository->all();
     }
 
+    public function retrieveHabitsForToday(): array
+    {
+        $habits = $this->repository->all();
+
+        return array_filter(
+            $habits,
+            fn (Habit $habit) => $habit->frequency()->includesToday()
+        );
+    }
+
     public function retrieveHabit(string $id): Habit
     {
         return $this->repository->find(HabitId::fromString($id));

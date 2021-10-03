@@ -1,11 +1,11 @@
 <?php
 
 use HabitTracking\Domain\Habit;
-use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitId;
+use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\Contracts\HabitRepository;
 use HabitTracking\Application\HabitService;
+use HabitTracking\Domain\Contracts\HabitRepository;
 
 beforeEach(function () {
     $this->repository = $this->createStub(HabitRepository::class);
@@ -26,16 +26,31 @@ it('can retrieve all habits', function () {
 });
 
 it("can retrieve today's habit", function () {
-    HabitModelFactory::count(5)->start([
-        'frequency' => new HabitFrequency('daily')
+    $todays = HabitModelFactory::count(5)->start([
+        'frequency' => new HabitFrequency('weekly', [
+            now()->dayOfWeek
+        ])
+    ]);
+    $tomorrows = HabitModelFactory::count(5)->start([
+        'frequency' => new HabitFrequency('weekly', [
+            now()->addDay()->dayOfWeek
+        ])
     ]);
 
+    $this->repository
+        ->expects($this->once())
+        ->method('all')
+        ->willReturn([...$todays, ...$tomorrows]);
+
+    $retrievedHabits = $this->service->retrieveHabitsForToday();
+
+    expect($retrievedHabits)->toEqualCanonicalizing($todays);
 });
 
 it('can retrieve a habit', function () {
-	$habit = HabitModelFactory::start([
-		'id' => $id = HabitId::generate()
-	]);
+    $habit = HabitModelFactory::start([
+        'id' => $id = HabitId::generate()
+    ]);
 
     $this->repository
         ->expects($this->once())

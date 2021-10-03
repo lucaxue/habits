@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Faker\Factory as Faker;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 
 class HabitModelFactory
@@ -63,7 +64,8 @@ class HabitModelFactory
     ): Habit {
 
         $attributes = array_merge($overrides, [
-            'lastCompleted' => CarbonImmutable::now()
+            'lastCompleted' => CarbonImmutable::now(),
+            'streak' => $overrides['streak'] ?? new HabitStreak(0, 0, 1)
         ]);
 
         return self::create($attributes);
