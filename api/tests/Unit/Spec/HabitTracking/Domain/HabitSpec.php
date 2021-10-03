@@ -8,6 +8,7 @@ use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\Exceptions\HabitStoppedException;
 
 class HabitSpec extends ObjectBehavior
 {
@@ -148,7 +149,7 @@ class HabitSpec extends ObjectBehavior
 
         $this->stop();
 
-        $this->shouldThrow(\Exception::class)
+        $this->shouldThrow(HabitStoppedException::class)
             ->duringStop();
     }
 

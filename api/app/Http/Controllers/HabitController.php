@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
+use HabitTracking\Domain\Exceptions\HabitStoppedException;
 
 class HabitController extends Controller
 {
@@ -76,8 +77,11 @@ class HabitController extends Controller
     {
         try {
             $this->service->stopHabit($id);
-        } catch (\Exception $e) {
-            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
+        } catch (HabitStoppedException $e) {
+            return response()->json(
+                ['error' => ['message' => $e->getMessage()]],
+                JsonResponse::HTTP_BAD_REQUEST
+            );
         }
 
         return response()->json();

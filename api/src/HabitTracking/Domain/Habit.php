@@ -4,6 +4,7 @@ namespace HabitTracking\Domain;
 
 use Carbon\CarbonImmutable;
 use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\Exceptions\HabitStoppedException;
 
 class Habit implements \JsonSerializable
 {
@@ -61,7 +62,7 @@ class Habit implements \JsonSerializable
     public function stop(): void
     {
         if ($this->stopped()) {
-            throw new \Exception;
+            throw new HabitStoppedException;
         }
 
         $this->stopped = true;
