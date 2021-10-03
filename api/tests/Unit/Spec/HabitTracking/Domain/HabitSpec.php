@@ -2,6 +2,7 @@
 
 namespace Spec\HabitTracking\Domain;
 
+use Carbon\CarbonImmutable;
 use PhpSpec\ObjectBehavior;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
@@ -10,6 +11,30 @@ use HabitTracking\Domain\HabitFrequency;
 
 class HabitSpec extends ObjectBehavior
 {
+    function it_is_initializable()
+    {
+        $this->beConstructedWith(
+            $id = HabitId::generate(),
+            $name = 'Read a book',
+            $frequency = new HabitFrequency('daily'),
+            $streak = new HabitStreak,
+            $stopped = true,
+            $lastCompleted = CarbonImmutable::now(),
+            $lastIncompleted = CarbonImmutable::now()->subDay(),
+        );
+
+        $this->shouldBeAnInstanceOf(Habit::class);
+
+        $this->id()->shouldBe($id);
+        $this->name()->shouldBe($name);
+        $this->frequency()->shouldBe($frequency);
+        $this->streak()->shouldBe($streak);
+        $this->stopped()->shouldBe($stopped);
+        $this->lastCompleted()->shouldBe($lastCompleted);
+        $this->lastIncompleted()->shouldBe($lastIncompleted);
+        $this->completed()->shouldBe(true);
+    }
+
     function it_can_be_started()
     {
         $this->beConstructedThrough('start', [
@@ -24,6 +49,8 @@ class HabitSpec extends ObjectBehavior
         $this->name()->shouldBe($name);
         $this->frequency()->shouldBe($frequency);
         $this->streak()->isEmpty()->shouldBe(true);
+        $this->lastCompleted()->shouldBe(null);
+        $this->lastIncompleted()->shouldBe(null);
         $this->completed()->shouldBe(false);
         $this->stopped()->shouldBe(false);
     }
@@ -127,11 +154,12 @@ class HabitSpec extends ObjectBehavior
 
     function it_can_be_serialized()
     {
-        $this->beConstructedThrough('start', [
+        $this->beConstructedWith(
             $id = HabitId::generate(),
-            'Read a book',
+            $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
-        ]);
+            $streak = new HabitStreak,
+        );
 
         $this->shouldImplement(\JsonSerializable::class);
 
@@ -139,7 +167,7 @@ class HabitSpec extends ObjectBehavior
             'id' => $id,
             'name' => 'Read a book',
             'frequency' => $frequency,
-            'streak' => $this->streak(),
+            'streak' => $streak,
             'completed' => false,
             'stopped' => false,
         ]);

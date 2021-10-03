@@ -7,16 +7,14 @@ use HabitTracking\Domain\HabitId;
 
 class Habit implements \JsonSerializable
 {
-    private bool $stopped = false;
-    private ?CarbonImmutable $lastCompleted = null;
-    private ?CarbonImmutable $lastIncompleted = null;
-    private HabitStreak $streak;
-
-    private function __construct(
+    public function __construct(
         private HabitId $id,
         private string $name,
         private HabitFrequency $frequency,
-        ?HabitStreak $streak = null,
+        private ?HabitStreak $streak = null,
+        private bool $stopped = false,
+        private ?CarbonImmutable $lastCompleted = null,
+        private ?CarbonImmutable $lastIncompleted = null,
     ) {
 
         $this->streak = $streak ?? new HabitStreak;
@@ -89,19 +87,29 @@ class Habit implements \JsonSerializable
         return $this->streak;
     }
 
+    public function lastIncompleted(): ?CarbonImmutable
+    {
+        return $this->lastIncompleted;
+    }
+
+    public function lastCompleted(): ?CarbonImmutable
+    {
+        return $this->lastCompleted;
+    }
+
     public function completed(): bool
     {
-        if (!$this->lastCompleted) {
+        if (!$this->lastCompleted()) {
             return false;
         }
 
-        if (!$this->lastIncompleted) {
-            return $this->lastCompleted->isToday();
+        if (!$this->lastIncompleted()) {
+            return $this->lastCompleted()->isToday();
         }
 
         return
-            $this->lastCompleted->isToday() &&
-            $this->lastCompleted->gt($this->lastIncompleted);
+            $this->lastCompleted()->isToday() &&
+            $this->lastCompleted()->gt($this->lastIncompleted());
     }
 
     public function stopped(): bool
