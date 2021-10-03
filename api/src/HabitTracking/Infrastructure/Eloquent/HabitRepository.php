@@ -4,9 +4,9 @@ namespace HabitTracking\Infrastructure\Eloquent;
 
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Support\Facades\Auth;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Infrastructure\Reflection;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
@@ -14,62 +14,56 @@ class HabitRepository implements HabitRepositoryInterface
 {
     public function all(): array
     {
-        $habits = EloquentHabit::where('user_id', auth()->id())->get();
+        $habits = EloquentHabit::where('user_id', Auth::id())->get();
 
-        return $habits
-            ->map(fn ($habit) => $this->transformIntoHabit($habit))
-            ->all();
-    }
-
-    public function find(HabitId $id): Habit
-    {
-        $habit = EloquentHabit::findOrFail($id);
-
-        if (auth()->id() !== $habit->user->id) {
-            throw new \Exception;
-        }
-
-        return $this->transformIntoHabit($habit);
-    }
-
-    public function save(Habit $habit): void
-    {
-        $reflection = Reflection::for($habit);
-
-        $lastCompleted = $reflection->get('lastCompleted');
-        $lastIncompleted = $reflection->get('lastIncompleted');
-
-        EloquentHabit::updateOrCreate([
-            'id' => $habit->id()
-        ], [
-            'name' => $habit->name(),
-            'streak' => $habit->streak(),
-            'frequency' => $habit->frequency(),
-            'last_completed' => $lastCompleted,
-            'last_incompleted' => $lastIncompleted,
-            'stopped' => $habit->stopped(),
-            'user_id' => auth()->id()
-        ]);
-    }
-
-    private function transformIntoHabit(
-        EloquentHabit $habit
-    ): Habit {
-
-        $instance = Habit::start(
+        return $habits->map(fn ($habit) => new Habit(
             HabitId::fromString($habit->id),
             $habit->name,
             new HabitFrequency(
                 $habit->frequency->type,
                 $habit->frequency->days
             ),
+            HabitStreak::fromString($habit->streak),
+            $habit->stopped,
+            $habit->last_completed,
+            $habit->last_incompleted,
+        ))->all();
+    }
+
+    public function find(HabitId $id): Habit
+    {
+        $habit = EloquentHabit::findOrFail($id);
+
+        if (Auth::id() !== $habit->user->id) {
+            throw new \Exception;
+        }
+
+        return new Habit(
+            HabitId::fromString($habit->id),
+            $habit->name,
+            new HabitFrequency(
+                $habit->frequency->type,
+                $habit->frequency->days
+            ),
+            HabitStreak::fromString($habit->streak),
+            $habit->stopped,
+            $habit->last_completed,
+            $habit->last_incompleted,
         );
+    }
 
-        Reflection::for($instance)
-            ->mutate('lastCompleted', $habit->lastCompleted)
-            ->mutate('lastIncompleted', $habit->lastIncompleted)
-            ->mutate('streak', HabitStreak::fromString($habit->streak));
-
-        return $instance;
+    public function save(Habit $habit): void
+    {
+        EloquentHabit::updateOrCreate([
+            'id' => $habit->id()
+        ], [
+            'name' => $habit->name(),
+            'streak' => $habit->streak(),
+            'frequency' => $habit->frequency(),
+            'last_completed' => $habit->lastCompleted(),
+            'last_incompleted' => $habit->lastIncompleted(),
+            'stopped' => $habit->stopped(),
+            'user_id' => Auth::id()
+        ]);
     }
 }
