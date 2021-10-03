@@ -42,6 +42,13 @@ class HabitFrequency implements \JsonSerializable
         return $this->days;
     }
 
+    public function includesToday(): bool
+    {
+        if (! $this->days()) { return true; }
+
+        return in_array(now()->dayOfWeek, $this->days());
+    }
+
     public function jsonSerialize(): array
     {
         return [

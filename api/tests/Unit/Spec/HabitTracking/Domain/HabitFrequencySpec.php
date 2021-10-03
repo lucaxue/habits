@@ -43,6 +43,20 @@ class HabitFrequencySpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
+    function it_can_determine_if_it_includes_today_when_daily()
+    {
+        $this->beConstructedWith('daily');
+
+        $this->includesToday()->shouldBe(true);
+    }
+
+    function it_can_determine_if_it_includes_today_when_weekly()
+    {
+        $this->beConstructedWith('weekly', [now()->dayOfWeek]);
+
+        $this->includesToday()->shouldBe(true);
+    }
+
     function it_can_be_serialized()
     {
         $this->beConstructedWith('weekly', [
