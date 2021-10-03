@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 
 class HabitController extends Controller
 {
@@ -40,7 +41,11 @@ class HabitController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $habit = $this->service->retrieveHabit($id);
+        try {
+            $habit = $this->service->retrieveHabit($id);
+        } catch (HabitNotFoundException $e) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+        }
 
         return response()->json($habit);
     }
@@ -77,6 +82,8 @@ class HabitController extends Controller
     {
         try {
             $this->service->stopHabit($id);
+        } catch (HabitNotFoundException $e) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         } catch (HabitStoppedException $e) {
             return response()->json(
                 ['error' => ['message' => $e->getMessage()]],
