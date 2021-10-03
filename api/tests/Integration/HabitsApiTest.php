@@ -181,31 +181,29 @@ it('can mark a habit as incomplete', function () {
         ]);
 });
 
-// it('can edit a habit', function () {
-//     $habit = [
-//         'id' => $id = 2,
-//         'name' => 'Learning Arabic',
-//         'frequency' => [
-//             'type' => 'weekly',
-//             'days' => [1, 2, 3]
-//         ]
-//     ];
+it('can edit a habit', function () {
+    HabitFactory::start([
+        'id' => $id = HabitId::generate(),
+        'name' => 'Learning Arabic',
+        'frequency' => new HabitFrequency('weekly', [1, 2, 3])
+    ]);
 
-//     $response = $this->putJson("api/habits/{$id}", [
-//         'name' => 'Learning Chinese',
-//         'frequency' => [
-//             'type' => 'daily',
-//             'days' => null
-//         ]
-//     ]);
-//     $response
-//         ->assertOk()
-//         ->assertJson([
-//             'id' => $id,
-//             'name' => 'Learning Chinese',
-//             'frequency' => [
-//                 'type' => 'daily',
-//                 'days' => null
-//             ]
-//         ]);
-// });
+    $response = $this->putJson("api/habits/{$id}", [
+        'name' => 'Learning Chinese',
+        'frequency' => [
+            'type' => 'daily',
+            'days' => null
+        ]
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJsonFragment([
+            'id' => $id,
+            'name' => 'Learning Chinese',
+            'frequency' => [
+                'type' => 'daily',
+                'days' => null
+            ]
+        ]);
+});

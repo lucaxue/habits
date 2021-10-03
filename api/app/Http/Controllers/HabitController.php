@@ -44,6 +44,20 @@ class HabitController extends Controller
         return response()->json($habit);
     }
 
+    public function update(
+        Request $request,
+        string $id
+    ): JsonResponse {
+
+        $habit = $this->service->editHabit(
+            $id,
+            $request->get('name'),
+            $request->get('frequency')
+        );
+
+        return response()->json($habit);
+    }
+
     public function complete(string $id): JsonResponse
     {
         $habit = $this->service->markHabitAsComplete($id);

@@ -81,10 +81,7 @@ class HabitService
 
         $habit = $this->repository->find(HabitId::fromString($id));
 
-        $habit->edit($name, new HabitFrequency(
-            $frequency['type'],
-            $frequency['days']
-        ));
+        $habit->edit($name, new HabitFrequency(...$frequency));
 
         $this->repository->save($habit);
 
