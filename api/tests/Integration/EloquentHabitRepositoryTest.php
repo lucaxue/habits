@@ -1,8 +1,9 @@
 <?php
 
 use HabitTracking\Domain\Habit;
-use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Support\Facades\DB;
+use Tests\Support\HabitModelFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Infrastructure\Eloquent\HabitRepository as EloquentHabitRepository;
@@ -46,10 +47,36 @@ it("can retrieve all user's habits", function () {
 
     $results = (new EloquentHabitRepository)->all();
 
+    expect($results)->toHaveCount(10);
     foreach ($results as $result) {
         expect($result)
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($habits->pluck('id'));
+    }
+});
+
+it("can retrieve all user's habits for today", function () {
+    $john = $this->login();
+    $todays = EloquentHabit::factory(5)->for($john)->create([
+        'frequency' => [
+            'type' => 'weekly',
+            'days' => [now()->dayOfWeek]
+        ]
+    ]);
+    $tomorrows = EloquentHabit::factory(5)->for($john)->create([
+        'frequency' => [
+            'type' => 'weekly',
+            'days' => [now()->addDay()->dayOfWeek]
+        ]
+    ]);
+
+    $results = (new EloquentHabitRepository)->forToday();
+
+    expect($results)->toHaveCount(5);
+    foreach ($results as $result) {
+        expect($result)
+            ->toBeInstanceOf(Habit::class)
+            ->id()->toString()->toBeIn($todays->pluck('id'));
     }
 });
 
@@ -75,13 +102,15 @@ it('can persist a habit', function () {
     (new EloquentHabitRepository)->save($habit);
 
     $this->assertDatabaseHas('habits', [
-        'id' => $habit->id()->toString(),
+        'id' => $habit->id(),
         'name' => $habit->name(),
         'streak' => $habit->streak()->toString(),
-        'frequency' => json_encode($habit->frequency()),
         'last_completed' => null,
         'last_incompleted' => null,
         'stopped' => $habit->stopped(),
         'user_id' => $john->id
     ]);
+    expect(EloquentHabit::find($habit->id())->frequency)
+        ->type->toBe($habit->frequency()->type())
+        ->days->toBe($habit->frequency()->days());
 });

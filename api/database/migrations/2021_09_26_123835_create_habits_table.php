@@ -18,8 +18,8 @@ class CreateHabitsTable extends Migration
             $table->string('name');
             $table->string('streak');
             $table->json('frequency');
-            $table->timestamp('last_completed')->nullable();
-            $table->timestamp('last_incompleted')->nullable();
+            $table->datetime('last_completed')->nullable();
+            $table->datetime('last_incompleted')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('stopped')->default(false);
             $table->timestamps();

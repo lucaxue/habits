@@ -29,6 +29,30 @@ class HabitRepository implements HabitRepositoryInterface
         ))->all();
     }
 
+    public function forToday(): array
+    {
+        $habits = EloquentHabit::query()
+            ->where('user_id', Auth::id())
+            ->where(function ($query) {
+                $query
+                    ->whereJsonContains('frequency->days', [now()->dayOfWeek])
+                    ->orWhere('frequency->days', null);
+            })
+            ->get();
+
+        return $habits->map(fn ($habit) => new Habit(
+            HabitId::fromString($habit->id),
+            $habit->name,
+            new HabitFrequency(
+                ...(array) $habit->frequency,
+            ),
+            HabitStreak::fromString($habit->streak),
+            $habit->stopped,
+            $habit->last_completed,
+            $habit->last_incompleted,
+        ))->all();
+    }
+
     public function find(HabitId $id): Habit
     {
         $habit = EloquentHabit::findOrFail($id);
