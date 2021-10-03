@@ -4,7 +4,6 @@ use Tests\Support\HabitFactory;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Infrastructure\Eloquent\Habit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -37,22 +36,24 @@ it("retrieves today's habits", function () {
     $response
         ->assertOk()
         ->assertJsonCount(3)
-        ->assertJson([[
+        ->assertJsonFragment([
             'id' => $bookId,
             'name' => 'Read Book',
             'streak' => 'P0Y0M0D',
             'completed' => false,
-        ], [
+        ])
+        ->assertJsonFragment([
             'id' => $arabicId,
             'name' => 'Learning Arabic',
             'streak' => 'P0Y0M0D',
             'completed' => false,
-        ], [
+        ])
+        ->assertJsonFragment([
             'id' => $runId,
             'name' => 'Morning Run',
             'streak' => 'P0Y0M0D',
             'completed' => false,
-        ]]);
+        ]);
 });
 
 it('retrieves all habits', function () {
@@ -74,28 +75,31 @@ it('retrieves all habits', function () {
 
     $response
         ->assertOk()
-        ->assertJson([[
+        ->assertJsonCount(3)
+        ->assertJsonFragment([
             'id' => $bookId,
             'name' => 'Read Book',
             'frequency' => [
                 'type' => 'daily',
                 'days' => null,
             ]
-        ], [
+        ])
+        ->assertJsonFragment([
             'id' => $arabicId,
             'name' => 'Learning Arabic',
             'frequency' => [
                 'type' => 'weekly',
                 'days' => [1, 2, 3],
             ]
-        ], [
+        ])
+        ->assertJsonFragment([
             'id' => $morningId,
             'name' => 'Morning Run',
             'frequency' => [
                 'type' => 'daily',
                 'days' => null,
             ]
-        ]]);
+        ]);
 });
 
 it('can retrieve a habit', function () {
@@ -122,7 +126,7 @@ it('can retrieve a habit', function () {
 it('can start a new habit', function () {
     $response = $this->postJson('api/habits', $habit = [
         'name' => 'Practice Shutdown Ritual',
-        'frequency' => $frequency = [
+        'frequency' => [
             'type' => 'weekly',
             'days' => [1, 2, 3, 4, 5],
         ]
@@ -139,11 +143,6 @@ it('can start a new habit', function () {
             'streak' => 'P0Y0M0D',
             'completed' => false,
         ]);
-
-    $this->assertDatabaseHas('habits', [
-        'name' => 'Practice Shutdown Ritual',
-        'frequency' => json_encode($frequency),
-    ]);
 });
 
 it('can mark a habit as complete', function () {

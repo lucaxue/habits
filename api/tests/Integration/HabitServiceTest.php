@@ -39,8 +39,8 @@ it("can retrieve today's habit", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')
-        ->willReturn([...$todays, ...$tomorrows]);
+        ->method('forToday')
+        ->willReturn($todays);
 
     $retrievedHabits = $this->service->retrieveHabitsForToday();
 
