@@ -13,27 +13,47 @@ beforeEach(function () {
     $this->login();
 });
 
-// it("retrieves today's habits", function () {
-//     $response = $this->getJson('api/habits/today');
-//     $response
-//         ->assertOk()
-//         ->assertJson([[
-//             'id' => 1,
-//             'name' => 'Read Book',
-//             'streak' => 'P0Y0M0D',
-//             'completed' => false,
-//         ], [
-//             'id' => 2,
-//             'name' => 'Learning Arabic',
-//             'streak' => 'P0Y0M1D',
-//             'completed' => true,
-//         ], [
-//             'id' => 3,
-//             'name' => 'Morning Run',
-//             'streak' => 'P0Y0M1D',
-//             'completed' => true,
-//         ]]);
-// });
+it("retrieves today's habits", function () {
+    HabitFactory::count(10)->start([
+        'frequency' => new HabitFrequency('weekly', [now()->addDay()->dayOfWeek])
+    ]);
+
+    HabitFactory::many()->start([[
+        'id' => $bookId = HabitId::generate(),
+        'name' => 'Read Book',
+        'frequency' => new HabitFrequency('daily')
+    ], [
+        'id' => $arabicId = HabitId::generate(),
+        'name' => 'Learning Arabic',
+        'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek])
+    ], [
+        'id' => $runId = HabitId::generate(),
+        'name' => 'Morning Run',
+        'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek])
+    ]]);
+
+    $response = $this->getJson('api/habits/today');
+
+    $response
+        ->assertOk()
+        ->assertJsonCount(3)
+        ->assertJson([[
+            'id' => $bookId,
+            'name' => 'Read Book',
+            'streak' => 'P0Y0M0D',
+            'completed' => false,
+        ], [
+            'id' => $arabicId,
+            'name' => 'Learning Arabic',
+            'streak' => 'P0Y0M0D',
+            'completed' => false,
+        ], [
+            'id' => $runId,
+            'name' => 'Morning Run',
+            'streak' => 'P0Y0M0D',
+            'completed' => false,
+        ]]);
+});
 
 it('retrieves all habits', function () {
     HabitFactory::many()->start([[

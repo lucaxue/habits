@@ -20,6 +20,13 @@ class HabitController extends Controller
         return response()->json($habits);
     }
 
+    public function todayIndex(): JsonResponse
+    {
+        $habits = $this->service->retrieveHabitsForToday();
+
+        return response()->json($habits);
+    }
+
     public function start(Request $request): JsonResponse
     {
         $habit = $this->service->startHabit(
@@ -30,7 +37,7 @@ class HabitController extends Controller
         return response()->json($habit, JsonResponse::HTTP_CREATED);
     }
 
-    public function retrieve(string $id): JsonResponse
+    public function show(string $id): JsonResponse
     {
         $habit = $this->service->retrieveHabit($id);
 

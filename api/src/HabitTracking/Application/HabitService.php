@@ -24,10 +24,10 @@ class HabitService
     {
         $habits = $this->repository->all();
 
-        return array_filter(
+        return array_values(array_filter(
             $habits,
             fn (Habit $habit) => $habit->frequency()->includesToday()
-        );
+        ));
     }
 
     public function retrieveHabit(string $id): Habit
