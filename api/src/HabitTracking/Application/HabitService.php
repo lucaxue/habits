@@ -33,10 +33,7 @@ class HabitService
         $habit = Habit::start(
             HabitId::generate(),
             $name,
-            new HabitFrequency(
-                $frequency['type'],
-                $frequency['days']
-            ),
+            new HabitFrequency(...$frequency),
         );
 
         $this->repository->save($habit);

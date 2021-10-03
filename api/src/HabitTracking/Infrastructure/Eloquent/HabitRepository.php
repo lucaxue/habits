@@ -20,8 +20,7 @@ class HabitRepository implements HabitRepositoryInterface
             HabitId::fromString($habit->id),
             $habit->name,
             new HabitFrequency(
-                $habit->frequency->type,
-                $habit->frequency->days
+                ...(array) $habit->frequency,
             ),
             HabitStreak::fromString($habit->streak),
             $habit->stopped,
@@ -42,8 +41,7 @@ class HabitRepository implements HabitRepositoryInterface
             HabitId::fromString($habit->id),
             $habit->name,
             new HabitFrequency(
-                $habit->frequency->type,
-                $habit->frequency->days
+                ...(array) $habit->frequency,
             ),
             HabitStreak::fromString($habit->streak),
             $habit->stopped,
