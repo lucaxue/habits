@@ -25,4 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('habits/{id}', [HabitController::class, 'update']);
     Route::put('habits/{id}/complete', [HabitController::class, 'complete']);
     Route::put('habits/{id}/incomplete', [HabitController::class, 'incomplete']);
+    Route::delete('habits/{id}', [HabitController::class, 'stop']);
 });

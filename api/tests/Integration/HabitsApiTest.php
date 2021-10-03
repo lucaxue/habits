@@ -207,3 +207,15 @@ it('can edit a habit', function () {
             ]
         ]);
 });
+
+it('can stop a habit', function () {
+    HabitFactory::start(['id' => $id = HabitId::generate()]);
+
+    $response = $this->deleteJson("api/habits/{$id}");
+
+    $response->assertOk();
+    $this->assertDatabaseHas('habits', [
+        'id' => $id,
+        'stopped' => true,
+    ]);
+});

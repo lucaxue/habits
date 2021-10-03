@@ -71,4 +71,15 @@ class HabitController extends Controller
 
         return response()->json($habit);
     }
+
+    public function stop(string $id): JsonResponse
+    {
+        try {
+            $this->service->stopHabit($id);
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json();
+    }
 }
