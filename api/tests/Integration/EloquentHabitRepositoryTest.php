@@ -1,7 +1,7 @@
 <?php
 
 use HabitTracking\Domain\Habit;
-use Tests\Support\HabitInstanceFactory;
+use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -70,7 +70,7 @@ it("cannot retrieve another user's habits", function () {
 
 it('can persist a habit', function () {
     $john = $this->login();
-    $habit = HabitInstanceFactory::start();
+    $habit = HabitModelFactory::start();
 
     (new EloquentHabitRepository)->save($habit);
 

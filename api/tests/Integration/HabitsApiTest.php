@@ -127,11 +127,10 @@ it('can start a new habit', function () {
 });
 
 it('can mark a habit as complete', function () {
-    HabitFactory::start([
+    HabitFactory::incompleted([
         'id' => $id = HabitId::generate(),
         'name' => 'Practice Shutdown Ritual',
         'streak' => HabitStreak::fromString('P0Y0M0D'),
-        'completed' => false,
     ]);
 
     $response = $this->putJson("api/habits/{$id}/complete");
@@ -146,11 +145,10 @@ it('can mark a habit as complete', function () {
 });
 
 it('can mark a habit as incomplete', function () {
-    HabitFactory::start([
+    HabitFactory::completed([
         'id' => $id = HabitId::generate(),
         'name' => 'Practice Shutdown Ritual',
         'streak' => HabitStreak::fromString('P0Y0M1D'),
-        'completed' => true,
     ]);
 
     $response = $this->putJson("api/habits/{$id}/incomplete");

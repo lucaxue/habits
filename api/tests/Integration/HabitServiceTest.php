@@ -1,7 +1,7 @@
 <?php
 
 use HabitTracking\Domain\Habit;
-use Tests\Support\HabitInstanceFactory;
+use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Contracts\HabitRepository;
@@ -13,7 +13,7 @@ beforeEach(function () {
 });
 
 it('can retrieve all habits', function () {
-    $habits = HabitInstanceFactory::count(10)->start();
+    $habits = HabitModelFactory::count(10)->start();
 
     $this->repository
         ->expects($this->once())
@@ -26,7 +26,7 @@ it('can retrieve all habits', function () {
 });
 
 it('can retrieve a habit', function () {
-	$habit = HabitInstanceFactory::start([
+	$habit = HabitModelFactory::start([
 		'id' => $id = HabitId::generate()
 	]);
 
@@ -58,7 +58,7 @@ it('can start a habit', function () {
 });
 
 it('can mark a habit as complete', function () {
-    $habit = HabitInstanceFactory::start([
+    $habit = HabitModelFactory::start([
         'id' => $id = HabitId::generate()
     ]);
 
@@ -81,7 +81,7 @@ it('can mark a habit as complete', function () {
 });
 
 it('can mark a habit as incomplete', function () {
-    $habit = HabitInstanceFactory::completed([
+    $habit = HabitModelFactory::completed([
         'id' => $id = HabitId::generate()
     ]);
 
@@ -104,7 +104,7 @@ it('can mark a habit as incomplete', function () {
 });
 
 it('can edit a habit', function () {
-    $habit = HabitInstanceFactory::start([
+    $habit = HabitModelFactory::start([
         'id' => $id = HabitId::generate(),
         'name' => 'Read a book',
         'frequency' => new HabitFrequency('weekly', [1])
@@ -133,7 +133,7 @@ it('can edit a habit', function () {
 });
 
 it('can stop a habit', function () {
-    $habit = HabitInstanceFactory::start([
+    $habit = HabitModelFactory::start([
         'id' => $id = HabitId::generate()
     ]);
 

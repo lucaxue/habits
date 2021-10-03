@@ -2,12 +2,13 @@
 
 namespace Tests\Support;
 
+use Carbon\CarbonImmutable;
 use Faker\Factory as Faker;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitFrequency;
 
-class HabitInstanceFactory
+class HabitModelFactory
 {
     public static function start(
         array $overrides = []
@@ -29,21 +30,53 @@ class HabitInstanceFactory
         return Habit::start(...$attributes);
     }
 
+    public static function create(
+        array $overrides = []
+    ): Habit {
+
+        $faker = Faker::create();
+
+        $defaults = [
+            'id' => HabitId::generate(),
+            'name' => $faker->sentence(),
+            'frequency' => $faker->randomElement([
+                new HabitFrequency('daily'),
+                new HabitFrequency('weekly', [1, 2, 3])
+            ])
+        ];
+
+        $attributes = array_merge($defaults, $overrides);
+
+        return new Habit(...$attributes);
+    }
+
     public static function completed(
         array $overrides
     ): Habit {
 
-        $habit = self::start($overrides);
+        $attributes = array_merge($overrides, [
+            'lastCompleted' => CarbonImmutable::now()
+        ]);
 
-        $habit->markAsComplete();
+        return self::create($attributes);
+    }
 
-        return $habit;
+    public static function incompleted(
+        array $overrides
+    ): Habit {
+
+        $attributes = array_merge($overrides, [
+            'lastIncompleted' => CarbonImmutable::now()
+        ]);
+
+        return self::create($attributes);
     }
 
     public static function count(
         int $count
     ) {
-        return new class($count) {
+        return new class($count)
+        {
             public function __construct(
                 private int $count
             ) {
@@ -60,7 +93,7 @@ class HabitInstanceFactory
                 $habits = [];
 
                 for ($i = 0; $i < $this->count; $i++) {
-                    $habits[] = HabitInstanceFactory::start($overrides);
+                    $habits[] = HabitModelFactory::start($overrides);
                 }
 
                 return $habits;
