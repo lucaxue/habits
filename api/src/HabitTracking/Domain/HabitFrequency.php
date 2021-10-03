@@ -2,8 +2,18 @@
 
 namespace HabitTracking\Domain;
 
+use Carbon\CarbonImmutable;
+
 class HabitFrequency implements \JsonSerializable
 {
+    public const SUNDAY = CarbonImmutable::SUNDAY;
+    public const MONDAY = CarbonImmutable::MONDAY;
+    public const TUESDAY = CarbonImmutable::TUESDAY;
+    public const WEDNESDAY = CarbonImmutable::WEDNESDAY;
+    public const THURSDAY = CarbonImmutable::THURSDAY;
+    public const FRIDAY = CarbonImmutable::FRIDAY;
+    public const SATURDAY = CarbonImmutable::SATURDAY;
+
     private string $type;
     private ?array $days;
 

@@ -21,7 +21,11 @@ class HabitModelFactory
             'name' => $faker->sentence(),
             'frequency' => $faker->randomElement([
                 new HabitFrequency('daily'),
-                new HabitFrequency('weekly', [1, 2, 3])
+                new HabitFrequency('weekly', [
+                    HabitFrequency::MONDAY,
+                    HabitFrequency::TUESDAY,
+                    HabitFrequency::WEDNESDAY
+                ])
             ])
         ];
 
@@ -41,7 +45,11 @@ class HabitModelFactory
             'name' => $faker->sentence(),
             'frequency' => $faker->randomElement([
                 new HabitFrequency('daily'),
-                new HabitFrequency('weekly', [1, 2, 3])
+                new HabitFrequency('weekly', [
+                    HabitFrequency::MONDAY,
+                    HabitFrequency::TUESDAY,
+                    HabitFrequency::WEDNESDAY
+                ])
             ])
         ];
 

@@ -19,12 +19,20 @@ class HabitFrequencySpec extends ObjectBehavior
 
     function it_can_be_initialized_with_weekly()
     {
-        $this->beConstructedWith('weekly', [1, 2, 3]);
+        $this->beConstructedWith('weekly', [
+            HabitFrequency::MONDAY,
+            HabitFrequency::TUESDAY,
+            HabitFrequency::WEDNESDAY
+        ]);
 
         $this->shouldBeAnInstanceOf(HabitFrequency::class);
 
         $this->type()->shouldBe('weekly');
-        $this->days()->shouldBe([1, 2, 3]);
+        $this->days()->shouldBe([
+            HabitFrequency::MONDAY,
+            HabitFrequency::TUESDAY,
+            HabitFrequency::WEDNESDAY
+        ]);
     }
 
     function it_requires_days_when_initializing_with_weekly()
@@ -37,12 +45,20 @@ class HabitFrequencySpec extends ObjectBehavior
 
     function it_can_be_serialized()
     {
-        $this->beConstructedWith('weekly', [1, 2, 3]);
+        $this->beConstructedWith('weekly', [
+            HabitFrequency::MONDAY,
+            HabitFrequency::TUESDAY,
+            HabitFrequency::WEDNESDAY
+        ]);
 
         $this->shouldImplement(\JsonSerializable::class);
         $this->jsonSerialize()->shouldBe([
             'type' => 'weekly',
-            'days' => [1, 2, 3],
+            'days' => [
+                HabitFrequency::MONDAY,
+                HabitFrequency::TUESDAY,
+                HabitFrequency::WEDNESDAY
+            ],
         ]);
     }
 }

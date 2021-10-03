@@ -25,6 +25,13 @@ it('can retrieve all habits', function () {
     expect($retrievedHabits)->toEqualCanonicalizing($habits);
 });
 
+it("can retrieve today's habit", function () {
+    HabitModelFactory::count(5)->start([
+        'frequency' => new HabitFrequency('daily')
+    ]);
+
+});
+
 it('can retrieve a habit', function () {
 	$habit = HabitModelFactory::start([
 		'id' => $id = HabitId::generate()
