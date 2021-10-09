@@ -18,10 +18,10 @@ use App\Http\Controllers\HabitController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', fn (Request $request) => $request->user());
 
-    Route::get('habits', [HabitController::class, 'index']);
     Route::get('habits/today', [HabitController::class, 'todayIndex']);
-    Route::post('habits', [HabitController::class, 'start']);
+    Route::get('habits', [HabitController::class, 'index']);
     Route::get('habits/{id}', [HabitController::class, 'show']);
+    Route::post('habits', [HabitController::class, 'start']);
     Route::put('habits/{id}', [HabitController::class, 'update']);
     Route::put('habits/{id}/complete', [HabitController::class, 'complete']);
     Route::put('habits/{id}/incomplete', [HabitController::class, 'incomplete']);

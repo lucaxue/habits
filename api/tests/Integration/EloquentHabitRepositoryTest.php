@@ -82,8 +82,18 @@ it("can find a user's habit", function () {
 it('cannot find a non existent habit', function () {
     $this->login();
 
-    expect(fn () => resolve(EloquentHabitRepository::class)->find(HabitId::generate()))
-        ->toThrow(HabitNotFoundException::class);
+    expect(fn () =>
+        resolve(EloquentHabitRepository::class)->find(HabitId::generate())
+    )->toThrow(HabitNotFoundException::class);
+});
+
+it("cannot find another user's habit", function () {
+    $this->login();
+    $habit = EloquentHabit::factory()->forUser()->create();
+
+    expect(fn () =>
+        resolve(EloquentHabitRepository::class)->find(HabitId::fromString($habit->id))
+    )->toThrow(\Exception::class);
 });
 
 it('can persist a habit', function () {

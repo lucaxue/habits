@@ -63,6 +63,10 @@ class HabitRepository implements HabitRepositoryInterface
             throw new HabitNotFoundException;
         }
 
+        if ($this->auth->id() !== $habit->user_id) {
+            throw new \Exception;
+        }
+
         return new Habit(
             HabitId::fromString($habit->id),
             $habit->name,

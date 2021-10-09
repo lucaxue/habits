@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
@@ -43,8 +44,12 @@ class HabitController extends Controller
     {
         try {
             $habit = $this->service->retrieveHabit($id);
+
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         return response()->json($habit);
