@@ -11,6 +11,12 @@ use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
+/**
+ * @improvement: This implementation currently hides authorization
+ * concerns instead of just being a data abstraction layer.
+ * Refactor this by adding author id to the domain model,
+ * and move authorization concerns away into the service class.
+ */
 class HabitRepository implements HabitRepositoryInterface
 {
     public function __construct(
