@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthManager;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
@@ -56,10 +57,10 @@ class HabitRepository implements HabitRepositoryInterface
 
     public function find(HabitId $id): Habit
     {
-        $habit = EloquentHabit::findOrFail($id);
+        $habit = EloquentHabit::find($id);
 
-        if ($this->auth->id() !== $habit->user->id) {
-            throw new \Exception;
+        if (! $habit) {
+            throw new HabitNotFoundException;
         }
 
         return new Habit(
