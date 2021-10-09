@@ -3,8 +3,8 @@
 namespace HabitTracking\Infrastructure\Eloquent;
 
 use HabitTracking\Domain\Habit;
+use Illuminate\Auth\AuthManager;
 use HabitTracking\Domain\HabitId;
-use Illuminate\Support\Facades\Auth;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -12,16 +12,19 @@ use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
 class HabitRepository implements HabitRepositoryInterface
 {
+    public function __construct(
+        private AuthManager $auth
+    ) {
+    }
+
     public function all(): array
     {
-        $habits = EloquentHabit::where('user_id', Auth::id())->get();
+        $habits = EloquentHabit::where('user_id', $this->auth->id())->get();
 
         return $habits->map(fn ($habit) => new Habit(
             HabitId::fromString($habit->id),
             $habit->name,
-            new HabitFrequency(
-                ...(array) $habit->frequency,
-            ),
+            new HabitFrequency(...(array) $habit->frequency),
             HabitStreak::fromString($habit->streak),
             $habit->stopped,
             $habit->last_completed,
@@ -32,7 +35,7 @@ class HabitRepository implements HabitRepositoryInterface
     public function forToday(): array
     {
         $habits = EloquentHabit::query()
-            ->where('user_id', Auth::id())
+            ->where('user_id', $this->auth->id())
             ->where(function ($query) {
                 $query
                     ->whereJsonContains('frequency->days', [now()->dayOfWeek])
@@ -43,9 +46,7 @@ class HabitRepository implements HabitRepositoryInterface
         return $habits->map(fn ($habit) => new Habit(
             HabitId::fromString($habit->id),
             $habit->name,
-            new HabitFrequency(
-                ...(array) $habit->frequency,
-            ),
+            new HabitFrequency(...(array) $habit->frequency),
             HabitStreak::fromString($habit->streak),
             $habit->stopped,
             $habit->last_completed,
@@ -57,16 +58,14 @@ class HabitRepository implements HabitRepositoryInterface
     {
         $habit = EloquentHabit::findOrFail($id);
 
-        if (Auth::id() !== $habit->user->id) {
+        if ($this->auth->id() !== $habit->user->id) {
             throw new \Exception;
         }
 
         return new Habit(
             HabitId::fromString($habit->id),
             $habit->name,
-            new HabitFrequency(
-                ...(array) $habit->frequency,
-            ),
+            new HabitFrequency(...(array) $habit->frequency),
             HabitStreak::fromString($habit->streak),
             $habit->stopped,
             $habit->last_completed,
@@ -85,7 +84,7 @@ class HabitRepository implements HabitRepositoryInterface
             'last_completed' => $habit->lastCompleted(),
             'last_incompleted' => $habit->lastIncompleted(),
             'stopped' => $habit->stopped(),
-            'user_id' => Auth::id()
+            'user_id' => $this->auth->id()
         ]);
     }
 }

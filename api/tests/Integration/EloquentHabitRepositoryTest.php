@@ -2,7 +2,6 @@
 
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
-use Illuminate\Support\Facades\DB;
 use Tests\Support\HabitModelFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -14,7 +13,7 @@ it("can find a user's habit", function () {
     $john = $this->login();
     $habit = EloquentHabit::factory()->for($john)->create();
 
-    $result = (new EloquentHabitRepository)->find(HabitId::fromString($habit->id));
+    $result = resolve(EloquentHabitRepository::class)->find(HabitId::fromString($habit->id));
 
     expect($result)
         ->toBeInstanceOf(Habit::class)
@@ -28,7 +27,7 @@ it('cannot find a non existent habit', function () {
     $this->login();
 
     expect(function () {
-        (new EloquentHabitRepository)->find(HabitId::generate());
+        resolve(EloquentHabitRepository::class)->find(HabitId::generate());
     })->toThrow(\Exception::class);
 });
 
@@ -37,7 +36,7 @@ it("cannot find another user's habit", function () {
     $habit = EloquentHabit::factory()->forUser()->create();
 
     expect(function () use ($habit) {
-        (new EloquentHabitRepository)->find(HabitId::fromString($habit->id));
+        resolve(EloquentHabitRepository::class)->find(HabitId::fromString($habit->id));
     })->toThrow(\Exception::class);
 });
 
@@ -45,7 +44,7 @@ it("can retrieve all user's habits", function () {
     $john = $this->login();
     $habits = EloquentHabit::factory(10)->for($john)->create();
 
-    $results = (new EloquentHabitRepository)->all();
+    $results = resolve(EloquentHabitRepository::class)->all();
 
     expect($results)->toHaveCount(10);
     foreach ($results as $result) {
@@ -70,7 +69,7 @@ it("can retrieve all user's habits for today", function () {
         ]
     ]);
 
-    $results = (new EloquentHabitRepository)->forToday();
+    $results = resolve(EloquentHabitRepository::class)->forToday();
 
     expect($results)->toHaveCount(5);
     foreach ($results as $result) {
@@ -85,7 +84,7 @@ it("cannot retrieve another user's habits", function () {
     $mine = EloquentHabit::factory(10)->for($john)->create();
     $notMine = EloquentHabit::factory(10)->forUser()->create();
 
-    $results = (new EloquentHabitRepository)->all();
+    $results = resolve(EloquentHabitRepository::class)->all();
 
     foreach ($results as $result) {
         expect($result)
@@ -99,7 +98,7 @@ it('can persist a habit', function () {
     $john = $this->login();
     $habit = HabitModelFactory::start();
 
-    (new EloquentHabitRepository)->save($habit);
+    resolve(EloquentHabitRepository::class)->save($habit);
 
     $this->assertDatabaseHas('habits', [
         'id' => $habit->id(),
