@@ -8,15 +8,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
-    $this->login();
-});
+beforeEach(fn () => $this->login());
 
-it("retrieves today's habits", function () {
+test("one retrieves today's habits", function () {
     HabitFactory::count(10)->start([
         'frequency' => new HabitFrequency('weekly', [now()->addDay()->dayOfWeek])
     ]);
-
     HabitFactory::many()->start([[
         'id' => $bookId = HabitId::generate(),
         'name' => 'Read Book',
@@ -56,7 +53,7 @@ it("retrieves today's habits", function () {
         ]);
 });
 
-it('retrieves all habits', function () {
+test('one retrieves all habits', function () {
     HabitFactory::many()->start([[
         'id' => $bookId =  HabitId::generate(),
         'name' => 'Read Book',
@@ -102,7 +99,7 @@ it('retrieves all habits', function () {
         ]);
 });
 
-it('can retrieve a habit', function () {
+test('one retrieves a habit', function () {
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
         'name' => 'Read Book',
@@ -123,8 +120,8 @@ it('can retrieve a habit', function () {
         ]);
 });
 
-it('can start a new habit', function () {
-    $response = $this->postJson('api/habits', $habit = [
+test('one starts a new habit', function () {
+    $response = $this->postJson('api/habits', [
         'name' => 'Practice Shutdown Ritual',
         'frequency' => [
             'type' => 'weekly',
@@ -145,7 +142,7 @@ it('can start a new habit', function () {
         ]);
 });
 
-it('can mark a habit as complete', function () {
+test('one marks a habit as complete', function () {
     HabitFactory::incompleted([
         'id' => $id = HabitId::generate(),
         'name' => 'Practice Shutdown Ritual',
@@ -163,7 +160,7 @@ it('can mark a habit as complete', function () {
         ]);
 });
 
-it('can mark a habit as incomplete', function () {
+test('one marks a habit as incomplete', function () {
     HabitFactory::completed([
         'id' => $id = HabitId::generate(),
         'name' => 'Practice Shutdown Ritual',
@@ -181,7 +178,7 @@ it('can mark a habit as incomplete', function () {
         ]);
 });
 
-it('can edit a habit', function () {
+test('one edits a habit', function () {
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
         'name' => 'Learning Arabic',
@@ -208,7 +205,7 @@ it('can edit a habit', function () {
         ]);
 });
 
-it('can stop a habit', function () {
+test('one stops a habit', function () {
     HabitFactory::start(['id' => $id = HabitId::generate()]);
 
     $response = $this->deleteJson("api/habits/{$id}");

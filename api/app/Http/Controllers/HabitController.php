@@ -82,8 +82,10 @@ class HabitController extends Controller
     {
         try {
             $this->service->stopHabit($id);
+
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
         } catch (HabitStoppedException $e) {
             return response()->json(
                 ['error' => ['message' => $e->getMessage()]],
