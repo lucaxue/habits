@@ -16,6 +16,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedWith(
             $id = HabitId::generate(),
+            $authorId = 3,
             $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
             $streak = new HabitStreak,
@@ -27,6 +28,7 @@ class HabitSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Habit::class);
 
         $this->id()->shouldBe($id);
+        $this->authorId()->shouldBe($authorId);
         $this->name()->shouldBe($name);
         $this->frequency()->shouldBe($frequency);
         $this->streak()->shouldBe($streak);
@@ -40,6 +42,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             $id = HabitId::generate(),
+            $authorId = 3,
             $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
         ]);
@@ -47,6 +50,7 @@ class HabitSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Habit::class);
 
         $this->id()->shouldBe($id);
+        $this->authorId()->shouldBe($authorId);
         $this->name()->shouldBe($name);
         $this->frequency()->shouldBe($frequency);
         $this->streak()->isEmpty()->shouldBe(true);
@@ -60,6 +64,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -74,6 +79,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -89,6 +95,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -102,6 +109,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -114,6 +122,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -131,6 +140,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -143,6 +153,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
+            3,
             'Read a book',
             new HabitFrequency('daily'),
         ]);
@@ -157,6 +168,7 @@ class HabitSpec extends ObjectBehavior
     {
         $this->beConstructedWith(
             $id = HabitId::generate(),
+            3,
             $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
             $streak = new HabitStreak,
@@ -166,7 +178,7 @@ class HabitSpec extends ObjectBehavior
 
         $this->jsonSerialize()->shouldBe([
             'id' => $id,
-            'name' => 'Read a book',
+            'name' => $name,
             'frequency' => $frequency,
             'streak' => $streak,
             'completed' => false,

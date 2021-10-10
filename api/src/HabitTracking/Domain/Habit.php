@@ -10,6 +10,7 @@ class Habit implements \JsonSerializable
 {
     public function __construct(
         private HabitId $id,
+        private int $authorId,
         private string $name,
         private HabitFrequency $frequency,
         private ?HabitStreak $streak = null,
@@ -23,11 +24,12 @@ class Habit implements \JsonSerializable
 
     public static function start(
         HabitId $id,
+        int $authorId,
         string $name,
         HabitFrequency $frequency
     ): self {
 
-        return new self($id, $name, $frequency);
+        return new self($id, $authorId, $name, $frequency);
     }
 
     public function markAsComplete(): void
@@ -71,6 +73,11 @@ class Habit implements \JsonSerializable
     public function id(): HabitId
     {
         return $this->id;
+    }
+
+    public function authorId(): int
+    {
+        return $this->authorId;
     }
 
     public function name(): string
