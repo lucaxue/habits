@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
@@ -12,19 +13,20 @@ class HabitController extends Controller
 {
     public function __construct(
         private HabitService $service,
+        private AuthManager $auth
     ) {
     }
 
     public function index(): JsonResponse
     {
-        $habits = $this->service->retrieveHabits();
+        $habits = $this->service->retrieveHabits($this->auth->id());
 
         return response()->json($habits);
     }
 
     public function todayIndex(): JsonResponse
     {
-        $habits = $this->service->retrieveHabitsForToday();
+        $habits = $this->service->retrieveHabitsForToday($this->auth->id());
 
         return response()->json($habits);
     }
@@ -34,6 +36,7 @@ class HabitController extends Controller
         $habit = $this->service->startHabit(
             $request->get('name'),
             $request->get('frequency'),
+            $this->auth->id(),
         );
 
         return response()->json($habit, JsonResponse::HTTP_CREATED);
@@ -42,7 +45,7 @@ class HabitController extends Controller
     public function show(string $id): JsonResponse
     {
         try {
-            $habit = $this->service->retrieveHabit($id);
+            $habit = $this->service->retrieveHabit($id, $this->auth->id());
 
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
@@ -59,25 +62,49 @@ class HabitController extends Controller
         string $id
     ): JsonResponse {
 
-        $habit = $this->service->editHabit(
-            $id,
-            $request->get('name'),
-            $request->get('frequency')
-        );
+        try {
+            $habit = $this->service->editHabit(
+                $id,
+                $request->get('name'),
+                $request->get('frequency'),
+                $this->auth->id()
+            );
+        } catch (HabitNotFoundException $e) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
         return response()->json($habit);
     }
 
     public function complete(string $id): JsonResponse
     {
-        $habit = $this->service->markHabitAsComplete($id);
+        try {
+            $habit = $this->service->markHabitAsComplete($id, $this->auth->id());
+
+        } catch (HabitNotFoundException $e) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
         return response()->json($habit);
     }
 
     public function incomplete(string $id): JsonResponse
     {
-        $habit = $this->service->markHabitAsIncomplete($id);
+        try {
+            $habit = $this->service->markHabitAsIncomplete($id, $this->auth->id());
+
+        } catch (HabitNotFoundException $e) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
         return response()->json($habit);
     }
@@ -85,10 +112,13 @@ class HabitController extends Controller
     public function stop(string $id): JsonResponse
     {
         try {
-            $this->service->stopHabit($id);
+            $this->service->stopHabit($id, $this->auth->id());
 
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+
+        } catch (\Exception $e) {
+            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
 
         } catch (HabitStoppedException $e) {
             return response()->json(

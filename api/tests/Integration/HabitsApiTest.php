@@ -2,42 +2,47 @@
 
 use Tests\Support\HabitFactory;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Http\JsonResponse;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('a guest cannot access the api',function () {
+test('a guest cannot access the api', function () {
     $responses = collect([
         $this->getJson('api/habits/today'),
         $this->getJson('api/habits'),
-        $this->getJson('api/habits/'.HabitId::generate()),
+        $this->getJson('api/habits/' . HabitId::generate()),
         $this->postJson('api/habits', []),
-        $this->putJson('api/habits/'.HabitId::generate(), []),
-        $this->putJson('api/habits/'.HabitId::generate().'/complete'),
-        $this->putJson('api/habits/'.HabitId::generate().'/incomplete'),
-        $this->deleteJson('api/habits/'.HabitId::generate()),
+        $this->putJson('api/habits/' . HabitId::generate(), []),
+        $this->putJson('api/habits/' . HabitId::generate() . '/complete'),
+        $this->putJson('api/habits/' . HabitId::generate() . '/incomplete'),
+        $this->deleteJson('api/habits/' . HabitId::generate()),
     ]);
 
     $responses->each->assertUnauthorized();
 });
 
-test("one can retrieve today's habits", function () {
-    $this->login();
+test('one can retrieve all their habits for today', function () {
+    $john = $this->login();
     HabitFactory::count(10)->start([
-        'frequency' => new HabitFrequency('weekly', [now()->addDay()->dayOfWeek])
+        'frequency' => new HabitFrequency('weekly', [now()->addDay()->dayOfWeek]),
+        'authorId' => $john->id,
     ]);
     HabitFactory::many()->start([[
         'id' => $bookId = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Read Book',
         'frequency' => new HabitFrequency('daily')
     ], [
         'id' => $arabicId = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Learning Arabic',
         'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek])
     ], [
         'id' => $runId = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Morning Run',
         'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek])
     ]]);
@@ -67,18 +72,21 @@ test("one can retrieve today's habits", function () {
         ]);
 });
 
-test('one can retrieve all habits', function () {
-    $this->login();
+test('one can retrieve all their habits', function () {
+    $john = $this->login();
     HabitFactory::many()->start([[
         'id' => $bookId =  HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Read Book',
         'frequency' => new HabitFrequency('daily')
     ], [
         'id' => $arabicId = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Learning Arabic',
         'frequency' => new HabitFrequency('weekly', [1, 2, 3])
     ], [
         'id' => $morningId = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Morning Run',
         'frequency' => new HabitFrequency('daily')
     ]]);
@@ -115,9 +123,10 @@ test('one can retrieve all habits', function () {
 });
 
 test('one can retrieve a habit', function () {
-    $this->login();
+    $john = $this->login();
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Read Book',
         'frequency' => new HabitFrequency('daily')
     ]);
@@ -136,18 +145,18 @@ test('one can retrieve a habit', function () {
         ]);
 });
 
-test("one cannot retrieve another user's habit", function () {
-    $jane = $this->login();
-    HabitFactory::start(['id' => $id = HabitId::generate()]);
-
+test('retrieving a non existent habit returns a not found response', function () {
+    $id = HabitId::generate();
     $john = $this->login();
 
-    $this->getJson("api/habits/{$id}")
-        ->assertUnauthorized();
+    $response = $this->getJson("api/habits/{$id}");
+
+    $response->assertNotFound();
 });
 
 test('one can start a new habit', function () {
-    $this->login();
+    $john = $this->login();
+
     $response = $this->postJson('api/habits', [
         'name' => 'Practice Shutdown Ritual',
         'frequency' => [
@@ -170,14 +179,16 @@ test('one can start a new habit', function () {
 });
 
 test('one can mark a habit as complete', function () {
-    $this->login();
+    $john = $this->login();
     HabitFactory::incompleted([
         'id' => $id = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Practice Shutdown Ritual',
         'streak' => HabitStreak::fromString('P0Y0M0D'),
     ]);
 
     $response = $this->putJson("api/habits/{$id}/complete");
+
     $response
         ->assertOk()
         ->assertJson([
@@ -189,14 +200,16 @@ test('one can mark a habit as complete', function () {
 });
 
 test('one can mark a habit as incomplete', function () {
-    $this->login();
+    $john = $this->login();
     HabitFactory::completed([
         'id' => $id = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Practice Shutdown Ritual',
         'streak' => HabitStreak::fromString('P0Y0M1D'),
     ]);
 
     $response = $this->putJson("api/habits/{$id}/incomplete");
+
     $response
         ->assertOk()
         ->assertJson([
@@ -208,9 +221,10 @@ test('one can mark a habit as incomplete', function () {
 });
 
 test('one can edit a habit', function () {
-    $this->login();
+    $john = $this->login();
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
+        'authorId' => $john->id,
         'name' => 'Learning Arabic',
         'frequency' => new HabitFrequency('weekly', [1, 2, 3])
     ]);
@@ -236,8 +250,11 @@ test('one can edit a habit', function () {
 });
 
 test('one can stop a habit', function () {
-    $this->login();
-    HabitFactory::start(['id' => $id = HabitId::generate()]);
+    $john = $this->login();
+    HabitFactory::start([
+        'id' => $id = HabitId::generate(),
+        'authorId' => $john->id
+    ]);
 
     $response = $this->deleteJson("api/habits/{$id}");
 
@@ -246,4 +263,26 @@ test('one can stop a habit', function () {
         'id' => $id,
         'stopped' => true,
     ]);
+});
+
+test("one cannot manage another user's habit", function () {
+    $jane = $this->login();
+    HabitFactory::start([
+        'id' => $id = HabitId::generate(),
+        'authorId' => $jane->id,
+    ]);
+    $john = $this->login();
+
+    $responses = collect([
+        $this->getJson("api/habits/{$id}"),
+        $this->putJson("api/habits/{$id}", [
+            'name' => 'Read a book',
+            'frequency' => ['type' => 'daily', 'days' => null],
+        ]),
+        $this->putJson("api/habits/{$id}/complete"),
+        $this->putJson("api/habits/{$id}/incomplete"),
+        $this->deleteJson("api/habits/{$id}")
+    ]);
+
+    $responses->each->assertUnauthorized();
 });
