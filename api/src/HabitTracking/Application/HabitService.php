@@ -7,6 +7,7 @@ use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 
 class HabitService
@@ -39,7 +40,7 @@ class HabitService
             ?? throw new HabitNotFoundException;
 
         if ($habit->authorId() !== $authorId) {
-            throw new \Exception;
+            throw new HabitDoesNotBelongToAuthorException;
         }
 
         return $habit;
@@ -73,7 +74,7 @@ class HabitService
             ?? throw new HabitNotFoundException;
 
         if ($habit->authorId() !== $authorId) {
-            throw new \Exception;
+            throw new HabitDoesNotBelongToAuthorException;
         }
 
         $habit->markAsComplete();
@@ -93,7 +94,7 @@ class HabitService
             ?? throw new HabitNotFoundException;
 
         if ($habit->authorId() !== $authorId) {
-            throw new \Exception;
+            throw new HabitDoesNotBelongToAuthorException;
         }
 
         $habit->markAsIncomplete();
@@ -115,7 +116,7 @@ class HabitService
             ?? throw new HabitNotFoundException;
 
         if ($habit->authorId() !== $authorId) {
-            throw new \Exception;
+            throw new HabitDoesNotBelongToAuthorException;
         }
 
         $habit->edit($name, new HabitFrequency(...$frequency));
@@ -135,7 +136,7 @@ class HabitService
             ?? throw new HabitNotFoundException;
 
         if ($habit->authorId() !== $authorId) {
-            throw new \Exception;
+            throw new HabitDoesNotBelongToAuthorException;
         }
 
         $habit->stop();

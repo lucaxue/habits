@@ -2,7 +2,6 @@
 
 use Tests\Support\HabitFactory;
 use HabitTracking\Domain\HabitId;
-use Illuminate\Http\JsonResponse;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 use Illuminate\Foundation\Testing\RefreshDatabase;

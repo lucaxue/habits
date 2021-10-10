@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
 use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 
 class HabitController extends Controller
 {
@@ -50,7 +51,7 @@ class HabitController extends Controller
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (\Exception $e) {
+        } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -72,7 +73,7 @@ class HabitController extends Controller
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (\Exception $e) {
+        } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -87,7 +88,7 @@ class HabitController extends Controller
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (\Exception $e) {
+        } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -102,7 +103,7 @@ class HabitController extends Controller
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (\Exception $e) {
+        } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -117,7 +118,7 @@ class HabitController extends Controller
         } catch (HabitNotFoundException $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (\Exception $e) {
+        } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
 
         } catch (HabitStoppedException $e) {

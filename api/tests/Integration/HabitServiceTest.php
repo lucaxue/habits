@@ -8,6 +8,7 @@ use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Contracts\HabitRepository;
 use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 
 beforeEach(function () {
     $this->repository = $this->createStub(HabitRepository::class);
@@ -261,5 +262,5 @@ it("cannot manage another user's habit", function () {
         fn () => $this->service->stopHabit($id, $john->id),
     ]);
 
-    $actions->each(fn ($action) => expect($action)->toThrow(\Exception::class));
+    $actions->each(fn ($action) => expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class));
 });
