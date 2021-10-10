@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
 use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
 use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 
 class HabitController extends Controller
@@ -90,6 +92,9 @@ class HabitController extends Controller
 
         } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+
+        } catch (HabitAlreadyCompletedException $e) {
+            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return response()->json($habit);
@@ -105,6 +110,9 @@ class HabitController extends Controller
 
         } catch (HabitDoesNotBelongToAuthorException $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+
+        } catch (HabitAlreadyIncompletedException $e) {
+            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return response()->json($habit);
