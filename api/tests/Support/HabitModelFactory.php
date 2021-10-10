@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Faker\Factory as Faker;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Support\Collection;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 
@@ -96,11 +97,11 @@ class HabitModelFactory
 
             /**
              * @param array $overrides
-             * @return Habit[]
+             * @return Collection<Habit>
              */
             public function start(
                 array $overrides = []
-            ): array {
+            ): Collection {
 
                 $habits = [];
 
@@ -108,7 +109,7 @@ class HabitModelFactory
                     $habits[] = HabitModelFactory::start($overrides);
                 }
 
-                return $habits;
+                return collect($habits);
             }
         };
     }

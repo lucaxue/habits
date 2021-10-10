@@ -4,8 +4,10 @@ namespace HabitTracking\Application;
 
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Support\Collection;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 
 class HabitService
 {
@@ -14,30 +16,44 @@ class HabitService
     ) {
     }
 
-    /** @return Habit[] */
-    public function retrieveHabits(): array
+    /** @return Collection<Habit> */
+    public function retrieveHabits(int $authorId): Collection
     {
-        return $this->repository->all();
+        $habits = $this->repository->all();
+
+        return $habits->filter(fn (Habit $habit) => $habit->authorId() === $authorId);
     }
 
-    /** @return Habit[] */
-    public function retrieveHabitsForToday(): array
+    /** @return Collection<Habit> */
+    public function retrieveHabitsForToday(int $authorId): Collection
     {
-        return $this->repository->forToday();
+        $habits = $this->repository->forToday();
+
+        return $habits->filter(fn (Habit $habit) => $habit->authorId() === $authorId);
     }
 
-    public function retrieveHabit(string $id): Habit
+    public function retrieveHabit(string $id, int $authorId): Habit
     {
-        return $this->repository->find(HabitId::fromString($id));
+        $habit =
+            $this->repository->find(HabitId::fromString($id))
+            ?? throw new HabitNotFoundException;
+
+        if ($habit->authorId() !== $authorId) {
+            throw new \Exception;
+        }
+
+        return $habit;
     }
 
     public function startHabit(
         string $name,
-        array $frequency
+        array $frequency,
+        int $authorId,
     ): Habit {
 
         $habit = Habit::start(
             HabitId::generate(),
+            $authorId,
             $name,
             new HabitFrequency(...$frequency),
         );
@@ -48,10 +64,17 @@ class HabitService
     }
 
     public function markHabitAsComplete(
-        string $id
+        string $id,
+        int $authorId
     ): Habit {
 
-        $habit = $this->repository->find(HabitId::fromString($id));
+        $habit =
+            $this->repository->find(HabitId::fromString($id))
+            ?? throw new HabitNotFoundException;
+
+        if ($habit->authorId() !== $authorId) {
+            throw new \Exception;
+        }
 
         $habit->markAsComplete();
 
@@ -61,10 +84,17 @@ class HabitService
     }
 
     public function markHabitAsIncomplete(
-        string $id
+        string $id,
+        int $authorId
     ): Habit {
 
-        $habit = $this->repository->find(HabitId::fromString($id));
+        $habit =
+            $this->repository->find(HabitId::fromString($id))
+            ?? throw new HabitNotFoundException;
+
+        if ($habit->authorId() !== $authorId) {
+            throw new \Exception;
+        }
 
         $habit->markAsIncomplete();
 
@@ -77,9 +107,16 @@ class HabitService
         string $id,
         string $name,
         array $frequency,
+        int $authorId
     ): Habit {
 
-        $habit = $this->repository->find(HabitId::fromString($id));
+        $habit =
+            $this->repository->find(HabitId::fromString($id))
+            ?? throw new HabitNotFoundException;
+
+        if ($habit->authorId() !== $authorId) {
+            throw new \Exception;
+        }
 
         $habit->edit($name, new HabitFrequency(...$frequency));
 
@@ -89,10 +126,17 @@ class HabitService
     }
 
     public function stopHabit(
-        string $id
+        string $id,
+        int $authorId,
     ): Habit {
 
-        $habit = $this->repository->find(HabitId::fromString($id));
+        $habit =
+            $this->repository->find(HabitId::fromString($id))
+            ?? throw new HabitNotFoundException;
+
+        if ($habit->authorId() !== $authorId) {
+            throw new \Exception;
+        }
 
         $habit->stop();
 
