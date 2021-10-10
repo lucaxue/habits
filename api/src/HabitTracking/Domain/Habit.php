@@ -5,6 +5,8 @@ namespace HabitTracking\Domain;
 use Carbon\CarbonImmutable;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
 
 class Habit implements \JsonSerializable
 {
@@ -35,7 +37,7 @@ class Habit implements \JsonSerializable
     public function markAsComplete(): void
     {
         if ($this->completed()) {
-            throw new \Exception;
+            throw new HabitAlreadyCompletedException;
         }
 
         $this->lastCompleted = new CarbonImmutable;
@@ -45,7 +47,7 @@ class Habit implements \JsonSerializable
     public function markAsIncomplete(): void
     {
         if (!$this->completed()) {
-            throw new \Exception;
+            throw new HabitAlreadyIncompletedException;
         }
 
         $this->lastIncompleted = new CarbonImmutable;

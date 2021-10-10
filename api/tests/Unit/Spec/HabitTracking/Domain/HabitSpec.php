@@ -9,6 +9,8 @@ use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
 
 class HabitSpec extends ObjectBehavior
 {
@@ -101,7 +103,7 @@ class HabitSpec extends ObjectBehavior
         ]);
 
         $this->markAsComplete();
-        $this->shouldThrow(\Exception::class)
+        $this->shouldThrow(HabitAlreadyCompletedException::class)
             ->during('markAsComplete');
     }
 
@@ -114,7 +116,7 @@ class HabitSpec extends ObjectBehavior
             new HabitFrequency('daily'),
         ]);
 
-        $this->shouldThrow(\Exception::class)
+        $this->shouldThrow(HabitAlreadyIncompletedException::class)
             ->during('markAsIncomplete');
     }
 
