@@ -6,32 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateHabitsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         Schema::create('habits', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->string('streak');
             $table->json('frequency');
             $table->datetime('last_completed')->nullable();
             $table->datetime('last_incompleted')->nullable();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('stopped')->default(false);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('habits');
     }

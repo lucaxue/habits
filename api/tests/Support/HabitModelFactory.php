@@ -19,6 +19,7 @@ class HabitModelFactory
 
         $defaults = [
             'id' => HabitId::generate(),
+            'authorId' => rand(1, 100),
             'name' => $faker->sentence(),
             'frequency' => $faker->randomElement([
                 new HabitFrequency('daily'),
@@ -43,6 +44,7 @@ class HabitModelFactory
 
         $defaults = [
             'id' => HabitId::generate(),
+            'authorId' => rand(1, 100),
             'name' => $faker->sentence(),
             'frequency' => $faker->randomElement([
                 new HabitFrequency('daily'),

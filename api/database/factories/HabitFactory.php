@@ -15,6 +15,7 @@ class HabitFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid(),
+            'author_id' => User::factory(),
             'name' => $this->faker->sentence(3),
             'streak' => 'P' . rand(0, 2) . 'Y' . rand(0, 11) . 'M' . rand(0, 29) . 'D',
             'frequency' => $this->faker->randomElement([
@@ -23,7 +24,6 @@ class HabitFactory extends Factory
             ]),
             'last_completed' => $this->faker->dateTime(),
             'last_incompleted' => $this->faker->dateTime(),
-            'user_id' => User::factory(),
         ];
     }
 }

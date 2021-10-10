@@ -4,18 +4,14 @@ namespace HabitTracking\Domain\Contracts;
 
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use Illuminate\Support\Collection;
 
 interface HabitRepository
 {
-    /** @return Habit[] */
-    public function all(): array;
-
-    /** @return Habit[] */
-    public function forToday(): array;
-
-    /** @throws HabitNotFoundException */
-    public function find(HabitId $id): Habit;
-
+    /** @return Collection<Habit> */
+    public function all(): Collection;
+    /** @return Collection<Habit> */
+    public function forToday(): Collection;
+    public function find(HabitId $id): ?Habit;
     public function save(Habit $habit): void;
 }

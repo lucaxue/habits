@@ -2,11 +2,9 @@
 
 namespace HabitTracking\Infrastructure\Eloquent;
 
-use App\Models\User;
 use Database\Factories\HabitFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Habit extends Model
@@ -21,12 +19,12 @@ class Habit extends Model
 
     protected $fillable = [
         'id',
+        'author_id',
         'name',
         'streak',
         'frequency',
         'last_completed',
         'last_incompleted',
-        'user_id',
         'stopped',
     ];
 
@@ -36,11 +34,6 @@ class Habit extends Model
         'last_incompleted' => 'date',
         'stopped' => 'boolean',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     protected static function newFactory(): Factory
     {
