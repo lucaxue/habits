@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace HabitTracking\Infrastructure;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitStoppedException;
 use HabitTracking\Domain\Exceptions\HabitNotFoundException;
