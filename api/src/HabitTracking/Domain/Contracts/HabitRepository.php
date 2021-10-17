@@ -5,13 +5,22 @@ namespace HabitTracking\Domain\Contracts;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 
 interface HabitRepository
 {
-    /** @return Collection<Habit> */
-    public function all(): Collection;
-    /** @return Collection<Habit> */
-    public function forToday(): Collection;
+    /**
+     * @param int $authorId
+     * @param array $filters ['forToday' => bool]
+     * @return Collection<Habit>
+     */
+    public function all(int $authorId, array $filters = []): Collection;
+
+    /**
+     * @param HabitId $id
+     * @return Habit|null
+     * @throws HabitNotFoundException
+     */
     public function find(HabitId $id): ?Habit;
     public function save(Habit $habit): void;
 }

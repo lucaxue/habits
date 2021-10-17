@@ -10,8 +10,8 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ellipse, square, triangle } from 'ionicons/icons';
-import { Home } from './pages/Home';
-import { Tab2 } from './pages/Tab2';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
 import { Tab3 } from './pages/Tab3';
 
 /* CSS required for Tailwind CSS */
@@ -41,27 +41,27 @@ export const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path='/home'>
-            <Home />
+          <Route exact path='/login'>
+            <Login />
           </Route>
-          <Route exact path='/tab2'>
-            <Tab2 />
+          <Route exact path='/register'>
+            <Register />
           </Route>
           <Route path='/tab3'>
             <Tab3 />
           </Route>
           <Route exact path='/'>
-            <Redirect to='/home' />
+            <Redirect to='/login' />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot='bottom'>
-          <IonTabButton tab='tab1' href='/home'>
+          <IonTabButton tab='tab1' href='/login'>
             <IonIcon icon={triangle} />
             <IonLabel>Home</IonLabel>
           </IonTabButton>
-          <IonTabButton tab='tab2' href='/tab2'>
+          <IonTabButton tab='tab2' href='/register'>
             <IonIcon icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
+            <IonLabel>Register</IonLabel>
           </IonTabButton>
           <IonTabButton tab='tab3' href='/tab3'>
             <IonIcon icon={square} />

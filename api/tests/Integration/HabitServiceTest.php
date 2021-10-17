@@ -7,7 +7,6 @@ use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Contracts\HabitRepository;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 
 beforeEach(function () {
@@ -21,7 +20,7 @@ it("can retrieve all of a user's habits", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')
+        ->method('all')->with($john->id)
         ->willReturn($habits);
 
     $retrievedHabits = $this->service->retrieveHabits($john->id);
@@ -46,43 +45,12 @@ it("can retrieve a user's habits for today", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('forToday')
+        ->method('all')->with($john->id, ['forToday' => true])
         ->willReturn($todays);
 
     $retrievedHabits = $this->service->retrieveHabitsForToday($john->id);
 
     expect($retrievedHabits)->toEqualCanonicalizing($todays);
-});
-
-it("does not retrieve another user's habits", function () {
-    $john = User::factory()->make(['id' => 1]);
-    $mine = HabitModelFactory::count(10)->start([
-        'authorId' => $john->id,
-        'frequency' => new HabitFrequency('daily'),
-    ]);
-    $jane = User::factory()->make(['id' => 2]);
-    $notMine = HabitModelFactory::count(10)->start([
-        'authorId' => $jane->id,
-        'frequency' => new HabitFrequency('daily'),
-    ]);
-
-    $this->repository
-        ->expects($this->once())
-        ->method('all')
-        ->willReturn($mine->merge($notMine));
-
-    $this->repository
-        ->expects($this->once())
-        ->method('forToday')
-        ->willReturn($mine->merge($notMine));
-
-    $retrievedHabits = $this->service->retrieveHabits($john->id);
-    $retrievedHabitsForToday = $this->service->retrieveHabitsForToday($john->id);
-
-    expect($retrievedHabits)->toEqual($mine);
-    expect($retrievedHabitsForToday)->toEqual($mine);
-    expect($retrievedHabits)->not->toEqual($notMine);
-    expect($retrievedHabitsForToday)->not->toEqual($notMine);
 });
 
 it("can retrieve a user's habit", function () {
@@ -100,19 +68,6 @@ it("can retrieve a user's habit", function () {
     $retrievedHabit = $this->service->retrieveHabit($id->toString(), $john->id);
 
     expect($retrievedHabit)->toBe($habit);
-});
-
-it('cannot retrieve a non existent habit', function () {
-    $john = User::factory()->make(['id' => 1]);
-    $id = HabitId::generate();
-
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn(null);
-
-    expect(fn () => $this->service->retrieveHabit($id->toString(), $john->id))
-        ->toThrow(HabitNotFoundException::class);
 });
 
 it("can start a user's habit", function () {

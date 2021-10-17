@@ -5,65 +5,41 @@ namespace HabitTracking\Infrastructure\Eloquent;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
-use HabitTracking\Domain\HabitStreak;
-use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
 class HabitRepository implements HabitRepositoryInterface
 {
-    public function all(): Collection
-    {
-        $habits = EloquentHabit::all();
+    public function all(
+        int $authorId,
+        array $filters = []
+    ): Collection {
 
-        return $habits->map(fn ($habit) => new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        ));
-    }
+        $query =  EloquentHabit::where('author_id', $authorId);
 
-    public function forToday(): Collection
-    {
-        $habits = EloquentHabit::where(function ($query) {
-            $query
-                ->whereJsonContains('frequency->days', [now()->dayOfWeek])
-                ->orWhere('frequency->type', 'daily');
-        })->get();
+        if (array_key_exists('forToday', $filters) &&
+            $filters['forToday']
+        ) {
+            $query->where(function ($query) {
+                $query
+                    ->whereJsonContains('frequency->days', [now()->dayOfWeek])
+                    ->orWhere('frequency->type', 'daily');
+            });
+        }
 
-        return $habits->map(fn ($habit) => new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        ));
+        return $query->get()->map->toModel();
     }
 
     public function find(HabitId $id): ?Habit
     {
         $habit = EloquentHabit::find($id);
 
-        if (!$habit) { return null; }
+        if (!$habit) {
+            throw new HabitNotFoundException($id);
+        }
 
-        return new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        );
+        return $habit->toModel();
     }
 
     public function save(Habit $habit): void

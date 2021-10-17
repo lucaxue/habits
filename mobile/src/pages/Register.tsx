@@ -10,24 +10,34 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useAuth } from '../utils/useAuth';
+import { Redirect } from 'react-router';
 
-export const Home: React.FC = () => {
-  const {user, authenticated, login, logout} = useAuth();
+export const Register: React.FC = () => {
+  const { user, authenticated, register, logout } = useAuth();
 
-  const [email, setEmail] = useState('john@example.com');
-  const [password, setPassword] = useState('password');
+  const [registered, setRegistered] = useState(false);
+
+  const [name, setName] = useState('Jane Doe');
+  const [email, setEmail] = useState('jane@example.com');
+  const [password, setPassword] = useState('ApplePear1234.');
+  const [passwordConfirmation, setPasswordConfirmation] =
+    useState('ApplePear1234.');
+
+  if (registered) {
+    return <Redirect to='/login'/>;
+  }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Home</IonTitle>
+          <IonTitle>Register</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse='condense'>
           <IonToolbar>
-            <IonTitle size='large'>Home</IonTitle>
+            <IonTitle size='large'>Register</IonTitle>
           </IonToolbar>
         </IonHeader>
 
@@ -40,6 +50,13 @@ export const Home: React.FC = () => {
 
           {!authenticated ? (
             <>
+              <IonItem>
+                <IonInput
+                  value={name}
+                  placeholder='Name'
+                  onIonChange={e => setName(e.detail.value!)}
+                ></IonInput>
+              </IonItem>
               <IonItem>
                 <IonInput
                   type='email'
@@ -56,13 +73,27 @@ export const Home: React.FC = () => {
                   onIonChange={e => setPassword(e.detail.value!)}
                 ></IonInput>
               </IonItem>
+              <IonItem>
+                <IonInput
+                  type='password'
+                  value={passwordConfirmation}
+                  placeholder='Confirm Password'
+                  onIonChange={e => setPasswordConfirmation(e.detail.value!)}
+                ></IonInput>
+              </IonItem>
               <IonButton
                 expand='block'
                 onClick={async () => {
-                  await login(email, password);
+                  const registered = await register(
+                    name,
+                    email,
+                    password,
+                    passwordConfirmation
+                  );
+                  setRegistered(registered);
                 }}
               >
-                Login
+                Register
               </IonButton>
             </>
           ) : (

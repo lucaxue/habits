@@ -1,5 +1,24 @@
 import axios from 'axios';
 
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  passwordConfirmation: string
+): Promise<boolean> {
+  try {
+    await axios.post('register', {
+      name: name,
+      email: email,
+      password: password,
+      password_confirmation: passwordConfirmation,
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 export async function login(
   email: string,
   password: string
