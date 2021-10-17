@@ -25,7 +25,7 @@ class HabitService
     /** @return Collection<Habit> */
     public function retrieveHabitsForToday(int $authorId): Collection
     {
-        return $this->repository->all($authorId, forToday: true);
+        return $this->repository->all($authorId, ['forToday' => true]);
     }
 
     public function retrieveHabit(string $id, int $authorId): Habit

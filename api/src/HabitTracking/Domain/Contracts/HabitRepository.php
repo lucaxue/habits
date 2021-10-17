@@ -11,10 +11,10 @@ interface HabitRepository
 {
     /**
      * @param int $authorId
-     * @param bool $forToday
+     * @param array $filters ['forToday' => bool]
      * @return Collection<Habit>
      */
-    public function all(int $authorId, bool $forToday = false): Collection;
+    public function all(int $authorId, array $filters = []): Collection;
 
     /**
      * @param HabitId $id

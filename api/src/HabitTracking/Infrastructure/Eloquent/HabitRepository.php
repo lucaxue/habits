@@ -13,12 +13,14 @@ class HabitRepository implements HabitRepositoryInterface
 {
     public function all(
         int $authorId,
-        bool $forToday = false
+        array $filters = []
     ): Collection {
 
         $query =  EloquentHabit::where('author_id', $authorId);
 
-        if ($forToday) {
+        if (array_key_exists('forToday', $filters) &&
+            $filters['forToday']
+        ) {
             $query->where(function ($query) {
                 $query
                     ->whereJsonContains('frequency->days', [now()->dayOfWeek])

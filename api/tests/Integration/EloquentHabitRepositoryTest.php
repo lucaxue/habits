@@ -17,11 +17,11 @@ it("retrieves all habits by its author", function () {
     $results = resolve(EloquentHabitRepository::class)->all(1);
 
     expect($results)->toHaveCount(10);
-    foreach ($results as $result) {
-        expect($result)
+    $results->each(
+        fn ($result) => expect($result)
             ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($habits->pluck('id'));
-    }
+            ->id()->toString()->toBeIn($habits->pluck('id'))
+    );
 });
 
 it("retrieves all habits for today by its author", function () {
@@ -41,14 +41,14 @@ it("retrieves all habits for today by its author", function () {
         'author_id' => 1,
     ]);
 
-    $results = resolve(EloquentHabitRepository::class)->all(1, forToday: true);
+    $results = resolve(EloquentHabitRepository::class)->all(1, ['forToday' => true]);
 
     expect($results)->toHaveCount(5);
-    foreach ($results as $result) {
-        expect($result)
+    $results->each(
+        fn ($result) => expect($result)
             ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($todays->pluck('id'));
-    }
+            ->id()->toString()->toBeIn($todays->pluck('id'))
+    );
 });
 
 it("does not retrieve another author's habits", function () {
@@ -57,6 +57,7 @@ it("does not retrieve another author's habits", function () {
 
     $results = resolve(EloquentHabitRepository::class)->all(1);
 
+    expect($results)->toHaveCount(10);
     $results->each(
         fn ($result) => expect($result)
             ->toBeInstanceOf(Habit::class)

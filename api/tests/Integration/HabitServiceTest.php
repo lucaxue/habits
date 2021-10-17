@@ -20,7 +20,7 @@ it("can retrieve all of a user's habits", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')->with(1)
+        ->method('all')->with($john->id)
         ->willReturn($habits);
 
     $retrievedHabits = $this->service->retrieveHabits($john->id);
@@ -45,7 +45,7 @@ it("can retrieve a user's habits for today", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')->with($john->id, true)
+        ->method('all')->with($john->id, ['forToday' => true])
         ->willReturn($todays);
 
     $retrievedHabits = $this->service->retrieveHabitsForToday($john->id);
