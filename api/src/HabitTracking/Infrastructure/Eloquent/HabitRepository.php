@@ -12,9 +12,9 @@ use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
 class HabitRepository implements HabitRepositoryInterface
 {
-    public function all(): Collection
+    public function all(int $authorId): Collection
     {
-        $habits = EloquentHabit::all();
+        $habits = EloquentHabit::where('author_id', $authorId)->get();
 
         return $habits->map(fn ($habit) => new Habit(
             HabitId::fromString($habit->id),
@@ -28,13 +28,14 @@ class HabitRepository implements HabitRepositoryInterface
         ));
     }
 
-    public function forToday(): Collection
+    public function forToday(int $authorId): Collection
     {
-        $habits = EloquentHabit::where(function ($query) {
-            $query
-                ->whereJsonContains('frequency->days', [now()->dayOfWeek])
-                ->orWhere('frequency->type', 'daily');
-        })->get();
+        $habits = EloquentHabit::where('author_id', $authorId)
+            ->where(function ($query) {
+                $query
+                    ->whereJsonContains('frequency->days', [now()->dayOfWeek])
+                    ->orWhere('frequency->type', 'daily');
+            })->get();
 
         return $habits->map(fn ($habit) => new Habit(
             HabitId::fromString($habit->id),

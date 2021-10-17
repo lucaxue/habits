@@ -10,10 +10,10 @@ use HabitTracking\Infrastructure\Eloquent\HabitRepository as EloquentHabitReposi
 
 uses(RefreshDatabase::class);
 
-it("can retrieve all habits", function () {
-    $habits = EloquentHabit::factory(10)->create();
+it("retrieves all habits by its author", function () {
+    $habits = EloquentHabit::factory(10)->forAuthor(['id' => 1])->create();
 
-    $results = resolve(EloquentHabitRepository::class)->all();
+    $results = resolve(EloquentHabitRepository::class)->all(1);
 
     expect($results)->toHaveCount(10);
     foreach ($results as $result) {
@@ -23,21 +23,24 @@ it("can retrieve all habits", function () {
     }
 });
 
-it("can retrieve all habits for today", function () {
+it("retrieves all habits for today by its author", function () {
+    User::factory()->create(['id' => 1]);
     $todays = EloquentHabit::factory(5)->create([
         'frequency' => [
             'type' => 'weekly',
             'days' => [now()->dayOfWeek]
-        ]
+        ],
+        'author_id' => 1,
     ]);
     $tomorrows = EloquentHabit::factory(5)->create([
         'frequency' => [
             'type' => 'weekly',
             'days' => [now()->addDay()->dayOfWeek]
-        ]
+        ],
+        'author_id' => 1,
     ]);
 
-    $results = resolve(EloquentHabitRepository::class)->forToday();
+    $results = resolve(EloquentHabitRepository::class)->forToday(1);
 
     expect($results)->toHaveCount(5);
     foreach ($results as $result) {
@@ -47,7 +50,20 @@ it("can retrieve all habits for today", function () {
     }
 });
 
-it("can find a habit", function () {
+it("does not retrieve another author's habits", function () {
+    $mine = EloquentHabit::factory(10)->forAuthor(['id' => 1])->create();
+    $notMine = EloquentHabit::factory(10)->forAuthor(['id' => 2])->create();
+
+    $results = resolve(EloquentHabitRepository::class)->all(1);
+
+    $results->each(fn ($result) => expect($result)
+            ->toBeInstanceOf(Habit::class)
+            ->id()->toString()->toBeIn($mine->pluck('id'))
+            ->id()->toString()->not->toBeIn($notMine->pluck('id'))
+    );
+});
+
+it('finds a habit', function () {
     $habit = EloquentHabit::factory()->create();
 
     $result = resolve(EloquentHabitRepository::class)->find(HabitId::fromString($habit->id));
