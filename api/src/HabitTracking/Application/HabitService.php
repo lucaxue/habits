@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Contracts\HabitRepository;
 use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 
 class HabitService
 {
@@ -31,9 +30,7 @@ class HabitService
 
     public function retrieveHabit(string $id, int $authorId): Habit
     {
-        $habit =
-            $this->repository->find(HabitId::fromString($id))
-            ?? throw new HabitNotFoundException;
+        $habit = $this->repository->find(HabitId::fromString($id));
 
         if ($habit->authorId() !== $authorId) {
             throw new HabitDoesNotBelongToAuthorException;
@@ -65,9 +62,7 @@ class HabitService
         int $authorId
     ): Habit {
 
-        $habit =
-            $this->repository->find(HabitId::fromString($id))
-            ?? throw new HabitNotFoundException;
+        $habit = $this->repository->find(HabitId::fromString($id));
 
         if ($habit->authorId() !== $authorId) {
             throw new HabitDoesNotBelongToAuthorException;
@@ -85,9 +80,7 @@ class HabitService
         int $authorId
     ): Habit {
 
-        $habit =
-            $this->repository->find(HabitId::fromString($id))
-            ?? throw new HabitNotFoundException;
+        $habit = $this->repository->find(HabitId::fromString($id));
 
         if ($habit->authorId() !== $authorId) {
             throw new HabitDoesNotBelongToAuthorException;
@@ -107,9 +100,7 @@ class HabitService
         int $authorId
     ): Habit {
 
-        $habit =
-            $this->repository->find(HabitId::fromString($id))
-            ?? throw new HabitNotFoundException;
+        $habit = $this->repository->find(HabitId::fromString($id));
 
         if ($habit->authorId() !== $authorId) {
             throw new HabitDoesNotBelongToAuthorException;
@@ -127,9 +118,7 @@ class HabitService
         int $authorId,
     ): Habit {
 
-        $habit =
-            $this->repository->find(HabitId::fromString($id))
-            ?? throw new HabitNotFoundException;
+        $habit = $this->repository->find(HabitId::fromString($id));
 
         if ($habit->authorId() !== $authorId) {
             throw new HabitDoesNotBelongToAuthorException;

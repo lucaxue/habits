@@ -5,8 +5,7 @@ namespace HabitTracking\Infrastructure\Eloquent;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
-use HabitTracking\Domain\HabitStreak;
-use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 
@@ -37,19 +36,10 @@ class HabitRepository implements HabitRepositoryInterface
         $habit = EloquentHabit::find($id);
 
         if (!$habit) {
-            return null;
+            throw new HabitNotFoundException($id);
         }
 
-        return new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        );
+        return $habit->toModel();
     }
 
     public function save(Habit $habit): void
