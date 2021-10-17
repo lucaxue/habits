@@ -20,17 +20,13 @@ class HabitService
     /** @return Collection<Habit> */
     public function retrieveHabits(int $authorId): Collection
     {
-        $habits = $this->repository->all();
-
-        return $habits->filter(fn (Habit $habit) => $habit->authorId() === $authorId);
+        return $this->repository->all($authorId);
     }
 
     /** @return Collection<Habit> */
     public function retrieveHabitsForToday(int $authorId): Collection
     {
-        $habits = $this->repository->forToday();
-
-        return $habits->filter(fn (Habit $habit) => $habit->authorId() === $authorId);
+        return $this->repository->forToday($authorId);
     }
 
     public function retrieveHabit(string $id, int $authorId): Habit

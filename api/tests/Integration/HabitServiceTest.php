@@ -21,7 +21,7 @@ it("can retrieve all of a user's habits", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')
+        ->method('all')->with(1)
         ->willReturn($habits);
 
     $retrievedHabits = $this->service->retrieveHabits($john->id);
@@ -46,7 +46,7 @@ it("can retrieve a user's habits for today", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('forToday')
+        ->method('forToday')->with(1)
         ->willReturn($todays);
 
     $retrievedHabits = $this->service->retrieveHabitsForToday($john->id);
@@ -68,13 +68,13 @@ it("does not retrieve another user's habits", function () {
 
     $this->repository
         ->expects($this->once())
-        ->method('all')
-        ->willReturn($mine->merge($notMine));
+        ->method('all')->with(1)
+        ->willReturn($mine);
 
     $this->repository
         ->expects($this->once())
-        ->method('forToday')
-        ->willReturn($mine->merge($notMine));
+        ->method('forToday')->with(1)
+        ->willReturn($mine);
 
     $retrievedHabits = $this->service->retrieveHabits($john->id);
     $retrievedHabitsForToday = $this->service->retrieveHabitsForToday($john->id);
