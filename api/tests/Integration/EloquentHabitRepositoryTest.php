@@ -5,6 +5,7 @@ use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use Tests\Support\HabitModelFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Infrastructure\Eloquent\HabitRepository as EloquentHabitRepository;
 
@@ -77,7 +78,14 @@ it('finds a habit', function () {
         ->frequency()->days()->toBe($habit->frequency->days);
 });
 
-it('can persist a habit', function () {
+it('throws a not found exception when finding non existent habit', function () {
+    $id = HabitId::generate();
+
+    expect(fn () => resolve(EloquentHabitRepository::class)->find($id))
+        ->toThrow(HabitNotFoundException::class, $id->toString());
+});
+
+it('persists a habit', function () {
     $habit = HabitModelFactory::start(['authorId' => User::factory()->create()->id]);
 
     resolve(EloquentHabitRepository::class)->save($habit);
