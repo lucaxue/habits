@@ -14,46 +14,31 @@ class HabitRepository implements HabitRepositoryInterface
 {
     public function all(int $authorId): Collection
     {
-        $habits = EloquentHabit::where('author_id', $authorId)->get();
-
-        return $habits->map(fn ($habit) => new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        ));
+        return EloquentHabit::where('author_id', $authorId)
+            ->get()
+            ->map->toModel();
     }
 
     public function forToday(int $authorId): Collection
     {
-        $habits = EloquentHabit::where('author_id', $authorId)
+        return EloquentHabit::query()
+            ->where('author_id', $authorId)
             ->where(function ($query) {
                 $query
                     ->whereJsonContains('frequency->days', [now()->dayOfWeek])
                     ->orWhere('frequency->type', 'daily');
-            })->get();
-
-        return $habits->map(fn ($habit) => new Habit(
-            HabitId::fromString($habit->id),
-            $habit->author_id,
-            $habit->name,
-            new HabitFrequency(...(array) $habit->frequency),
-            HabitStreak::fromString($habit->streak),
-            $habit->stopped,
-            $habit->last_completed,
-            $habit->last_incompleted,
-        ));
+            })
+            ->get()
+            ->map->toModel();
     }
 
     public function find(HabitId $id): ?Habit
     {
         $habit = EloquentHabit::find($id);
 
-        if (!$habit) { return null; }
+        if (!$habit) {
+            return null;
+        }
 
         return new Habit(
             HabitId::fromString($habit->id),
