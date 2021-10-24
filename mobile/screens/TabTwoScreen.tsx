@@ -1,32 +1,18 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import tailwind from 'tailwind-rn';
 
-import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
 export default function TabTwoScreen() {
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
+    <View style={tailwind('flex-1 justify-center items-center')}>
+      <Text style={tailwind('text-4xl font-bold')}>Tab Two</Text>
+      <View
+        style={tailwind('my-4 h-1 w-4/5')}
+        lightColor='#eee'
+        darkColor='rgba(255,255,255,0.1)'
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});

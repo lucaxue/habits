@@ -34,7 +34,7 @@ function convertToStreak(streak: string): Streak {
 
 export default function TrackingScreen({
   navigation,
-}: RootTabScreenProps<'TabOne'>) {
+}: RootTabScreenProps<'Habits'>) {
   const [habits, setHabits] = useState(dummyHabits);
 
   function toggleHabitCompletion(id: string) {
