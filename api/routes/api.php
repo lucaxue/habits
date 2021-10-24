@@ -18,8 +18,6 @@ use HabitTracking\Infrastructure\HabitController;
 |
 */
 
-Route::get('{any}', fn (string $any) => $any);
-
 Route::post('sanctum/token', function (Request $request) {
     $request->validate([
         'email' => 'required|email',
