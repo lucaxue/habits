@@ -20,16 +20,16 @@ use HabitTracking\Infrastructure\HabitController;
 
 Route::post('sanctum/token', function (Request $request) {
     $request->validate([
-        'email' => 'required|email',
+        'email' => ['required', 'email', 'exists:users,email'],
         'password' => 'required',
         'device_name' => 'required',
     ]);
 
     $user = User::where('email', $request->email)->first();
 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
+    if (! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
+            'password' => ['The provided password is incorrect.'],
         ]);
     }
 
