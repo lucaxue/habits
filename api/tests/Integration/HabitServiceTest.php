@@ -3,84 +3,71 @@
 use App\Models\User;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
+use Illuminate\Support\Collection;
 use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
-
-beforeEach(function () {
-    $this->repository = $this->createStub(HabitRepository::class);
-    $this->service = new HabitService($this->repository);
-});
 
 it("can retrieve all of a user's habits", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habits = HabitModelFactory::count(10)->start(['authorId' => $john->id]);
+    $repository = new CollectionHabitRepository(
+        $habits = HabitModelFactory::count(10)->start([
+            'authorId' => $john->id
+        ])
+    );
 
-    $this->repository
-        ->expects($this->once())
-        ->method('all')->with($john->id)
-        ->willReturn($habits);
-
-    $retrievedHabits = $this->service->retrieveHabits($john->id);
+    $retrievedHabits = (new HabitService($repository))->retrieveHabits($john->id);
 
     expect($retrievedHabits)->toEqualCanonicalizing($habits);
 });
 
 it("can retrieve a user's habits for today", function () {
     $john = User::factory()->make(['id' => 1]);
-    $todays = HabitModelFactory::count(5)->start([
-        'authorId' => $john->id,
-        'frequency' => new HabitFrequency('weekly', [
-            now()->dayOfWeek
+    $repository = new CollectionHabitRepository(collect([
+        ...$todays = HabitModelFactory::count(5)->start([
+            'authorId' => $john->id,
+            'frequency' => new HabitFrequency('weekly', [
+                now()->dayOfWeek
+            ])
+        ]),
+        ...$tomorrows = HabitModelFactory::count(5)->start([
+            'authorId' => $john->id,
+            'frequency' => new HabitFrequency('weekly', [
+                now()->addDay()->dayOfWeek
+            ])
         ])
-    ]);
-    $tomorrows = HabitModelFactory::count(5)->start([
-        'authorId' => $john->id,
-        'frequency' => new HabitFrequency('weekly', [
-            now()->addDay()->dayOfWeek
-        ])
-    ]);
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('all')->with($john->id, ['forToday' => true])
-        ->willReturn($todays);
-
-    $retrievedHabits = $this->service->retrieveHabitsForToday($john->id);
+    $retrievedHabits = (new HabitService($repository))->retrieveHabitsForToday($john->id);
 
     expect($retrievedHabits)->toEqualCanonicalizing($todays);
 });
 
 it("can retrieve a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habit = HabitModelFactory::start([
-        'id' => $id = HabitId::generate(),
-        'authorId' => $john->id,
-    ]);
+    $repository = new CollectionHabitRepository(collect([
+        $habit = HabitModelFactory::start([
+            'id' => $id = HabitId::generate(),
+            'authorId' => $john->id,
+        ])
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn($habit);
-
-    $retrievedHabit = $this->service->retrieveHabit($id->toString(), $john->id);
+    $retrievedHabit = (new HabitService($repository))->retrieveHabit($id->toString(), $john->id);
 
     expect($retrievedHabit)->toBe($habit);
 });
 
 it("can start a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
+    $repository = new CollectionHabitRepository;
 
-    $this->repository
-        ->expects($this->once())
-        ->method('save');
-
-    $habit = $this->service->startHabit(
-        'Read a book',
-        ['type' => 'weekly', 'days' => [1, 2, 3]],
-        $john->id,
+    $habit = (new HabitService($repository))->startHabit(
+        name: 'Read a book',
+        frequency: ['type' => 'weekly', 'days' => [1, 2, 3]],
+        authorId: $john->id,
     );
 
     expect($habit)
@@ -88,108 +75,95 @@ it("can start a user's habit", function () {
         ->name()->toBe('Read a book')
         ->frequency()->type()->toBe('weekly')
         ->frequency()->days()->toBe([1, 2, 3]);
+
+    expect($repository)
+        ->all($john->id)
+        ->toContain($habit);
 });
 
 it("can mark a user's habit as complete", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habit = HabitModelFactory::start([
-        'id' => $id = HabitId::generate(),
-        'authorId' => $john->id,
-    ]);
+    $repository = new CollectionHabitRepository(collect([
+        HabitModelFactory::start([
+            'id' => $id = HabitId::generate(),
+            'authorId' => $john->id,
+        ])
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn($habit);
-
-    $this->repository
-        ->expects($this->once())
-        ->method('save');
-
-    $habit = $this->service->markHabitAsComplete($id, $john->id);
+    $habit = (new HabitService($repository))->markHabitAsComplete($id, $john->id);
 
     expect($habit)
         ->toBeInstanceOf(Habit::class)
-        ->id()->toBe($id)
         ->completed()->toBeTrue()
         ->streak()->days()->toBe(1);
+
+    expect($repository)
+        ->find($id)
+        ->toBe($habit);
 });
 
 it("can mark a user's habit as incomplete", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habit = HabitModelFactory::completed([
-        'id' => $id = HabitId::generate(),
-        'authorId' => $john->id,
-    ]);
+    $repository = new CollectionHabitRepository(collect([
+        HabitModelFactory::completed([
+            'id' => $id = HabitId::generate(),
+            'authorId' => $john->id,
+        ])
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn($habit);
-
-    $this->repository
-        ->expects($this->once())
-        ->method('save');
-
-    $habit = $this->service->markHabitAsIncomplete($id, $john->id);
+    $habit = (new HabitService($repository))->markHabitAsIncomplete($id, $john->id);
 
     expect($habit)
         ->toBeInstanceOf(Habit::class)
-        ->id()->toBe($id)
         ->completed()->toBeFalse()
         ->streak()->days()->toBe(0);
+
+    expect($repository)
+        ->find($id)
+        ->toBe($habit);
 });
 
 it("can edit a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habit = HabitModelFactory::start([
-        'id' => $id = HabitId::generate(),
-        'authorId' => $john->id,
-        'name' => 'Read a book',
-        'frequency' => new HabitFrequency('weekly', [1])
-    ]);
+    $repository = new CollectionHabitRepository(collect([
+        HabitModelFactory::start([
+            'id' => $id = HabitId::generate(),
+            'authorId' => $john->id,
+            'name' => 'Read a book',
+            'frequency' => new HabitFrequency('weekly', [1])
+        ])
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn($habit);
-
-    $this->repository
-        ->expects($this->once())
-        ->method('save');
-
-    $habit = $this->service->editHabit(
-        $id,
-        'Read two books',
-        ['type' => 'daily', 'days' => null],
-        $john->id
+    $habit = (new HabitService($repository))->editHabit(
+        id: $id,
+        name: 'Read two books',
+        frequency: ['type' => 'daily', 'days' => null],
+        authorId: $john->id
     );
 
     expect($habit)
         ->toBeInstanceOf(Habit::class)
-        ->id()->toBe($id)
         ->name()->toBe('Read two books')
         ->frequency()->type()->toBe('daily')
         ->frequency()->days()->toBe(null);
+
+    expect($repository)
+        ->find($id)
+        ->toBe($habit);
 });
 
 it("can stop a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
-    $habit = HabitModelFactory::start([
-        'id' => $id = HabitId::generate(),
-        'authorId' => $john->id,
-    ]);
+    $repository = new CollectionHabitRepository(collect([
+        HabitModelFactory::start([
+            'id' => $id = HabitId::generate(),
+            'authorId' => $john->id,
+            'name' => 'Read a book',
+            'frequency' => new HabitFrequency('weekly', [1])
+        ])
+    ]));
 
-    $this->repository
-        ->expects($this->once())
-        ->method('find')->with($id)
-        ->willReturn($habit);
-
-    $this->repository
-        ->expects($this->once())
-        ->method('save');
-
-    $habit = $this->service->stopHabit($id, $john->id);
+    $habit = (new HabitService($repository))->stopHabit($id, $john->id);
 
     expect($habit)
         ->toBeInstanceOf(Habit::class)
@@ -199,23 +173,73 @@ it("can stop a user's habit", function () {
 it("cannot manage another user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
     $jane = User::factory()->make(['id' => 2]);
-    $habit = HabitModelFactory::start([
+    $repository = new CollectionHabitRepository(collect([HabitModelFactory::start([
         'id' => $id = HabitId::generate(),
         'authorId' => $jane->id
-    ]);
+    ])]));
 
-    $this->repository
-        ->expects($this->exactly(5))
-        ->method('find')->with($id)
-        ->willReturn($habit);
+    $service = new HabitService($repository);
 
     $actions = collect([
-        fn () => $this->service->retrieveHabit($id, $john->id),
-        fn () => $this->service->markHabitAsComplete($id, $john->id),
-        fn () => $this->service->markHabitAsIncomplete($id, $john->id),
-        fn () => $this->service->editHabit($id, 'name', ['type' => 'daily', 'days' => null], $john->id),
-        fn () => $this->service->stopHabit($id, $john->id),
+        fn () => $service->retrieveHabit($id, $john->id),
+        fn () => $service->markHabitAsComplete($id, $john->id),
+        fn () => $service->markHabitAsIncomplete($id, $john->id),
+        fn () => $service->editHabit($id, 'name', ['type' => 'daily', 'days' => null], $john->id),
+        fn () => $service->stopHabit($id, $john->id),
     ]);
 
-    $actions->each(fn ($action) => expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class));
+    $actions->each(fn ($action) =>
+        expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class)
+    );
 });
+
+class CollectionHabitRepository implements HabitRepository
+{
+    /** @var Collection<Habit> */
+    private Collection $habits;
+
+    /**
+     * @param null|Collection<Habit> $habits
+     */
+    public function __construct(?Collection $habits = null)
+    {
+        $this->habits = $habits ?? new Collection;
+    }
+
+    /**
+     * @param int $authorId
+     * @param array $filters ['forToday' => bool]
+     * @return Collection<Habit>
+     */
+    public function all(int $authorId, array $filters = []): Collection
+    {
+        return $this->habits->filter(function (Habit $h) use ($authorId, $filters) {
+            $belongsToAuthor = $h->authorId() === $authorId;
+
+            if (array_key_exists('forToday', $filters)) {
+                return $belongsToAuthor && $h->frequency()->includesToday();
+            }
+
+            return $belongsToAuthor;
+        });
+    }
+
+    /**
+     * @param HabitId $id
+     * @return Habit|null
+     * @throws HabitNotFoundException
+     */
+    public function find(HabitId $id): ?Habit
+    {
+        return
+            $this->habits->first(fn (Habit $h) => $h->id()->equals($id)) ??
+            throw new HabitNotFoundException($id);
+    }
+
+    public function save(Habit $habit): void
+    {
+        $this->habits = $this->habits
+            ->reject(fn (Habit $h) => $h->id()->equals($habit->id()))
+            ->push($habit);
+    }
+}
