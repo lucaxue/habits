@@ -32,4 +32,29 @@ class AuthenticationController extends Controller
             JsonResponse::HTTP_CREATED,
         );
     }
+
+    public function register(Request $request) : JsonResponse
+    {
+        $validated = $this->validate($request, [
+            'name' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+            'password_confirmation' => ['required'],
+        ]);
+
+        if ($validated['password'] !== $validated['password_confirmation']) {
+            throw ValidationException::withMessages([
+                'password_confirmation' => ['Invalid password confirmation.'],
+            ]);
+        }
+
+        $user = User::create($validated);
+
+        $token = $user->createToken($request->device_name)->plainTextToken;
+
+        return response()->json(
+            array_merge($user->toArray(),['token' => $token]),
+            JsonResponse::HTTP_CREATED,
+        );
+    }
 }

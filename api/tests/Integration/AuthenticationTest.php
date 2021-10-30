@@ -62,3 +62,27 @@ test('guests cannot access protected routes', function () {
     $this->getJson('api/user')
         ->assertUnauthorized();
 });
+
+test('one can register a new account and access protected routes', function () {
+    $response = $this->postJson('api/register', [
+            'name' => 'Jane Smith',
+            'email' => 'jane@example.com',
+            'password' => 'my_password',
+            'password_confirmation' => 'my_password',
+            'device_name' => 'iPhone 13 Max',
+        ])
+        ->assertCreated()
+        ->assertJsonStructure([
+            'id',
+            'name',
+            'email',
+            'created_at',
+            'updated_at',
+            'token',
+        ])
+        ->getData();
+
+    $this
+        ->getJson('api/user', ['Authorization' => "Bearer {$response->token}"])
+        ->assertOk();
+});
