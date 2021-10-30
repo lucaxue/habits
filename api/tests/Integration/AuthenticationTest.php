@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('one can login and access protected routes', function () {
     $token = $this
-        ->postJson('api/sanctum/token', [
+        ->postJson('api/login', [
             'email' => 'john@example.com',
             'password' => 'password',
             'device_name' => 'iPhone 13 Max',
@@ -34,7 +34,7 @@ test('one can login and access protected routes', function () {
 });
 
 test('one cannot login with unknown email', function () {
-    $this->postJson('api/sanctum/token', [
+    $this->postJson('api/login', [
             'email' => 'unknown@email.com',
             'password' => 'password',
             'device_name' => 'iPhone 13 Max',
@@ -43,7 +43,7 @@ test('one cannot login with unknown email', function () {
 });
 
 test('one cannot login with incorrect password', function () {
-    $this->postJson('api/sanctum/token', [
+    $this->postJson('api/login', [
             'email' => 'john@example.com',
             'password' => 'incorrect-password',
             'device_name' => 'iPhone 13 Max',

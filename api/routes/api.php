@@ -1,11 +1,9 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\AuthenticationController;
 use HabitTracking\Infrastructure\HabitController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,23 +16,7 @@ use HabitTracking\Infrastructure\HabitController;
 |
 */
 
-Route::post('sanctum/token', function (Request $request) {
-    $request->validate([
-        'email' => ['required', 'email', 'exists:users,email'],
-        'password' => 'required',
-        'device_name' => 'required',
-    ]);
-
-    $user = User::where('email', $request->email)->first();
-
-    if (! Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'password' => ['The provided password is incorrect.'],
-        ]);
-    }
-
-    return $user->createToken($request->device_name)->plainTextToken;
-});
+Route::post('login', [AuthenticationController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', fn (Request $request) => $request->user());
