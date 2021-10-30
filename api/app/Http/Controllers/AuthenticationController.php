@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthenticationController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request) : JsonResponse
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
@@ -25,6 +25,11 @@ class AuthenticationController extends Controller
             ]);
         }
 
-        return $user->createToken($request->device_name)->plainTextToken;
+        $token = $user->createToken($request->device_name)->plainTextToken;
+
+        return response()->json(
+            array_merge($user->toArray(),['token' => $token]),
+            JsonResponse::HTTP_CREATED,
+        );
     }
 }

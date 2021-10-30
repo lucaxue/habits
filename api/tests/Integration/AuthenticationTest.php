@@ -15,22 +15,29 @@ beforeEach(function () {
 });
 
 test('one can login and access protected routes', function () {
-    $token = $this
+    $response = $this
         ->postJson('api/login', [
             'email' => 'john@example.com',
             'password' => 'password',
             'device_name' => 'iPhone 13 Max',
         ])
-        ->assertOk()
-        ->getContent();
+        ->assertCreated()
+        ->assertJsonStructure([
+            'id',
+            'name',
+            'email',
+            'email_verified_at',
+            'two_factor_secret',
+            'two_factor_recovery_codes',
+            'created_at',
+            'updated_at',
+            'token',
+        ])
+        ->getData();
 
-    $response = $this
-        ->getJson('api/user', ['Authorization' => "Bearer {$token}"])
+    $this
+        ->getJson('api/user', ['Authorization' => "Bearer {$response->token}"])
         ->assertOk();
-
-    expect($response)
-        ->getData()
-        ->toMatchObject($this->john->toArray());
 });
 
 test('one cannot login with unknown email', function () {
