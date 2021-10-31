@@ -13,8 +13,8 @@ class AuthenticationController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
-            'password' => 'required',
-            'device_name' => 'required',
+            'password' => ['required'],
+            'device_name' => ['required'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -28,32 +28,30 @@ class AuthenticationController extends Controller
         $token = $user->createToken($request->device_name)->plainTextToken;
 
         return response()->json(
-            array_merge($user->toArray(),['token' => $token]),
+            array_merge($user->toArray(), ['token' => $token]),
             JsonResponse::HTTP_CREATED,
         );
     }
 
     public function register(Request $request) : JsonResponse
     {
-        $validated = $this->validate($request, [
-            'name' => 'required',
+        $this->validate($request, [
+            'name' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required'],
-            'password_confirmation' => ['required'],
+            'password' => ['required', 'confirmed'],
+            'device_name' => ['required']
         ]);
 
-        if ($validated['password'] !== $validated['password_confirmation']) {
-            throw ValidationException::withMessages([
-                'password_confirmation' => ['Invalid password confirmation.'],
-            ]);
-        }
-
-        $user = User::create($validated);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
         $token = $user->createToken($request->device_name)->plainTextToken;
 
         return response()->json(
-            array_merge($user->toArray(),['token' => $token]),
+            array_merge($user->toArray(), ['token' => $token]),
             JsonResponse::HTTP_CREATED,
         );
     }
