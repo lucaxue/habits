@@ -5,6 +5,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -42,5 +43,12 @@ class AuthenticationController extends Controller
             'user' => $user,
             'token' => $token
         ], JsonResponse::HTTP_CREATED);
+    }
+
+    public function logout(Request $request) : JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

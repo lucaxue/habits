@@ -2,16 +2,19 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use function Pest\Laravel\{getJson, postJson};
+use function Pest\Laravel\{getJson, postJson, deleteJson};
 
 uses(RefreshDatabase::class);
 
-beforeEach(fn () => User::factory()->create([
-    'name' => 'John Doe',
-    'email' => 'john@example.com',
-    'password' => Hash::make('password')
-]));
+beforeEach(function () {
+    $this->john = User::factory()->create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => Hash::make('password')
+    ]);
+});
 
 test('one can login and access protected routes', function () {
     $response = postJson('api/login', [
@@ -76,3 +79,19 @@ test('one cannot register with a taken email')
         'device_name' => 'iPhone 13 Max',
     ])
     ->assertJsonValidationErrors('email');
+
+test('one can logout', function () {
+    $response = postJson('api/login', [
+        'email' => 'john@example.com',
+        'password' => 'password',
+        'device_name' => 'iPhone 13 Max',
+    ]);
+
+    deleteJson('api/logout', [], [
+        'Authorization' => "Bearer {$response->getData()->token}"
+    ])->assertNoContent();
+
+    Auth::forgetGuards();
+
+    getJson('api/user')->assertUnauthorized();
+});
