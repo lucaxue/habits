@@ -3,8 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use function Pest\Laravel\getJson;
-use function Pest\Laravel\postJson;
+use function Pest\Laravel\{getJson, postJson};
 
 uses(RefreshDatabase::class);
 
@@ -81,3 +80,13 @@ test('one cannot register with incorrect password confirmation')
         'device_name' => 'iPhone 13 Max',
     ])
     ->assertJsonValidationErrors('password');
+
+test('one cannot register with a taken email')
+    ->postJson('api/register', [
+        'name' => 'Jane Smith',
+        'email' => 'john@example.com',
+        'password' => 'jane-likes-food-53',
+        'password_confirmation' => 'jane-likes-food-53',
+        'device_name' => 'iPhone 13 Max',
+    ])
+    ->assertJsonValidationErrors('email');

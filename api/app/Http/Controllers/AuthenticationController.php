@@ -37,7 +37,7 @@ class AuthenticationController extends Controller
     {
         $this->validate($request, [
             'name' => ['required'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed'],
             'device_name' => ['required']
         ]);
