@@ -20,14 +20,7 @@ test('one can login and access protected routes', function () {
             'device_name' => 'iPhone 13 Max',
         ])
         ->assertCreated()
-        ->assertJsonStructure([
-            'id',
-            'name',
-            'email',
-            'created_at',
-            'updated_at',
-            'token',
-        ]);
+        ->assertJsonStructure(['user', 'token']);
 
     getJson('api/user', ['Authorization' => "Bearer {$response->getData()->token}"])
         ->assertOk();
@@ -53,19 +46,12 @@ test('one can register a new account and access protected routes', function () {
     $response = postJson('api/register', [
             'name' => 'Jane Smith',
             'email' => 'jane@example.com',
-            'password' => 'jane-likes-food-53',
-            'password_confirmation' => 'jane-likes-food-53',
+            'password' => 'Jane-likes-food-123',
+            'password_confirmation' => 'Jane-likes-food-123',
             'device_name' => 'iPhone 13 Max',
         ])
         ->assertCreated()
-        ->assertJsonStructure([
-            'id',
-            'name',
-            'email',
-            'created_at',
-            'updated_at',
-            'token',
-        ]);
+        ->assertJsonStructure(['user', 'token']);
 
     getJson('api/user', ['Authorization' => "Bearer {$response->getData()->token}"])
         ->assertOk();
@@ -75,7 +61,7 @@ test('one cannot register with incorrect password confirmation')
     ->postJson('api/register', [
         'name' => 'Jane Smith',
         'email' => 'jane@example.com',
-        'password' => 'jane-likes-food-53',
+        'password' => 'Jane-likes-food-123',
         'password_confirmation' => 'wrong-confirmation',
         'device_name' => 'iPhone 13 Max',
     ])
@@ -85,8 +71,8 @@ test('one cannot register with a taken email')
     ->postJson('api/register', [
         'name' => 'Jane Smith',
         'email' => 'john@example.com',
-        'password' => 'jane-likes-food-53',
-        'password_confirmation' => 'jane-likes-food-53',
+        'password' => 'Jane-likes-food-123',
+        'password_confirmation' => 'Jane-likes-food-123',
         'device_name' => 'iPhone 13 Max',
     ])
     ->assertJsonValidationErrors('email');

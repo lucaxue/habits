@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticationController extends Controller
@@ -27,10 +28,10 @@ class AuthenticationController extends Controller
 
         $token = $user->createToken($request->device_name)->plainTextToken;
 
-        return response()->json(
-            array_merge($user->toArray(), ['token' => $token]),
-            JsonResponse::HTTP_CREATED,
-        );
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], JsonResponse::HTTP_CREATED);
     }
 
     public function register(Request $request) : JsonResponse
@@ -38,7 +39,16 @@ class AuthenticationController extends Controller
         $this->validate($request, [
             'name' => ['required'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed'],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+            ],
             'device_name' => ['required']
         ]);
 
@@ -50,9 +60,9 @@ class AuthenticationController extends Controller
 
         $token = $user->createToken($request->device_name)->plainTextToken;
 
-        return response()->json(
-            array_merge($user->toArray(), ['token' => $token]),
-            JsonResponse::HTTP_CREATED,
-        );
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], JsonResponse::HTTP_CREATED);
     }
 }
