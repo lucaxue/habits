@@ -2,4 +2,5 @@
 
 namespace HabitTracking\Domain;
 
-class HabitId extends Uuid {}
+class HabitId extends Uuid
+{}

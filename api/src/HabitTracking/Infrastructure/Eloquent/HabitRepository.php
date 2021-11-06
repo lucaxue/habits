@@ -2,21 +2,21 @@
 
 namespace HabitTracking\Infrastructure\Eloquent;
 
+use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
-use Illuminate\Support\Collection;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
-use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class HabitRepository implements HabitRepositoryInterface
 {
     public function all(
         int $authorId,
         array $filters = []
-    ): Collection {
+    ) : Collection {
 
-        $query =  EloquentHabit::where('author_id', $authorId);
+        $query = EloquentHabit::where('author_id', $authorId);
 
         if (array_key_exists('forToday', $filters) &&
             $filters['forToday']
@@ -31,18 +31,18 @@ class HabitRepository implements HabitRepositoryInterface
         return $query->get()->map->toModel();
     }
 
-    public function find(HabitId $id): ?Habit
+    public function find(HabitId $id) : ?Habit
     {
         $habit = EloquentHabit::find($id);
 
-        if (!$habit) {
+        if ( ! $habit) {
             throw new HabitNotFoundException($id);
         }
 
         return $habit->toModel();
     }
 
-    public function save(Habit $habit): void
+    public function save(Habit $habit) : void
     {
         EloquentHabit::updateOrCreate([
             'id' => $habit->id(),

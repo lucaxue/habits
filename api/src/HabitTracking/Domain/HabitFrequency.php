@@ -22,34 +22,34 @@ class HabitFrequency implements \JsonSerializable
         ?array $days = null
     ) {
 
-        if ((! in_array($type, ['daily', 'weekly'])) ||
-            ($type === 'weekly' && !$days)
+        if (( ! in_array($type, ['daily', 'weekly'])) ||
+            ($type === 'weekly' && ! $days)
         ) {
-            throw new \InvalidArgumentException;
+            throw new \InvalidArgumentException();
         }
 
         $this->type = $type;
         $this->days = $days;
     }
 
-    public function type(): string
+    public function type() : string
     {
         return $this->type;
     }
 
-    public function days(): ?array
+    public function days() : ?array
     {
         return $this->days;
     }
 
-    public function includesToday(): bool
+    public function includesToday() : bool
     {
-        if (! $this->days()) { return true; }
+        if ( ! $this->days()) { return true; }
 
         return in_array(now()->dayOfWeek, $this->days());
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize() : array
     {
         return [
             'type' => $this->type(),
