@@ -5,7 +5,9 @@ use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Domain\HabitStreak;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use function Pest\Laravel\{getJson, putJson, deleteJson};
+use function Pest\Laravel\deleteJson;
+use function Pest\Laravel\getJson;
+use function Pest\Laravel\putJson;
 use Tests\Support\HabitFactory;
 
 uses(RefreshDatabase::class);
@@ -16,7 +18,7 @@ beforeEach(function () {
 
 test('one can retrieve all their habits', function () {
     $habits = HabitFactory::count(10)->start([
-        'authorId' => $this->login()->id
+        'authorId' => $this->login()->id,
     ]);
 
     $response = getJson('api/habits')
@@ -30,9 +32,9 @@ test('one can retrieve all their habits', function () {
                 'completed',
                 'frequency' => [
                     'type',
-                    'days'
-                ]
-            ]
+                    'days',
+                ],
+            ],
         ]);
     $this->assertEqualsCanonicalizing(
         collect($habits)->map->id(),
@@ -44,17 +46,17 @@ test('one can retrieve all their habits for today', function () {
     $practiceGuitar = HabitFactory::start([
         'authorId' => $this->john->id,
         'name' => 'Practice Guitar',
-        'frequency' => new HabitFrequency('weekly', [now()->subDay()->dayOfWeek]) // <- yesterday
+        'frequency' => new HabitFrequency('weekly', [now()->subDay()->dayOfWeek]), // <- yesterday
     ]);
     $readBook = HabitFactory::start([
         'authorId' => $this->john->id,
         'name' => 'Read Book',
-        'frequency' => new HabitFrequency('daily') // <- daily
+        'frequency' => new HabitFrequency('daily'), // <- daily
     ]);
     $morningRun = HabitFactory::start([
         'authorId' => $this->john->id,
         'name' => 'Morning Run',
-        'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek]) // <- today
+        'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek]), // <- today
     ]);
 
     getJson('api/habits/today')
@@ -70,7 +72,7 @@ test('one can retrieve a habit', function () {
         'id' => $id = HabitId::generate(),
         'authorId' => $this->john->id,
         'name' => 'Read Book',
-        'frequency' => new HabitFrequency('daily')
+        'frequency' => new HabitFrequency('daily'),
     ]);
 
     getJson("api/habits/{$id}")
@@ -82,7 +84,7 @@ test('one can retrieve a habit', function () {
             'frequency' => [
                 'type' => 'daily',
                 'days' => null,
-            ]
+            ],
         ]);
 });
 
@@ -93,7 +95,7 @@ test('one cannot retrive an unknown habit')
 test('one can start a new habit')
     ->postJson('api/habits', [
         'name' => 'Practice Shutdown Ritual',
-        'frequency' => ['type' => 'weekly', 'days' => [1, 2, 3, 4, 5]]
+        'frequency' => ['type' => 'weekly', 'days' => [1, 2, 3, 4, 5]],
     ])
     ->assertCreated()
     ->assertJson([
@@ -144,25 +146,25 @@ test('one can edit a habit', function () {
         'id' => $id = HabitId::generate(),
         'authorId' => $this->john->id,
         'name' => 'Learning Arabic',
-        'frequency' => new HabitFrequency('weekly', [1, 2, 3])
+        'frequency' => new HabitFrequency('weekly', [1, 2, 3]),
     ]);
 
     putJson("api/habits/{$id}", [
             'name' => 'Learning Chinese',
-            'frequency' => ['type' => 'daily', 'days' => null]
+            'frequency' => ['type' => 'daily', 'days' => null],
         ])
         ->assertOk()
         ->assertJsonFragment([
             'id' => $id,
             'name' => 'Learning Chinese',
-            'frequency' => ['type' => 'daily', 'days' => null]
+            'frequency' => ['type' => 'daily', 'days' => null],
         ]);
 });
 
 test('one can stop a habit', function () {
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
-        'authorId' => $this->john->id
+        'authorId' => $this->john->id,
     ]);
 
     deleteJson("api/habits/{$id}")->assertOk();
@@ -176,17 +178,17 @@ test('one can stop a habit', function () {
 test("one cannot manage another user's habit", function () {
     HabitFactory::start([
         'id' => $id = HabitId::generate(),
-        'authorId' => User::factory()->create(['name' => 'Jane'])->id
+        'authorId' => User::factory()->create(['name' => 'Jane'])->id,
     ]);
 
     collect([
         getJson("api/habits/{$id}"),
         putJson("api/habits/{$id}", [
             'name' => 'Read a book',
-            'frequency' => ['type' => 'daily', 'days' => null]
+            'frequency' => ['type' => 'daily', 'days' => null],
         ]),
         putJson("api/habits/{$id}/complete"),
         putJson("api/habits/{$id}/incomplete"),
-        deleteJson("api/habits/{$id}")
+        deleteJson("api/habits/{$id}"),
     ])->each->assertUnauthorized();
 });

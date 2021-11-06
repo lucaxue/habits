@@ -2,15 +2,14 @@
 
 namespace Tests\Support;
 
-use HabitTracking\Domain\Habit;
-use Tests\Support\HabitModelFactory;
 use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Domain\Habit;
 
 class HabitFactory
 {
     public static function start(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $habit = HabitModelFactory::start($overrides);
 
@@ -21,7 +20,7 @@ class HabitFactory
 
     public static function create(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $habit = HabitModelFactory::create($overrides);
 
@@ -32,7 +31,7 @@ class HabitFactory
 
     public static function completed(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $habit = HabitModelFactory::completed($overrides);
 
@@ -43,7 +42,7 @@ class HabitFactory
 
     public static function incompleted(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $habit = HabitModelFactory::incompleted($overrides);
 
@@ -54,10 +53,9 @@ class HabitFactory
 
     public static function many()
     {
-        return new class
-        {
+        return new class() {
             /** @return Habit[] */
-            public function start(array $manyOverrides): array
+            public function start(array $manyOverrides) : array
             {
                 $habits = [];
 
@@ -72,8 +70,7 @@ class HabitFactory
 
     public static function count(int $count)
     {
-        return new class($count)
-        {
+        return new class($count) {
             public function __construct(
                 private int $count
             ) {
@@ -82,7 +79,7 @@ class HabitFactory
             /** @return Habit[] */
             public function start(
                 array $overrides = []
-            ): array {
+            ) : array {
 
                 $habits = [];
 

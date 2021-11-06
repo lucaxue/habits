@@ -3,25 +3,25 @@
 namespace Spec\HabitTracking\Domain;
 
 use Carbon\CarbonImmutable;
-use PhpSpec\ObjectBehavior;
-use HabitTracking\Domain\Habit;
-use HabitTracking\Domain\HabitId;
-use HabitTracking\Domain\HabitStreak;
-use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Domain\Exceptions\HabitStoppedException;
 use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
 use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
+use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Habit;
+use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\HabitStreak;
+use PhpSpec\ObjectBehavior;
 
 class HabitSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->beConstructedWith(
             $id = HabitId::generate(),
             $authorId = 3,
             $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
-            $streak = new HabitStreak,
+            $streak = new HabitStreak(),
             $stopped = true,
             $lastCompleted = CarbonImmutable::now(),
             $lastIncompleted = CarbonImmutable::now()->subDay(),
@@ -40,7 +40,7 @@ class HabitSpec extends ObjectBehavior
         $this->completed()->shouldBe(true);
     }
 
-    function it_can_be_started()
+    public function it_can_be_started()
     {
         $this->beConstructedThrough('start', [
             $id = HabitId::generate(),
@@ -62,7 +62,7 @@ class HabitSpec extends ObjectBehavior
         $this->stopped()->shouldBe(false);
     }
 
-    function it_can_be_marked_as_complete()
+    public function it_can_be_marked_as_complete()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -77,7 +77,7 @@ class HabitSpec extends ObjectBehavior
         $this->streak()->days()->shouldBe(1);
     }
 
-    function it_can_be_marked_as_incomplete()
+    public function it_can_be_marked_as_incomplete()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -93,7 +93,7 @@ class HabitSpec extends ObjectBehavior
         $this->streak()->days()->shouldBe(0);
     }
 
-    function it_cannot_mark_a_completed_habit_as_complete()
+    public function it_cannot_mark_a_completed_habit_as_complete()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -107,7 +107,7 @@ class HabitSpec extends ObjectBehavior
             ->during('markAsComplete');
     }
 
-    function it_cannot_mark_an_incompleted_task_as_incomplete()
+    public function it_cannot_mark_an_incompleted_task_as_incomplete()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -120,7 +120,7 @@ class HabitSpec extends ObjectBehavior
             ->during('markAsIncomplete');
     }
 
-    function it_can_be_edited()
+    public function it_can_be_edited()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -138,7 +138,7 @@ class HabitSpec extends ObjectBehavior
         $this->frequency()->shouldBe($frequency);
     }
 
-    function it_can_be_stopped()
+    public function it_can_be_stopped()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -151,7 +151,7 @@ class HabitSpec extends ObjectBehavior
         $this->stopped()->shouldBe(true);
     }
 
-    function it_cannot_stop_an_already_stopped_habit()
+    public function it_cannot_stop_an_already_stopped_habit()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -166,14 +166,14 @@ class HabitSpec extends ObjectBehavior
             ->duringStop();
     }
 
-    function it_can_be_serialized()
+    public function it_can_be_serialized()
     {
         $this->beConstructedWith(
             $id = HabitId::generate(),
             3,
             $name = 'Read a book',
             $frequency = new HabitFrequency('daily'),
-            $streak = new HabitStreak,
+            $streak = new HabitStreak(),
         );
 
         $this->shouldImplement(\JsonSerializable::class);

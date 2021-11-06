@@ -3,22 +3,22 @@
 namespace Tests\Unit\Spec;
 
 use Assert\Assertion;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Assert\AssertionFailedException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 trait CustomMatchers
 {
-    public function getMatchers(): array
+    public function getMatchers() : array
     {
         return [
-            'beUuid' => function (string $subject): bool {
+            'beUuid' => function (string $subject) : bool {
                 return Str::isUuid($subject);
             },
             'haveDateFormat' => function (
                 string $subject,
                 string $format
-            ): bool {
+            ) : bool {
 
                 try {
                     return Assertion::date($subject, $format);
@@ -27,15 +27,15 @@ trait CustomMatchers
                     return false;
                 }
             },
-            'beNow' => function (\DateTime $subject): bool {
+            'beNow' => function (\DateTime $subject) : bool {
                 return now()->eq($subject);
             },
-            'beToday' => function (\DateTime|string $subject): bool {
+            'beToday' => function (\DateTime|string $subject) : bool {
                 return (new Carbon($subject))->isToday();
             },
-            'haveHappened' => function (Carbon $subject, Carbon $candidate): bool {
+            'haveHappened' => function (Carbon $subject, Carbon $candidate) : bool {
                 return $subject->eq($candidate);
-            }
+            },
         ];
     }
 }

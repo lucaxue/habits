@@ -18,7 +18,8 @@ it('retrieves all habits by its author', function () {
 
     expect($results)
         ->toHaveCount(10)
-        ->each(fn ($r) => $r
+        ->each(
+            fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($habits->pluck('id'))
         );
@@ -29,14 +30,14 @@ it('retrieves all habits for today by its author', function () {
     $todays = EloquentHabit::factory(5)->create([
         'frequency' => [
             'type' => 'weekly',
-            'days' => [now()->dayOfWeek]
+            'days' => [now()->dayOfWeek],
         ],
         'author_id' => 1,
     ]);
     $tomorrows = EloquentHabit::factory(5)->create([
         'frequency' => [
             'type' => 'weekly',
-            'days' => [now()->addDay()->dayOfWeek]
+            'days' => [now()->addDay()->dayOfWeek],
         ],
         'author_id' => 1,
     ]);
@@ -45,7 +46,8 @@ it('retrieves all habits for today by its author', function () {
 
     expect($results)
         ->toHaveCount(5)
-        ->each(fn ($r) => $r
+        ->each(
+            fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($todays->pluck('id'))
             ->id()->toString()->not->toBeIn($tomorrows->pluck('id'))
@@ -60,7 +62,8 @@ it("does not retrieve another author's habits", function () {
 
     expect($results)
         ->toHaveCount(10)
-        ->each(fn ($r) => $r
+        ->each(
+            fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($mine->pluck('id'))
             ->id()->toString()->not->toBeIn($notMine->pluck('id'))

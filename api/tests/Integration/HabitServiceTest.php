@@ -1,21 +1,21 @@
 <?php
 
 use App\Models\User;
+use HabitTracking\Application\HabitService;
+use HabitTracking\Domain\Contracts\HabitRepository;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
+use HabitTracking\Domain\Exceptions\HabitNotFoundException;
 use HabitTracking\Domain\Habit;
+use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
 use Tests\Support\HabitModelFactory;
-use HabitTracking\Domain\HabitFrequency;
-use HabitTracking\Application\HabitService;
-use HabitTracking\Domain\Contracts\HabitRepository;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
-use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
 
 it("can retrieve all of a user's habits", function () {
     $john = User::factory()->make(['id' => 1]);
     $repository = new CollectionHabitRepository(
         $habits = HabitModelFactory::count(10)->start([
-            'authorId' => $john->id
+            'authorId' => $john->id,
         ])
     );
 
@@ -30,15 +30,15 @@ it("can retrieve a user's habits for today", function () {
         ...$todays = HabitModelFactory::count(5)->start([
             'authorId' => $john->id,
             'frequency' => new HabitFrequency('weekly', [
-                now()->dayOfWeek
-            ])
+                now()->dayOfWeek,
+            ]),
         ]),
         ...$tomorrows = HabitModelFactory::count(5)->start([
             'authorId' => $john->id,
             'frequency' => new HabitFrequency('weekly', [
-                now()->addDay()->dayOfWeek
-            ])
-        ])
+                now()->addDay()->dayOfWeek,
+            ]),
+        ]),
     ]));
 
     $retrievedHabits = (new HabitService($repository))->retrieveHabitsForToday($john->id);
@@ -52,7 +52,7 @@ it("can retrieve a user's habit", function () {
         $habit = HabitModelFactory::start([
             'id' => $id = HabitId::generate(),
             'authorId' => $john->id,
-        ])
+        ]),
     ]));
 
     $retrievedHabit = (new HabitService($repository))->retrieveHabit($id->toString(), $john->id);
@@ -62,7 +62,7 @@ it("can retrieve a user's habit", function () {
 
 it("can start a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
-    $repository = new CollectionHabitRepository;
+    $repository = new CollectionHabitRepository();
 
     $habit = (new HabitService($repository))->startHabit(
         name: 'Read a book',
@@ -87,7 +87,7 @@ it("can mark a user's habit as complete", function () {
         HabitModelFactory::start([
             'id' => $id = HabitId::generate(),
             'authorId' => $john->id,
-        ])
+        ]),
     ]));
 
     $habit = (new HabitService($repository))->markHabitAsComplete($id, $john->id);
@@ -108,7 +108,7 @@ it("can mark a user's habit as incomplete", function () {
         HabitModelFactory::completed([
             'id' => $id = HabitId::generate(),
             'authorId' => $john->id,
-        ])
+        ]),
     ]));
 
     $habit = (new HabitService($repository))->markHabitAsIncomplete($id, $john->id);
@@ -130,8 +130,8 @@ it("can edit a user's habit", function () {
             'id' => $id = HabitId::generate(),
             'authorId' => $john->id,
             'name' => 'Read a book',
-            'frequency' => new HabitFrequency('weekly', [1])
-        ])
+            'frequency' => new HabitFrequency('weekly', [1]),
+        ]),
     ]));
 
     $habit = (new HabitService($repository))->editHabit(
@@ -159,8 +159,8 @@ it("can stop a user's habit", function () {
             'id' => $id = HabitId::generate(),
             'authorId' => $john->id,
             'name' => 'Read a book',
-            'frequency' => new HabitFrequency('weekly', [1])
-        ])
+            'frequency' => new HabitFrequency('weekly', [1]),
+        ]),
     ]));
 
     $habit = (new HabitService($repository))->stopHabit($id, $john->id);
@@ -175,7 +175,7 @@ it("cannot manage another user's habit", function () {
     $jane = User::factory()->make(['id' => 2]);
     $repository = new CollectionHabitRepository(collect([HabitModelFactory::start([
         'id' => $id = HabitId::generate(),
-        'authorId' => $jane->id
+        'authorId' => $jane->id,
     ])]));
 
     $service = new HabitService($repository);
@@ -188,8 +188,8 @@ it("cannot manage another user's habit", function () {
         fn () => $service->stopHabit($id, $john->id),
     ]);
 
-    $actions->each(fn ($action) =>
-        expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class)
+    $actions->each(
+        fn ($action) => expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class)
     );
 });
 
@@ -203,7 +203,7 @@ class CollectionHabitRepository implements HabitRepository
      */
     public function __construct(?Collection $habits = null)
     {
-        $this->habits = $habits ?? new Collection;
+        $this->habits = $habits ?? new Collection();
     }
 
     /**
@@ -211,7 +211,7 @@ class CollectionHabitRepository implements HabitRepository
      * @param array $filters ['forToday' => bool]
      * @return Collection<Habit>
      */
-    public function all(int $authorId, array $filters = []): Collection
+    public function all(int $authorId, array $filters = []) : Collection
     {
         return $this->habits->filter(function (Habit $h) use ($authorId, $filters) {
             $belongsToAuthor = $h->authorId() === $authorId;
@@ -229,14 +229,14 @@ class CollectionHabitRepository implements HabitRepository
      * @return Habit|null
      * @throws HabitNotFoundException
      */
-    public function find(HabitId $id): ?Habit
+    public function find(HabitId $id) : ?Habit
     {
         return
             $this->habits->first(fn (Habit $h) => $h->id()->equals($id)) ??
             throw new HabitNotFoundException($id);
     }
 
-    public function save(Habit $habit): void
+    public function save(Habit $habit) : void
     {
         $this->habits = $this->habits
             ->reject(fn (Habit $h) => $h->id()->equals($habit->id()))
