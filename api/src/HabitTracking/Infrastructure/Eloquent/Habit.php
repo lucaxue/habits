@@ -3,15 +3,15 @@
 namespace HabitTracking\Infrastructure\Eloquent;
 
 use App\Models\User;
-use HabitTracking\Domain\HabitId;
 use Database\Factories\HabitFactory;
-use HabitTracking\Domain\HabitStreak;
-use Illuminate\Database\Eloquent\Model;
-use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\Habit as HabitModel;
+use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\HabitStreak;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Habit extends Model
 {
@@ -41,7 +41,7 @@ class Habit extends Model
         'stopped' => 'boolean',
     ];
 
-    public function toModel(): HabitModel
+    public function toModel() : HabitModel
     {
         return new HabitModel(
             HabitId::fromString($this->id),
@@ -55,12 +55,12 @@ class Habit extends Model
         );
     }
 
-    public function author(): BelongsTo
+    public function author() : BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    protected static function newFactory(): Factory
+    protected static function newFactory() : Factory
     {
         return HabitFactory::new();
     }
