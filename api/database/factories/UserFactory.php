@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
@@ -16,7 +16,7 @@ class UserFactory extends Factory
      */
     protected $model = User::class;
 
-    public function definition(): array
+    public function definition() : array
     {
         return [
             'name' => $this->faker->name(),
@@ -27,7 +27,7 @@ class UserFactory extends Factory
         ];
     }
 
-    public function unverified(): Factory
+    public function unverified() : Factory
     {
         return $this->state(function (array $attributes) {
             return [
@@ -36,7 +36,7 @@ class UserFactory extends Factory
         });
     }
 
-    public function example(): Factory
+    public function example() : Factory
     {
         return $this->state(function (array $attributes) {
             return [

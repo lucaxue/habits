@@ -7,7 +7,7 @@ use PhpSpec\ObjectBehavior;
 
 class HabitStreakSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldBeAnInstanceOf(HabitStreak::class);
 
@@ -17,7 +17,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(0);
     }
 
-    function it_can_be_initialized_with_years_months_and_days()
+    public function it_can_be_initialized_with_years_months_and_days()
     {
         $this->beConstructedWith(1, 2, 3);
 
@@ -29,7 +29,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(3);
     }
 
-    function it_can_be_initialized_from_string()
+    public function it_can_be_initialized_from_string()
     {
         $this->beConstructedThrough('fromString', ['P1Y2M3D']);
 
@@ -41,12 +41,12 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(3);
     }
 
-    function it_guards_against_invalid_string_formats()
+    public function it_guards_against_invalid_string_formats()
     {
         $invalidFormats = [
             '01:02:03', 'Y1M2D3', 'PY1M2D3',
             'PPYYMMDD', 'P0.1Y5.3M2.3D', '010203',
-            '1 Year 2 Months 3 Days'
+            '1 Year 2 Months 3 Days',
         ];
 
         foreach ($invalidFormats as $invalidFormat) {
@@ -56,7 +56,7 @@ class HabitStreakSpec extends ObjectBehavior
         }
     }
 
-    function it_guards_against_invalid_days()
+    public function it_guards_against_invalid_days()
     {
         $this->beConstructedWith(0, 0, 31);
         $this->shouldThrow(\InvalidArgumentException::class)
@@ -70,7 +70,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(29);
     }
 
-    function it_guards_against_invalid_months()
+    public function it_guards_against_invalid_months()
     {
         $this->beConstructedWith(0, 13, 0);
         $this->shouldThrow(\InvalidArgumentException::class)
@@ -84,7 +84,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->months()->shouldBe(11);
     }
 
-    function it_can_be_incremented_by_a_day()
+    public function it_can_be_incremented_by_a_day()
     {
         $this->beConstructedWith(0, 0, 0);
 
@@ -95,7 +95,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(1);
     }
 
-    function it_can_be_decremented_a_day()
+    public function it_can_be_decremented_a_day()
     {
         $this->beConstructedWith(0, 0, 2);
 
@@ -106,7 +106,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(1);
     }
 
-    function it_cannot_decrement_an_empty_streak()
+    public function it_cannot_decrement_an_empty_streak()
     {
         $this->beConstructedWith(0, 0, 0);
 
@@ -114,7 +114,7 @@ class HabitStreakSpec extends ObjectBehavior
             ->during('decrement');
     }
 
-    function it_considers_30_days_to_be_a_month()
+    public function it_considers_30_days_to_be_a_month()
     {
         $this->beConstructedWith(0, 0, 29);
 
@@ -129,7 +129,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(29);
     }
 
-    function it_considers_12_months_to_be_a_year()
+    public function it_considers_12_months_to_be_a_year()
     {
         $this->beConstructedWith(0, 11, 29);
 
@@ -146,7 +146,7 @@ class HabitStreakSpec extends ObjectBehavior
         $this->days()->shouldBe(29);
     }
 
-    function it_can_be_serialized()
+    public function it_can_be_serialized()
     {
         $this->beConstructedThrough('fromString', ['P1Y2M3D']);
 

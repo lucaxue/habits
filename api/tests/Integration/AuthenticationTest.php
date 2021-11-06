@@ -4,7 +4,9 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use function Pest\Laravel\{getJson, postJson, deleteJson};
+use function Pest\Laravel\deleteJson;
+use function Pest\Laravel\getJson;
+use function Pest\Laravel\postJson;
 
 uses(RefreshDatabase::class);
 
@@ -12,7 +14,7 @@ beforeEach(function () {
     $this->john = User::factory()->create([
         'name' => 'John Doe',
         'email' => 'john@example.com',
-        'password' => Hash::make('password')
+        'password' => Hash::make('password'),
     ]);
 });
 
@@ -88,7 +90,7 @@ test('one can logout', function () {
     ]);
 
     deleteJson('api/logout', [], [
-        'Authorization' => "Bearer {$response->getData()->token}"
+        'Authorization' => "Bearer {$response->getData()->token}",
     ])->assertNoContent();
 
     Auth::forgetGuards();

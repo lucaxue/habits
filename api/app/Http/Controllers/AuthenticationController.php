@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
@@ -15,7 +16,7 @@ class AuthenticationController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (! Hash::check($request->password, $user->password)) {
+        if ( ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'password' => ['The provided password is incorrect.'],
             ]);
@@ -25,7 +26,7 @@ class AuthenticationController extends Controller
 
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], JsonResponse::HTTP_CREATED);
     }
 
@@ -41,7 +42,7 @@ class AuthenticationController extends Controller
 
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], JsonResponse::HTTP_CREATED);
     }
 

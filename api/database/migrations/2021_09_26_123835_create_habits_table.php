@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateHabitsTable extends Migration
 {
-    public function up(): void
+    public function up() : void
     {
         Schema::create('habits', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -21,7 +21,7 @@ class CreateHabitsTable extends Migration
         });
     }
 
-    public function down(): void
+    public function down() : void
     {
         Schema::dropIfExists('habits');
     }

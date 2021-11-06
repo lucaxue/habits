@@ -5,16 +5,16 @@ namespace Tests\Support;
 use Carbon\CarbonImmutable;
 use Faker\Factory as Faker;
 use HabitTracking\Domain\Habit;
-use HabitTracking\Domain\HabitId;
-use Illuminate\Support\Collection;
-use HabitTracking\Domain\HabitStreak;
 use HabitTracking\Domain\HabitFrequency;
+use HabitTracking\Domain\HabitId;
+use HabitTracking\Domain\HabitStreak;
+use Illuminate\Support\Collection;
 
 class HabitModelFactory
 {
     public static function start(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $faker = Faker::create();
 
@@ -27,9 +27,9 @@ class HabitModelFactory
                 new HabitFrequency('weekly', [
                     HabitFrequency::MONDAY,
                     HabitFrequency::TUESDAY,
-                    HabitFrequency::WEDNESDAY
-                ])
-            ])
+                    HabitFrequency::WEDNESDAY,
+                ]),
+            ]),
         ];
 
         $attributes = array_merge($defaults, $overrides);
@@ -39,7 +39,7 @@ class HabitModelFactory
 
     public static function create(
         array $overrides = []
-    ): Habit {
+    ) : Habit {
 
         $faker = Faker::create();
 
@@ -52,9 +52,9 @@ class HabitModelFactory
                 new HabitFrequency('weekly', [
                     HabitFrequency::MONDAY,
                     HabitFrequency::TUESDAY,
-                    HabitFrequency::WEDNESDAY
-                ])
-            ])
+                    HabitFrequency::WEDNESDAY,
+                ]),
+            ]),
         ];
 
         $attributes = array_merge($defaults, $overrides);
@@ -64,11 +64,11 @@ class HabitModelFactory
 
     public static function completed(
         array $overrides
-    ): Habit {
+    ) : Habit {
 
         $attributes = array_merge($overrides, [
             'lastCompleted' => CarbonImmutable::now(),
-            'streak' => $overrides['streak'] ?? new HabitStreak(0, 0, 1)
+            'streak' => $overrides['streak'] ?? new HabitStreak(0, 0, 1),
         ]);
 
         return self::create($attributes);
@@ -76,10 +76,10 @@ class HabitModelFactory
 
     public static function incompleted(
         array $overrides
-    ): Habit {
+    ) : Habit {
 
         $attributes = array_merge($overrides, [
-            'lastIncompleted' => CarbonImmutable::now()
+            'lastIncompleted' => CarbonImmutable::now(),
         ]);
 
         return self::create($attributes);
@@ -88,8 +88,7 @@ class HabitModelFactory
     public static function count(
         int $count
     ) {
-        return new class($count)
-        {
+        return new class($count) {
             public function __construct(
                 private int $count
             ) {
@@ -101,7 +100,7 @@ class HabitModelFactory
              */
             public function start(
                 array $overrides = []
-            ): Collection {
+            ) : Collection {
 
                 $habits = [];
 

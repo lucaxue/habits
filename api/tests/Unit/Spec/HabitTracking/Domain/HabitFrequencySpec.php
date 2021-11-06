@@ -2,12 +2,12 @@
 
 namespace Spec\HabitTracking\Domain;
 
-use PhpSpec\ObjectBehavior;
 use HabitTracking\Domain\HabitFrequency;
+use PhpSpec\ObjectBehavior;
 
 class HabitFrequencySpec extends ObjectBehavior
 {
-    function it_can_be_initialized_with_daily()
+    public function it_can_be_initialized_with_daily()
     {
         $this->beConstructedWith('daily');
 
@@ -17,12 +17,12 @@ class HabitFrequencySpec extends ObjectBehavior
         $this->days()->shouldBe(null);
     }
 
-    function it_can_be_initialized_with_weekly()
+    public function it_can_be_initialized_with_weekly()
     {
         $this->beConstructedWith('weekly', [
             HabitFrequency::MONDAY,
             HabitFrequency::TUESDAY,
-            HabitFrequency::WEDNESDAY
+            HabitFrequency::WEDNESDAY,
         ]);
 
         $this->shouldBeAnInstanceOf(HabitFrequency::class);
@@ -31,11 +31,11 @@ class HabitFrequencySpec extends ObjectBehavior
         $this->days()->shouldBe([
             HabitFrequency::MONDAY,
             HabitFrequency::TUESDAY,
-            HabitFrequency::WEDNESDAY
+            HabitFrequency::WEDNESDAY,
         ]);
     }
 
-    function it_requires_days_when_initializing_with_weekly()
+    public function it_requires_days_when_initializing_with_weekly()
     {
         $this->beConstructedWith('weekly');
 
@@ -43,26 +43,26 @@ class HabitFrequencySpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
-    function it_can_determine_if_it_includes_today_when_daily()
+    public function it_can_determine_if_it_includes_today_when_daily()
     {
         $this->beConstructedWith('daily');
 
         $this->includesToday()->shouldBe(true);
     }
 
-    function it_can_determine_if_it_includes_today_when_weekly()
+    public function it_can_determine_if_it_includes_today_when_weekly()
     {
         $this->beConstructedWith('weekly', [now()->dayOfWeek]);
 
         $this->includesToday()->shouldBe(true);
     }
 
-    function it_can_be_serialized()
+    public function it_can_be_serialized()
     {
         $this->beConstructedWith('weekly', [
             HabitFrequency::MONDAY,
             HabitFrequency::TUESDAY,
-            HabitFrequency::WEDNESDAY
+            HabitFrequency::WEDNESDAY,
         ]);
 
         $this->shouldImplement(\JsonSerializable::class);
@@ -71,7 +71,7 @@ class HabitFrequencySpec extends ObjectBehavior
             'days' => [
                 HabitFrequency::MONDAY,
                 HabitFrequency::TUESDAY,
-                HabitFrequency::WEDNESDAY
+                HabitFrequency::WEDNESDAY,
             ],
         ]);
     }
