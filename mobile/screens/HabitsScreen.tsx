@@ -57,6 +57,7 @@ export default function HabitsScreen({
           >
             <Switch
               style={tailwind('mr-5')}
+              trackColor={{ true: 'cornflowerblue' }}
               value={habit.completed}
               onChange={() =>
                 habit.completed
