@@ -28,8 +28,8 @@ Track your habits, one by one. A simple habit tracker application.
 
 ### Front-end
 
-- React Native
-- Tailwind CSS
+- React 
+- Capacitor JS (for ios client)
 
 ### Back-end
 
