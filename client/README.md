@@ -22,6 +22,6 @@
 * To run the iOS client, make sure you are running the web client first (to ensure live reloading), then run the following command:
 
 	```bash
-	npx cap open ios
+	npx cap run ios
 	```
-	Next, open the application on your preferred simulator with XCode
+	Next, pick your iOS simulator and open your app.
