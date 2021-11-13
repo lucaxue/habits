@@ -17,7 +17,6 @@ class Habit implements \JsonSerializable
         private ? HabitStreak $streak = null,
         private bool $stopped = false,
         private ? CarbonImmutable $lastCompleted = null,
-        private ? CarbonImmutable $lastIncompleted = null,
     ) {
         $this->streak = $streak ?? new HabitStreak();
     }
@@ -49,7 +48,7 @@ class Habit implements \JsonSerializable
         }
 
         $this->streak = $this->streak()->decrement();
-        $this->lastIncompleted = CarbonImmutable::now();
+        $this->lastCompleted = null;
     }
 
     public function edit(
@@ -95,11 +94,6 @@ class Habit implements \JsonSerializable
         return $this->streak;
     }
 
-    public function lastIncompleted() : ? CarbonImmutable
-    {
-        return $this->lastIncompleted;
-    }
-
     public function lastCompleted() : ? CarbonImmutable
     {
         return $this->lastCompleted;
@@ -107,17 +101,7 @@ class Habit implements \JsonSerializable
 
     public function completed() : bool
     {
-        if ( ! $this->lastCompleted()) {
-            return false;
-        }
-
-        if ( ! $this->lastIncompleted()) {
-            return $this->lastCompleted()->isToday();
-        }
-
-        return
-            $this->lastCompleted()->isToday() &&
-            $this->lastCompleted()->gt($this->lastIncompleted());
+        return null !== $this->lastCompleted();
     }
 
     public function stopped() : bool

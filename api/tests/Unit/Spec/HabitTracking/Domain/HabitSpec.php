@@ -24,7 +24,6 @@ class HabitSpec extends ObjectBehavior
             $streak = new HabitStreak(),
             $stopped = true,
             $lastCompleted = CarbonImmutable::now(),
-            $lastIncompleted = CarbonImmutable::yesterday(),
         );
 
         $this->shouldBeAnInstanceOf(Habit::class);
@@ -36,7 +35,6 @@ class HabitSpec extends ObjectBehavior
         $this->streak()->shouldBe($streak);
         $this->stopped()->shouldBe($stopped);
         $this->lastCompleted()->shouldBe($lastCompleted);
-        $this->lastIncompleted()->shouldBe($lastIncompleted);
         $this->completed()->shouldBe(true);
     }
 
@@ -57,7 +55,6 @@ class HabitSpec extends ObjectBehavior
         $this->frequency()->shouldBe($frequency);
         $this->streak()->isEmpty()->shouldBe(true);
         $this->lastCompleted()->shouldBe(null);
-        $this->lastIncompleted()->shouldBe(null);
         $this->completed()->shouldBe(false);
         $this->stopped()->shouldBe(false);
     }

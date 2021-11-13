@@ -92,7 +92,8 @@ class HabitController extends Controller
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
         } catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+            // return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+            return response()->json($this->service->retrieveHabit($id, $this->auth->id()));
 
         } catch (HabitAlreadyCompleted $e) {
             return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
@@ -110,10 +111,11 @@ class HabitController extends Controller
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
         } catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+            // return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
+            return response()->json($this->service->retrieveHabit($id, $this->auth->id()));
 
         } catch (HabitAlreadyIncompleted $e) {
-            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
+            return response()->json($e::class, JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return response()->json($habit);
