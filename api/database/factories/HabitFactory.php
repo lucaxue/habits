@@ -23,7 +23,6 @@ class HabitFactory extends Factory
                 new HabitFrequency('weekly', [1, 2, 3]),
             ]),
             'last_completed' => $this->faker->dateTime(),
-            'last_incompleted' => $this->faker->dateTime(),
         ];
     }
 }

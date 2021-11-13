@@ -18,9 +18,7 @@ class HabitRepository implements HabitRepositoryInterface
 
         $query = EloquentHabit::where('author_id', $authorId);
 
-        if (array_key_exists('forToday', $filters) &&
-            $filters['forToday']
-        ) {
+        if ($filters['forToday'] ?? false) {
             $query->where(function ($query) {
                 $query
                     ->whereJsonContains('frequency->days', [now()->dayOfWeek])
@@ -31,7 +29,7 @@ class HabitRepository implements HabitRepositoryInterface
         return $query->get()->map->toModel();
     }
 
-    public function find(HabitId $id) : ?Habit
+    public function find(HabitId $id) : ? Habit
     {
         $habit = EloquentHabit::find($id);
 
@@ -52,7 +50,6 @@ class HabitRepository implements HabitRepositoryInterface
             'streak' => $habit->streak(),
             'frequency' => $habit->frequency(),
             'last_completed' => $habit->lastCompleted(),
-            'last_incompleted' => $habit->lastIncompleted(),
             'stopped' => $habit->stopped(),
         ]);
     }
