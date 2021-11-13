@@ -44,7 +44,7 @@ class HabitStreakSpec extends ObjectBehavior
     public function it_guards_against_invalid_string_formats()
     {
         $invalidFormats = [
-            '01:02:03', 'Y1M2D3', 'PY1M2D3',
+            '01:02:03', 'Y1M2D3', 'PY1M2D3', 'PP1Y2M3DD',
             'PPYYMMDD', 'P0.1Y5.3M2.3D', '010203',
             '1 Year 2 Months 3 Days',
         ];
@@ -88,22 +88,22 @@ class HabitStreakSpec extends ObjectBehavior
     {
         $this->beConstructedWith(0, 0, 0);
 
-        $this->increment();
+        $incremented = $this->increment();
 
-        $this->years()->shouldBe(0);
-        $this->months()->shouldBe(0);
-        $this->days()->shouldBe(1);
+        $incremented->years()->shouldBe(0);
+        $incremented->months()->shouldBe(0);
+        $incremented->days()->shouldBe(1);
     }
 
     public function it_can_be_decremented_a_day()
     {
         $this->beConstructedWith(0, 0, 2);
 
-        $this->decrement();
+        $decremented = $this->decrement();
 
-        $this->years()->shouldBe(0);
-        $this->months()->shouldBe(0);
-        $this->days()->shouldBe(1);
+        $decremented->years()->shouldBe(0);
+        $decremented->months()->shouldBe(0);
+        $decremented->days()->shouldBe(1);
     }
 
     public function it_cannot_decrement_an_empty_streak()
@@ -118,42 +118,42 @@ class HabitStreakSpec extends ObjectBehavior
     {
         $this->beConstructedWith(0, 0, 29);
 
-        $this->increment();
+        $incremented = $this->increment();
 
-        $this->months()->shouldBe(1);
-        $this->days()->shouldBe(0);
+        $incremented->months()->shouldBe(1);
+        $incremented->days()->shouldBe(0);
 
-        $this->decrement();
+        $decremented = $incremented->decrement();
 
-        $this->months()->shouldBe(0);
-        $this->days()->shouldBe(29);
+        $decremented->months()->shouldBe(0);
+        $decremented->days()->shouldBe(29);
     }
 
     public function it_considers_12_months_to_be_a_year()
     {
         $this->beConstructedWith(0, 11, 29);
 
-        $this->increment();
+        $incremented = $this->increment();
 
-        $this->years()->shouldBe(1);
-        $this->months()->shouldBe(0);
-        $this->days()->shouldBe(0);
+        $incremented->years()->shouldBe(1);
+        $incremented->months()->shouldBe(0);
+        $incremented->days()->shouldBe(0);
 
-        $this->decrement();
+        $decremented = $incremented->decrement();
 
-        $this->years()->shouldBe(0);
-        $this->months()->shouldBe(11);
-        $this->days()->shouldBe(29);
+        $decremented->years()->shouldBe(0);
+        $decremented->months()->shouldBe(11);
+        $decremented->days()->shouldBe(29);
     }
 
     public function it_can_be_serialized()
     {
         $this->beConstructedThrough('fromString', ['P1Y2M3D']);
 
-        $this->shouldImplement(\JsonSerializable::class);
-
-        $this->toString()->shouldBe('P1Y2M3D');
+        $this->shouldImplement(\Stringable::class);
         $this->__toString()->shouldBe('P1Y2M3D');
+
+        $this->shouldImplement(\JsonSerializable::class);
         $this->jsonSerialize()->shouldBe('P1Y2M3D');
     }
 }
