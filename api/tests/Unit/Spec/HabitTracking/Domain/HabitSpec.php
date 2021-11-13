@@ -24,7 +24,7 @@ class HabitSpec extends ObjectBehavior
             $streak = new HabitStreak(),
             $stopped = true,
             $lastCompleted = CarbonImmutable::now(),
-            $lastIncompleted = CarbonImmutable::now()->subDay(),
+            $lastIncompleted = CarbonImmutable::yesterday(),
         );
 
         $this->shouldBeAnInstanceOf(Habit::class);
