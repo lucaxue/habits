@@ -79,7 +79,8 @@ class HabitModelFactory
     ) : Habit {
 
         $attributes = array_merge($overrides, [
-            'lastIncompleted' => CarbonImmutable::now(),
+            'lastCompleted' => null,
+            'streak' => new HabitStreak(),
         ]);
 
         return self::create($attributes);
@@ -91,8 +92,7 @@ class HabitModelFactory
         return new class($count) {
             public function __construct(
                 private int $count
-            ) {
-            }
+            ) {}
 
             /**
              * @param array $overrides

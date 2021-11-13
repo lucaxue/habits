@@ -3,9 +3,9 @@
 namespace HabitTracking\Domain;
 
 use Carbon\CarbonImmutable;
-use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
-use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
-use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
 
 class Habit implements \JsonSerializable
 {
@@ -14,12 +14,10 @@ class Habit implements \JsonSerializable
         private int $authorId,
         private string $name,
         private HabitFrequency $frequency,
-        private ?HabitStreak $streak = null,
+        private ? HabitStreak $streak = null,
         private bool $stopped = false,
-        private ?CarbonImmutable $lastCompleted = null,
-        private ?CarbonImmutable $lastIncompleted = null,
+        private ? CarbonImmutable $lastCompleted = null,
     ) {
-
         $this->streak = $streak ?? new HabitStreak();
     }
 
@@ -36,21 +34,21 @@ class Habit implements \JsonSerializable
     public function markAsComplete() : void
     {
         if ($this->completed()) {
-            throw new HabitAlreadyCompletedException();
+            throw new HabitAlreadyCompleted();
         }
 
-        $this->lastCompleted = new CarbonImmutable();
-        $this->streak()->increment();
+        $this->streak = $this->streak()->increment();
+        $this->lastCompleted = CarbonImmutable::now();
     }
 
     public function markAsIncomplete() : void
     {
         if ( ! $this->completed()) {
-            throw new HabitAlreadyIncompletedException();
+            throw new HabitAlreadyIncompleted();
         }
 
-        $this->lastIncompleted = new CarbonImmutable();
-        $this->streak()->decrement();
+        $this->streak = $this->streak()->decrement();
+        $this->lastCompleted = null;
     }
 
     public function edit(
@@ -65,7 +63,7 @@ class Habit implements \JsonSerializable
     public function stop() : void
     {
         if ($this->stopped()) {
-            throw new HabitStoppedException();
+            throw new HabitAlreadyStopped();
         }
 
         $this->stopped = true;
@@ -96,29 +94,14 @@ class Habit implements \JsonSerializable
         return $this->streak;
     }
 
-    public function lastIncompleted() : ?CarbonImmutable
-    {
-        return $this->lastIncompleted;
-    }
-
-    public function lastCompleted() : ?CarbonImmutable
+    public function lastCompleted() : ? CarbonImmutable
     {
         return $this->lastCompleted;
     }
 
     public function completed() : bool
     {
-        if ( ! $this->lastCompleted()) {
-            return false;
-        }
-
-        if ( ! $this->lastIncompleted()) {
-            return $this->lastCompleted()->isToday();
-        }
-
-        return
-            $this->lastCompleted()->isToday() &&
-            $this->lastCompleted()->gt($this->lastIncompleted());
+        return null !== $this->lastCompleted();
     }
 
     public function stopped() : bool

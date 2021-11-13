@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -18,11 +18,9 @@ it('retrieves all habits by its author', function () {
 
     expect($results)
         ->toHaveCount(10)
-        ->each(
-            fn ($r) => $r
+        ->each(fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($habits->pluck('id'))
-        );
+            ->id()->toString()->toBeIn($habits->pluck('id')));
 });
 
 it('retrieves all habits for today by its author', function () {
@@ -46,12 +44,10 @@ it('retrieves all habits for today by its author', function () {
 
     expect($results)
         ->toHaveCount(5)
-        ->each(
-            fn ($r) => $r
+        ->each(fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($todays->pluck('id'))
-            ->id()->toString()->not->toBeIn($tomorrows->pluck('id'))
-        );
+            ->id()->toString()->not->toBeIn($tomorrows->pluck('id')));
 });
 
 it("does not retrieve another author's habits", function () {
@@ -62,12 +58,10 @@ it("does not retrieve another author's habits", function () {
 
     expect($results)
         ->toHaveCount(10)
-        ->each(
-            fn ($r) => $r
+        ->each(fn ($r) => $r
             ->toBeInstanceOf(Habit::class)
             ->id()->toString()->toBeIn($mine->pluck('id'))
-            ->id()->toString()->not->toBeIn($notMine->pluck('id'))
-        );
+            ->id()->toString()->not->toBeIn($notMine->pluck('id')));
 });
 
 it('finds a habit', function () {
@@ -87,7 +81,7 @@ it('throws a not found exception when finding non existent habit', function () {
     $id = HabitId::generate();
 
     expect(fn () => resolve(EloquentHabitRepository::class)->find($id))
-        ->toThrow(HabitNotFoundException::class, $id->toString());
+        ->toThrow(HabitNotFound::class, $id->toString());
 });
 
 it('persists a habit', function () {
@@ -102,7 +96,6 @@ it('persists a habit', function () {
         'streak' => $habit->streak()->toString(),
         'frequency->type' => $habit->frequency()->type(),
         'last_completed' => null,
-        'last_incompleted' => null,
         'stopped' => $habit->stopped(),
     ]);
     $this->assertEquals(

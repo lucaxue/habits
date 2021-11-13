@@ -3,9 +3,9 @@
 namespace Spec\HabitTracking\Domain;
 
 use Carbon\CarbonImmutable;
-use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
-use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
-use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\HabitId;
@@ -24,7 +24,6 @@ class HabitSpec extends ObjectBehavior
             $streak = new HabitStreak(),
             $stopped = true,
             $lastCompleted = CarbonImmutable::now(),
-            $lastIncompleted = CarbonImmutable::now()->subDay(),
         );
 
         $this->shouldBeAnInstanceOf(Habit::class);
@@ -36,7 +35,6 @@ class HabitSpec extends ObjectBehavior
         $this->streak()->shouldBe($streak);
         $this->stopped()->shouldBe($stopped);
         $this->lastCompleted()->shouldBe($lastCompleted);
-        $this->lastIncompleted()->shouldBe($lastIncompleted);
         $this->completed()->shouldBe(true);
     }
 
@@ -57,7 +55,6 @@ class HabitSpec extends ObjectBehavior
         $this->frequency()->shouldBe($frequency);
         $this->streak()->isEmpty()->shouldBe(true);
         $this->lastCompleted()->shouldBe(null);
-        $this->lastIncompleted()->shouldBe(null);
         $this->completed()->shouldBe(false);
         $this->stopped()->shouldBe(false);
     }
@@ -103,7 +100,7 @@ class HabitSpec extends ObjectBehavior
         ]);
 
         $this->markAsComplete();
-        $this->shouldThrow(HabitAlreadyCompletedException::class)
+        $this->shouldThrow(HabitAlreadyCompleted::class)
             ->during('markAsComplete');
     }
 
@@ -116,7 +113,7 @@ class HabitSpec extends ObjectBehavior
             new HabitFrequency('daily'),
         ]);
 
-        $this->shouldThrow(HabitAlreadyIncompletedException::class)
+        $this->shouldThrow(HabitAlreadyIncompleted::class)
             ->during('markAsIncomplete');
     }
 
@@ -162,7 +159,7 @@ class HabitSpec extends ObjectBehavior
 
         $this->stop();
 
-        $this->shouldThrow(HabitStoppedException::class)
+        $this->shouldThrow(HabitAlreadyStopped::class)
             ->duringStop();
     }
 

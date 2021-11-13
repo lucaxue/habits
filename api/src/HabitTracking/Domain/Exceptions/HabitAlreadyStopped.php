@@ -2,7 +2,7 @@
 
 namespace HabitTracking\Domain\Exceptions;
 
-class HabitStoppedException extends \Exception
+class HabitAlreadyStopped extends \Exception
 {
     public function __construct()
     {
