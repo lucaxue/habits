@@ -4,7 +4,7 @@ namespace HabitTracking\Domain\Exceptions;
 
 use HabitTracking\Domain\HabitId;
 
-class HabitNotFoundException extends \Exception
+class HabitNotFound extends \Exception
 {
     public function __construct(HabitId $id)
     {

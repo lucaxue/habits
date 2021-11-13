@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -87,7 +87,7 @@ it('throws a not found exception when finding non existent habit', function () {
     $id = HabitId::generate();
 
     expect(fn () => resolve(EloquentHabitRepository::class)->find($id))
-        ->toThrow(HabitNotFoundException::class, $id->toString());
+        ->toThrow(HabitNotFound::class, $id->toString());
 });
 
 it('persists a habit', function () {

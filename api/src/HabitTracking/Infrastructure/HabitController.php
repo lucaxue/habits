@@ -4,11 +4,11 @@ namespace HabitTracking\Infrastructure;
 
 use App\Http\Controllers\Controller;
 use HabitTracking\Application\HabitService;
-use HabitTracking\Domain\Exceptions\HabitAlreadyCompletedException;
-use HabitTracking\Domain\Exceptions\HabitAlreadyIncompletedException;
-use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
-use HabitTracking\Domain\Exceptions\HabitStoppedException;
+use HabitTracking\Domain\Exceptions\HabitAlreadyCompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyIncompleted;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthor;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
+use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,10 +51,10 @@ class HabitController extends Controller
         try {
             $habit = $this->service->retrieveHabit($id, $this->auth->id());
 
-        } catch (HabitNotFoundException $e) {
+        } catch (HabitNotFound $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (HabitDoesNotBelongToAuthorException $e) {
+        } catch (HabitDoesNotBelongToAuthor $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -73,10 +73,10 @@ class HabitController extends Controller
                 $request->get('frequency'),
                 $this->auth->id()
             );
-        } catch (HabitNotFoundException $e) {
+        } catch (HabitNotFound $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (HabitDoesNotBelongToAuthorException $e) {
+        } catch (HabitDoesNotBelongToAuthor $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
         }
 
@@ -88,13 +88,13 @@ class HabitController extends Controller
         try {
             $habit = $this->service->markHabitAsComplete($id, $this->auth->id());
 
-        } catch (HabitNotFoundException $e) {
+        } catch (HabitNotFound $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (HabitDoesNotBelongToAuthorException $e) {
+        } catch (HabitDoesNotBelongToAuthor $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
 
-        } catch (HabitAlreadyCompletedException $e) {
+        } catch (HabitAlreadyCompleted $e) {
             return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -106,13 +106,13 @@ class HabitController extends Controller
         try {
             $habit = $this->service->markHabitAsIncomplete($id, $this->auth->id());
 
-        } catch (HabitNotFoundException $e) {
+        } catch (HabitNotFound $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (HabitDoesNotBelongToAuthorException $e) {
+        } catch (HabitDoesNotBelongToAuthor $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
 
-        } catch (HabitAlreadyIncompletedException $e) {
+        } catch (HabitAlreadyIncompleted $e) {
             return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -124,13 +124,13 @@ class HabitController extends Controller
         try {
             $this->service->stopHabit($id, $this->auth->id());
 
-        } catch (HabitNotFoundException $e) {
+        } catch (HabitNotFound $e) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
 
-        } catch (HabitDoesNotBelongToAuthorException $e) {
+        } catch (HabitDoesNotBelongToAuthor $e) {
             return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
 
-        } catch (HabitStoppedException $e) {
+        } catch (HabitAlreadyStopped $e) {
             return response()->json(
                 ['error' => ['message' => $e->getMessage()]],
                 JsonResponse::HTTP_BAD_REQUEST

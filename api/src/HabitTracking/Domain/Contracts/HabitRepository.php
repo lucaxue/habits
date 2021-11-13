@@ -2,7 +2,7 @@
 
 namespace HabitTracking\Domain\Contracts;
 
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
@@ -18,10 +18,10 @@ interface HabitRepository
 
     /**
      * @param HabitId $id
-     * @return Habit|null
-     * @throws HabitNotFoundException
+     * @return ?Habit
+     * @throws HabitNotFound
      */
-    public function find(HabitId $id) : ?Habit;
+    public function find(HabitId $id) : ? Habit;
 
     public function save(Habit $habit) : void;
 }

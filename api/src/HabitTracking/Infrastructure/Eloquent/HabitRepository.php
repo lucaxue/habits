@@ -3,7 +3,7 @@
 namespace HabitTracking\Infrastructure\Eloquent;
 
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -36,7 +36,7 @@ class HabitRepository implements HabitRepositoryInterface
         $habit = EloquentHabit::find($id);
 
         if ( ! $habit) {
-            throw new HabitNotFoundException($id);
+            throw new HabitNotFound($id);
         }
 
         return $habit->toModel();
