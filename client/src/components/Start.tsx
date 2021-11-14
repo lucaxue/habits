@@ -6,31 +6,31 @@ type Weekdays = { value: Day; label: string }[];
 const weekdays: Weekdays = [
   {
     value: 0,
-    label: 'Monday',
+    label: 'Sunday',
   },
   {
     value: 1,
-    label: 'Tuesday',
+    label: 'Monday',
   },
   {
     value: 2,
-    label: 'Wednesday',
+    label: 'Tuesday',
   },
   {
     value: 3,
-    label: 'Thursday',
+    label: 'Wednesday',
   },
   {
     value: 4,
-    label: 'Friday',
+    label: 'Thursday',
   },
   {
     value: 5,
-    label: 'Saturday',
+    label: 'Friday',
   },
   {
     value: 6,
-    label: 'Sunday',
+    label: 'Saturday',
   },
 ];
 
@@ -41,9 +41,12 @@ export const Start: React.FC = () => {
     days: null,
   });
 
+  const [created, setCreated] = useState<Habit>();
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     const { data } = await axios.post<Habit>('api/habits', { name, frequency });
+    setCreated(data);
   };
 
   return (
@@ -107,6 +110,7 @@ export const Start: React.FC = () => {
         </div>
       </form>
       <pre>{JSON.stringify({ name, frequency }, null, 2)}</pre>
+      <pre>{JSON.stringify(created, null, 2)}</pre>
     </div>
   );
 };
