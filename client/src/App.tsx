@@ -3,6 +3,7 @@ import { Tracking } from './components/Tracking';
 import { Login } from './components/Login';
 import { useAuth } from './hooks/useAuth';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Habits } from './components/Habits';
 
 export const App: React.FC = () => {
   const { authenticated } = useAuth();
@@ -15,7 +16,7 @@ export const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path='/tracking' element={<Tracking />} />
-        <Route path='/habits' element={<p>Show all habits...</p>} />
+        <Route path='/habits' element={<Habits />} />
         <Route path='/add' element={<p>Start new habit...</p>} />
         <Route path='/profile' element={<p>Profile... Logout...</p>} />
       </Routes>
