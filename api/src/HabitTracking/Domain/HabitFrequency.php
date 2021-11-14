@@ -15,11 +15,11 @@ class HabitFrequency implements \JsonSerializable
     public const SATURDAY = CarbonImmutable::SATURDAY;
 
     private string $type;
-    private ?array $days;
+    private ? array $days;
 
     public function __construct(
         string $type,
-        ?array $days = null
+        ? array $days = null
     ) {
 
         if (( ! in_array($type, ['daily', 'weekly'])) ||
@@ -37,7 +37,7 @@ class HabitFrequency implements \JsonSerializable
         return $this->type;
     }
 
-    public function days() : ?array
+    public function days() : ? array
     {
         return $this->days;
     }

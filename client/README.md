@@ -1,0 +1,27 @@
+# Habits Web + Mobile (iOS) Client
+
+## Prerequisites
+
+### Web 
+
+* yarn
+* node
+
+### iOS
+
+* Xcode (iOS development)
+* gem
+* cocoapods
+
+## Development
+
+* To run the web client, run:
+	```bash
+	yarn start
+	```
+* To run the iOS client, make sure you are running the web client first (to ensure live reloading), then run the following command:
+
+	```bash
+	npx cap run ios
+	```
+	Next, pick your iOS simulator and open your app.

@@ -3,7 +3,7 @@
 namespace HabitTracking\Infrastructure\Eloquent;
 
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
@@ -18,9 +18,7 @@ class HabitRepository implements HabitRepositoryInterface
 
         $query = EloquentHabit::where('author_id', $authorId);
 
-        if (array_key_exists('forToday', $filters) &&
-            $filters['forToday']
-        ) {
+        if ($filters['forToday'] ?? false) {
             $query->where(function ($query) {
                 $query
                     ->whereJsonContains('frequency->days', [now()->dayOfWeek])
@@ -31,12 +29,12 @@ class HabitRepository implements HabitRepositoryInterface
         return $query->get()->map->toModel();
     }
 
-    public function find(HabitId $id) : ?Habit
+    public function find(HabitId $id) : ? Habit
     {
         $habit = EloquentHabit::find($id);
 
         if ( ! $habit) {
-            throw new HabitNotFoundException($id);
+            throw new HabitNotFound($id);
         }
 
         return $habit->toModel();
@@ -52,7 +50,6 @@ class HabitRepository implements HabitRepositoryInterface
             'streak' => $habit->streak(),
             'frequency' => $habit->frequency(),
             'last_completed' => $habit->lastCompleted(),
-            'last_incompleted' => $habit->lastIncompleted(),
             'stopped' => $habit->stopped(),
         ]);
     }

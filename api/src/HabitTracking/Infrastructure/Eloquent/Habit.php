@@ -23,6 +23,8 @@ class Habit extends Model
 
     public $incrementing = false;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id',
         'author_id',
@@ -37,7 +39,6 @@ class Habit extends Model
     protected $casts = [
         'frequency' => 'object',
         'last_completed' => 'date',
-        'last_incompleted' => 'date',
         'stopped' => 'boolean',
     ];
 
@@ -51,7 +52,6 @@ class Habit extends Model
             HabitStreak::fromString($this->streak),
             $this->stopped,
             $this->last_completed,
-            $this->last_incompleted,
         );
     }
 

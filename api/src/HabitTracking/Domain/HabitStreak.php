@@ -2,36 +2,30 @@
 
 namespace HabitTracking\Domain;
 
+use Assert\Assertion;
+
 class HabitStreak implements \JsonSerializable
 {
-    private int $years;
-    private int $months;
-    private int $days;
-
     public function __construct(
-        int $years = 0,
-        int $months = 0,
-        int $days = 0
+        private int $years = 0,
+        private int $months = 0,
+        private int $days = 0,
     ) {
-
-        if ($days >= 30 || $months >= 12) {
-            throw new \InvalidArgumentException();
-        }
-
-        $this->years = $years;
-        $this->months = $months;
-        $this->days = $days;
+        Assertion::lessThan($days, 30);
+        Assertion::lessThan($months, 12);
     }
 
     public static function fromString(string $streak) : self
     {
-        if ( ! preg_match('/P(\d+)Y(\d+)M(\d+)D/',$streak,$matches)) {
+        $pattern = '/^P(\d+)Y(\d+)M(\d+)D$/';
+
+        if ( ! preg_match($pattern, $streak, $matches)) {
             throw new \InvalidArgumentException();
         }
 
         [, $years, $months, $days] = $matches;
 
-        return new self(...compact('years', 'months', 'days'));
+        return new self($years, $months, $days);
     }
 
     public function years() : int
@@ -57,43 +51,42 @@ class HabitStreak implements \JsonSerializable
             $this->days() === 0;
     }
 
-    public function increment() : void
+    public function increment() : self
     {
         if ($this->isEndOfYear()) {
-            $this->days = $this->months = 0;
-            $this->years++;
-            return;
+            return new self($this->years() + 1, 0, 0);
         }
 
         if ($this->isEndOfMonth()) {
-            $this->days = 0;
-            $this->months++;
-            return;
+            return new self($this->years(), $this->months() + 1, 0);
         }
 
-        $this->days++;
+        return new self(
+            $this->years(),
+            $this->months(),
+            $this->days() + 1,
+        );
     }
 
-    public function decrement() : void
+    public function decrement() : self
     {
         if ($this->isEmpty()) {
             throw new \Exception("Cannot decrement {$this->toString()}");
         }
 
         if ($this->isStartOfYear()) {
-            $this->days = 29;
-            $this->months = 11;
-            $this->years--;
-            return;
+            return new self($this->years() - 1, 11, 29);
         }
 
         if ($this->isStartOfMonth()) {
-            $this->days = 29;
-            $this->months--;
-            return;
+            return new self($this->years(), $this->months() - 1, 29);
         }
 
-        $this->days--;
+        return new self(
+            $this->years(),
+            $this->months(),
+            $this->days() - 1
+        );
     }
 
     public function toString() : string
@@ -119,7 +112,7 @@ class HabitStreak implements \JsonSerializable
             $this->months() === 0;
     }
 
-    private function isStartOfMonth()
+    private function isStartOfMonth() : bool
     {
         return
             ! $this->isEmpty() &&

@@ -3,8 +3,8 @@
 use App\Models\User;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Contracts\HabitRepository;
-use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthorException;
-use HabitTracking\Domain\Exceptions\HabitNotFoundException;
+use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthor;
+use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\HabitId;
@@ -189,7 +189,7 @@ it("cannot manage another user's habit", function () {
     ]);
 
     $actions->each(
-        fn ($action) => expect($action)->toThrow(HabitDoesNotBelongToAuthorException::class)
+        fn ($action) => expect($action)->toThrow(HabitDoesNotBelongToAuthor::class)
     );
 });
 
@@ -227,13 +227,13 @@ class CollectionHabitRepository implements HabitRepository
     /**
      * @param HabitId $id
      * @return Habit|null
-     * @throws HabitNotFoundException
+     * @throws HabitNotFound
      */
     public function find(HabitId $id) : ?Habit
     {
         return
             $this->habits->first(fn (Habit $h) => $h->id()->equals($id)) ??
-            throw new HabitNotFoundException($id);
+            throw new HabitNotFound($id);
     }
 
     public function save(Habit $habit) : void
