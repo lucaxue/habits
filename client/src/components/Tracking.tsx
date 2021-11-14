@@ -1,16 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-
-interface Habit {
-  id: string;
-  name: string;
-  streak: string;
-  completed: boolean;
-  frequency: {
-    type: string;
-    days?: string;
-  };
-}
+import { Habit } from '../types';
 
 export const Tracking: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -35,7 +25,10 @@ export const Tracking: React.FC = () => {
   return (
     <div className='pt-10 mt-20 bg-white rounded-t-3xl'>
       {habits.map(habit => (
-        <div key={habit.id} className='flex-row items-center w-full px-12 py-6'>
+        <div
+          key={habit.id}
+          className='flex items-center w-full px-12 py-6 border-2 border-red-500'
+        >
           <input
             type='checkbox'
             className='mr-5'
