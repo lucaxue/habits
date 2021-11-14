@@ -91,7 +91,7 @@ export const Start: React.FC = () => {
                     ...frequency,
                     days: e.target.checked
                       ? [...(frequency.days ?? []), w.value]
-                      : [...(frequency.days ?? []).filter(d => d !== w.value)],
+                      : (frequency.days ?? []).filter(d => d !== w.value),
                   })
                 }
               />
