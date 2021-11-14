@@ -5,6 +5,7 @@ import { useAuth } from './hooks/useAuth';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Habits } from './components/Habits';
 import { Start } from './components/Start';
+import { Profile } from './components/Profile';
 
 export const App: React.FC = () => {
   const { authenticated } = useAuth();
@@ -19,7 +20,7 @@ export const App: React.FC = () => {
         <Route path='/tracking' element={<Tracking />} />
         <Route path='/habits' element={<Habits />} />
         <Route path='/add' element={<Start />} />
-        <Route path='/profile' element={<p>Profile... Logout...</p>} />
+        <Route path='/profile' element={<Profile/>} />
       </Routes>
 
       <nav className='fixed bottom-0 w-full'>
