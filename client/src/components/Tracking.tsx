@@ -12,7 +12,7 @@ interface Habit {
   };
 }
 
-export const Habits: React.FC = () => {
+export const Tracking: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
@@ -33,9 +33,9 @@ export const Habits: React.FC = () => {
   }
 
   return (
-    <div className='rounded-t-3xl mt-20 pt-10 bg-white'>
+    <div className='pt-10 mt-20 bg-white rounded-t-3xl'>
       {habits.map(habit => (
-        <div key={habit.id} className='flex-row py-6 px-12 w-full items-center'>
+        <div key={habit.id} className='flex-row items-center w-full px-12 py-6'>
           <input
             type='checkbox'
             className='mr-5'
@@ -47,7 +47,7 @@ export const Habits: React.FC = () => {
             }
           />
           <div>
-            <p className='font-bold text-lg w-2/3'>{habit.name}</p>
+            <p className='w-2/3 text-lg font-bold'>{habit.name}</p>
             <p className='text-sm'>{habit.streak}</p>
           </div>
         </div>
