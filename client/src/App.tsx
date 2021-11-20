@@ -23,8 +23,8 @@ export const App: React.FC = () => {
         <Route path='/profile' element={<Profile/>} />
       </Routes>
 
-      <nav className='fixed bottom-0 w-full'>
-        <ul className='flex justify-between w-full p-4 border-2 border-red-500'>
+      <nav className='fixed bottom-0 w-full bg-white shadow-2xl rounded-t-3xl'>
+        <ul className='flex justify-between w-full p-4'>
           <li><Link to='/tracking'>Tracking</Link></li>
           <li><Link to='/habits'>Habits</Link></li>
           <li><Link to='/add'>Add</Link></li>
