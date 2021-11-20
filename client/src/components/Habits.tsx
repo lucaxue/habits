@@ -13,14 +13,17 @@ export const Habits: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className='fixed bottom-0 w-full py-8 pb-24 overflow-auto shadow-2xl h-1/2 rounded-t-3xl bg-gradient-to-b from-white via-white to-gray-50'>
       {habits.map(habit => (
-        <div
-          key={habit.id}
-          className='flex-col items-center w-full px-12 py-6 border-2 border-red-500'
-        >
-          <p className='w-2/3 text-lg font-bold'>{habit.name}</p>
-          <p className='text-sm'>{habit.streak}</p>
+        <div key={habit.id} className='flex items-center w-full px-8 py-4'>
+          <div>
+            <p className='mb-1 text-sm font-semibold text-gray-700'>
+              {habit.name}
+            </p>
+            <p className='text-xs font-semibold text-gray-400'>
+              {habit.streak}
+            </p>
+          </div>
         </div>
       ))}
     </div>
