@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 interface Auth {
-  user: {} | null;
+  user: { name: string } | null;
   authenticated: boolean;
   register: (
     name: string,
@@ -39,13 +39,13 @@ export const AuthProvider: React.FC = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 
 interface AuthenticatedResponse {
-  user: {};
+  user: { name: string };
   token: string;
 }
 
 function useProvideAuth(): Auth {
   const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState<{} | null>(null);
+  const [user, setUser] = useState<{ name: string } | null>(null);
 
   async function register(
     name: string,
