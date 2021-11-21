@@ -61,13 +61,21 @@ export const Start: React.FC = () => {
               <div className='grid px-1 place-items-center' key={w.value}>
                 <label
                   htmlFor={w.label}
-                  className='mb-1 text-xs font-semibold text-gray-700 uppercase'
+                  className={`mb-1 text-xs font-semibold uppercase ${
+                    frequency.type === 'daily'
+                      ? 'text-gray-300'
+                      : 'text-gray-700'
+                  }`}
                 >
                   {w.label.slice(0, 3)}
                 </label>
                 <input
                   disabled={frequency.type === 'daily'}
-                  className='w-8 h-8 border-gray-300 rounded-lg shadow'
+                  className={`w-8 h-8 rounded-lg shadow ${
+                    frequency.type === 'daily'
+                      ? 'border-gray-100'
+                      : 'border-gray-300'
+                  }`}
                   type='checkbox'
                   name={w.label}
                   checked={frequency.days?.includes(w.value)}
