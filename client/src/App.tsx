@@ -1,8 +1,14 @@
 import React from 'react';
-import { Tracking } from './components/Tracking';
-import { Login } from './components/Login';
 import { useAuth } from './hooks/useAuth';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Routes,
+  Route,
+  Link,
+} from 'react-router-dom';
+import { Login } from './components/Login';
+import { Tracking } from './components/Tracking';
 import { Habits } from './components/Habits';
 import { Start } from './components/Start';
 import { Profile } from './components/Profile';
@@ -19,14 +25,15 @@ export const App: React.FC = () => {
       <Routes>
         <Route path='/tracking' element={<Tracking />} />
         <Route path='/habits' element={<Habits />} />
-        <Route path='/add' element={<Start />} />
+        <Route path='/start' element={<Start />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/' element={<Navigate to='/tracking' />} />
       </Routes>
 
       <nav className='fixed bottom-0 w-full'>
         <Link
           className='absolute z-10 px-4 pt-4 pb-3 transform -translate-x-1/2 bg-indigo-500 rounded-full -top-6 left-1/2'
-          to='/add'
+          to='/start'
         >
           <span className='p-0 m-0 text-white fill-current material-icons'>
             add_task
