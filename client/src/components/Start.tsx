@@ -1,38 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Day, Frequency, Habit } from '../types';
-
-type Weekdays = { value: Day; label: string }[];
-const weekdays: Weekdays = [
-  {
-    value: 0,
-    label: 'Sunday',
-  },
-  {
-    value: 1,
-    label: 'Monday',
-  },
-  {
-    value: 2,
-    label: 'Tuesday',
-  },
-  {
-    value: 3,
-    label: 'Wednesday',
-  },
-  {
-    value: 4,
-    label: 'Thursday',
-  },
-  {
-    value: 5,
-    label: 'Friday',
-  },
-  {
-    value: 6,
-    label: 'Saturday',
-  },
-];
+import { WEEKDAYS } from '../utils/constants';
+import { Frequency, Habit } from '../utils/types';
 
 export const Start: React.FC = () => {
   const [name, setName] = useState('');
@@ -88,7 +57,7 @@ export const Start: React.FC = () => {
           </select>
 
           <div className='flex justify-center py-2 overflow-auto'>
-            {weekdays.map(w => (
+            {WEEKDAYS.map(w => (
               <div className='grid px-1 place-items-center' key={w.value}>
                 <label
                   htmlFor={w.label}
