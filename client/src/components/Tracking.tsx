@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Habit } from '../types';
+import { streakMessage } from '../utils/helpers';
+import { Habit } from '../utils/types';
 
 export const Tracking: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -31,29 +32,31 @@ export const Tracking: React.FC = () => {
           Hi, <strong>{user?.name}</strong>
         </h1>
       </div>
-      <div className='fixed bottom-0 w-full py-8 pb-24 overflow-auto shadow-2xl h-1/2 rounded-t-3xl bg-gradient-to-b from-white via-white to-gray-50'>
-        {habits.map(habit => (
-          <div key={habit.id} className='flex items-center w-full px-8 py-4'>
-            <input
-              type='checkbox'
-              className='w-6 h-6 mr-5 border-gray-300 rounded-full'
-              checked={habit.completed}
-              onChange={() =>
-                habit.completed
-                  ? incompleteHabit(habit.id)
-                  : completeHabit(habit.id)
-              }
-            />
-            <div>
-              <p className='mb-1 text-sm font-semibold text-gray-700'>
-                {habit.name}
-              </p>
-              <p className='text-xs font-semibold text-gray-400'>
-                {habit.streak}
-              </p>
+      <div className='fixed bottom-0 w-full py-8 overflow-auto shadow-2xl pb-28 h-1/2 rounded-t-3xl bg-gradient-to-b from-white via-white to-gray-50'>
+        {habits
+          .sort((a, b) => +a.completed - +b.completed)
+          .map(habit => (
+            <div key={habit.id} className='flex items-center w-full px-8 py-4'>
+              <input
+                type='checkbox'
+                className='w-6 h-6 mr-5 border-gray-300 rounded-full'
+                checked={habit.completed}
+                onChange={() =>
+                  habit.completed
+                    ? incompleteHabit(habit.id)
+                    : completeHabit(habit.id)
+                }
+              />
+              <div>
+                <p className='mb-1 text-sm font-semibold text-gray-700'>
+                  {habit.name}
+                </p>
+                <p className='text-xs font-semibold text-gray-400'>
+                  {streakMessage(habit.streak)}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
