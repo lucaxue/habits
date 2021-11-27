@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export const Register: React.FC = () => {
+  const [name, setName] = useState('John Doe');
   const [email, setEmail] = useState('john@example.com');
   const [password, setPassword] = useState('password');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('password');
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -11,22 +15,37 @@ export const Register: React.FC = () => {
       <form
         className='grid w-full p-8'
         onSubmit={async e => {
-          // register
+          e.preventDefault();
+          await register(name, email, password, passwordConfirmation, 'mobile');
           navigate('/');
         }}
       >
-        <h1 className='mx-auto mb-8 text-gray-700'>Create your account</h1>
+        <h1 className='mx-auto mb-8 text-xl font-semibold text-gray-700'>
+          Create your account
+        </h1>
+        <input
+          className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
+          type='text'
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='email'
           value={email}
-          onChange={({ target }) => setEmail(target.value)}
+          onChange={e => setEmail(e.target.value)}
         />
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='password'
           value={password}
-          onChange={({ target }) => setPassword(target.value)}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <input
+          className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
+          type='password'
+          value={passwordConfirmation}
+          onChange={e => setPasswordConfirmation(e.target.value)}
         />
         <button
           className='py-3 mt-4 font-semibold text-white bg-indigo-500 rounded shadow'
@@ -34,6 +53,12 @@ export const Register: React.FC = () => {
         >
           Create Account
         </button>
+        <span className='mx-auto mt-4 text-gray-700'>
+          Already have an account?{' '}
+          <Link className='font-semibold text-gray-700' to='/login'>
+            Log in
+          </Link>
+        </span>
       </form>
     </div>
   );
