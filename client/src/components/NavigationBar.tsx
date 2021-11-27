@@ -27,9 +27,9 @@ export const NavigationBar: React.FC = () => (
         </Link>
       </li>
       <li>
-        <Link to='/profile'>
+        <Link to='/stats'>
           <span className='text-indigo-600 fill-current material-icons'>
-            face
+            query_stats
           </span>
         </Link>
       </li>
