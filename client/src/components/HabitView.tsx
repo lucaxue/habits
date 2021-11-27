@@ -4,6 +4,7 @@ import { WEEKDAYS } from '../utils/constants';
 import { streakMessage } from '../utils/helpers';
 import { Frequency, Habit } from '../utils/types';
 import { HabitForm } from './HabitForm';
+import { Modal } from './Modal';
 
 interface Props {
   habit: Habit;
@@ -12,6 +13,7 @@ interface Props {
 
 export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
   const [editing, setEditing] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const [name, setName] = useState(habit.name);
   const [frequency, setFrequency] = useState<Frequency>(habit.frequency);
@@ -27,58 +29,72 @@ export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
   };
 
   return (
-    <div className='grid p-8'>
-      <h1 className='mb-2 text-3xl font-semibold text-gray-700'>
-        {name.length === 0 ? 'No Title' : name}
-      </h1>
-      <p className='mb-8 text-xs font-semibold text-gray-700 uppercase'>
-        {habit.streak ? streakMessage(habit.streak) : ''}
-      </p>
+    <>
+      <Modal
+        backgroundClassName='rounded-3xl'
+        className='w-11/12 bg-white border-2 border-red-500 shadow-2xl h-1/3 rounded-2xl'
+        showModal={showConfirmationModal}
+        setShowModal={setShowConfirmationModal}
+      >
+        lalala
+      </Modal>
 
-      {!editing ? (
-        <>
-          <p className='text-gray-700 capitalize'>
-            <strong>Frequency</strong>: {frequency.type}
-          </p>
-          {frequency.days && (
-            <p className='text-gray-700'>
-              <strong>Days: </strong>
-              {frequency.days
-                .map(d => WEEKDAYS.find(w => w.value === d)?.label)
-                .join(', ')}
+      <div className='grid p-8'>
+        <h1 className='mb-2 text-3xl font-semibold text-gray-700'>
+          {name.length === 0 ? 'No Title' : name}
+        </h1>
+        <p className='mb-8 text-xs font-semibold text-gray-700 uppercase'>
+          {habit.streak ? streakMessage(habit.streak) : ''}
+        </p>
+
+        {!editing ? (
+          <>
+            <p className='text-gray-700 capitalize'>
+              <strong>Frequency</strong>: {frequency.type}
             </p>
-          )}
-        </>
-      ) : (
-        <HabitForm
-          {...{
-            handleSubmit,
-            frequency,
-            setFrequency,
-            name,
-            setName,
-            editing,
-          }}
-        />
-      )}
+            {frequency.days && (
+              <p className='text-gray-700'>
+                <strong>Days: </strong>
+                {frequency.days
+                  .map(d => WEEKDAYS.find(w => w.value === d)?.label)
+                  .join(', ')}
+              </p>
+            )}
+          </>
+        ) : (
+          <HabitForm
+            {...{
+              handleSubmit,
+              frequency,
+              setFrequency,
+              name,
+              setName,
+              editing,
+            }}
+          />
+        )}
 
-      <div className='absolute flex justify-end gap-2 mt-12 bottom-10 right-10'>
-        <button className='px-6 py-3 font-semibold text-white bg-red-400 rounded'>
-          Stop
-        </button>
-        <button
-          className={`px-6 py-3 font-semibold text-white rounded ${
-            editing ? 'bg-gray-700' : 'bg-indigo-500'
-          }`}
-          onClick={() => {
-            setEditing(!editing);
-            setFrequency(habit.frequency);
-            setName(habit.name);
-          }}
-        >
-          {!editing ? 'Edit' : 'Cancel'}
-        </button>
+        <div className='absolute flex justify-end gap-2 mt-12 bottom-10 right-10'>
+          <button
+            className='px-6 py-3 font-semibold text-white bg-red-400 rounded'
+            onClick={() => setShowConfirmationModal(!showConfirmationModal)}
+          >
+            Stop
+          </button>
+          <button
+            className={`px-6 py-3 font-semibold text-white rounded ${
+              editing ? 'bg-gray-700' : 'bg-indigo-500'
+            }`}
+            onClick={() => {
+              setEditing(!editing);
+              setFrequency(habit.frequency);
+              setName(habit.name);
+            }}
+          >
+            {!editing ? 'Edit' : 'Cancel'}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

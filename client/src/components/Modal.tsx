@@ -5,6 +5,7 @@ interface Props {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
   className?: string;
+  backgroundClassName?: string;
 }
 
 export const Modal: React.FC<Props> = ({
@@ -12,6 +13,7 @@ export const Modal: React.FC<Props> = ({
   setShowModal,
   children,
   className = '',
+  backgroundClassName = '',
 }) => {
   if (!showModal) {
     return <></>;
@@ -19,7 +21,7 @@ export const Modal: React.FC<Props> = ({
   return (
     <>
       <div
-        className='fixed z-20 w-full min-h-screen bg-gray-800 opacity-40'
+        className={`fixed z-20 w-full h-full bg-gray-700 opacity-40 ${backgroundClassName}`}
         onClick={() => setShowModal(false)}
       />
       <div
