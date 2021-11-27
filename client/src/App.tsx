@@ -6,13 +6,13 @@ import {
   Route,
 } from 'react-router-dom';
 import { RequireAuth } from './components/RequireAuth';
-import { Tracking } from './components/Tracking';
-import { Habits } from './components/Habits';
-import { Start } from './components/Start';
-import { Stats } from './components/Stats';
-import { Profile } from './components/Profile';
-import { Login } from './components/Login';
-import { Register } from './components/Register';
+import { Tracking } from './screens/Tracking';
+import { Habits } from './screens/Habits';
+import { Start } from './screens/Start';
+import { Stats } from './screens/Stats';
+import { Profile } from './screens/Profile';
+import { Login } from './screens/Login';
+import { Register } from './screens/Register';
 
 export const App: React.FC = () => (
   <Router>
