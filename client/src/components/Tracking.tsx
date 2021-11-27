@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { dates, streakMessage } from '../utils/helpers';
 import { useAuth } from '../hooks/useAuth';
-import { streakMessage } from '../utils/helpers';
 import { Habit } from '../utils/types';
 
 export const Tracking: React.FC = () => {
@@ -39,6 +39,27 @@ export const Tracking: React.FC = () => {
             complete.`}
           </p>
         </span>
+      </div>
+      <div className='absolute flex items-center w-full gap-4 px-8 py-8 overflow-auto top-1/3 h-1/6'>
+        {dates(7).map(d => (
+          <div
+            key={d.weekday + d.day}
+            className={`grid p-5 text-center uppercase shadow rounded-xl ${
+              d.isToday
+                ? 'bg-indigo-200 border border-indigo-500 text-indigo-500'
+                : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            <span
+              className={`text-xs ${
+                d.isToday ? 'font-extrabold' : 'font-semibold'
+              }`}
+            >
+              {d.weekday}
+            </span>
+            <span className='text-lg font-bold'>{d.day}</span>
+          </div>
+        ))}
       </div>
       <div className='fixed bottom-0 w-full py-8 overflow-auto shadow-2xl pb-28 h-1/2 rounded-t-3xl bg-gradient-to-b from-white via-white to-gray-50'>
         {habits
