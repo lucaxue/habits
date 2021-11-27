@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export const Login: React.FC = () => {
@@ -38,6 +39,12 @@ export const Login: React.FC = () => {
           >
             Login
           </button>
+          <span className='mx-auto mt-4 text-gray-700'>
+            Don't have an account?{' '}
+            <Link className='font-semibold text-gray-700' to='/register'>
+              Register
+            </Link>
+          </span>
         </form>
       </div>
     </div>

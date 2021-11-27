@@ -11,6 +11,7 @@ import { Habits } from './components/Habits';
 import { Start } from './components/Start';
 import { Profile } from './components/Profile';
 import { Login } from './components/Login';
+import { Register } from './components/Register';
 
 export const App: React.FC = () => (
   <Router>
@@ -23,7 +24,7 @@ export const App: React.FC = () => (
         <Route path='/' element={<Navigate to='/tracking' />} />
       </Route>
       <Route path='/login' element={<Login />} />
-      <Route path='/register' element={<p>Register</p>} />
+      <Route path='/register' element={<Register />} />
     </Routes>
   </Router>
 );
