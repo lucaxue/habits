@@ -93,7 +93,7 @@ export const Start: React.FC = () => {
           </div>
           <button
             type='submit'
-            className='py-4 font-semibold text-white bg-indigo-500 rounded-lg'
+            className='py-3 font-semibold text-white bg-indigo-500 rounded shadow'
           >
             Start
           </button>

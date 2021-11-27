@@ -6,9 +6,9 @@ export const Profile: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <div className='fixed top-0 grid w-full p-8 place-items-center h-1/3'>
+      <div className='fixed top-0 flex items-end justify-center w-full px-8 bg-gradient-to-br from-indigo-400 to-indigo-600 h-1/3 rounded-b-3xl'>
         <img
-          className='p-6 bg-white rounded-full h-44'
+          className='absolute p-6 bg-white rounded-full shadow-xl -bottom-1/3 h-44'
           src={`https://avatars.dicebear.com/api/bottts/${user?.name}.svg?`}
           alt={user?.name}
         />
@@ -18,12 +18,14 @@ export const Profile: React.FC = () => {
         <pre className='px-4 overflow-auto text-xs'>
           {JSON.stringify(user, null, 2)}
         </pre>
-        <button
-          className='font-bold text-white bg-indigo-500 rounded'
-          onClick={async e => logout()}
-        >
-          Logout
-        </button>
+        <div className='w-full'>
+          <button
+            className='w-full py-3 mt-4 font-semibold text-white bg-indigo-500 rounded shadow'
+            onClick={async e => logout()}
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
