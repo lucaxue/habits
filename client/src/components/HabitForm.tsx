@@ -8,6 +8,7 @@ interface Props {
   setFrequency: React.Dispatch<React.SetStateAction<Frequency>>;
   name: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
+  editing?: boolean;
 }
 
 export const HabitForm: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const HabitForm: React.FC<Props> = ({
   setFrequency,
   name,
   setName,
+  editing = false,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -81,7 +83,7 @@ export const HabitForm: React.FC<Props> = ({
           type='submit'
           className='py-3 font-semibold text-white bg-indigo-500 rounded shadow'
         >
-          Start
+          {!editing ? 'Start' : 'Save'}
         </button>
       </div>
     </form>
