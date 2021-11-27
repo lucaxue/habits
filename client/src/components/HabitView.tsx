@@ -32,11 +32,32 @@ export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
     <>
       <Modal
         backgroundClassName='rounded-3xl'
-        className='w-11/12 bg-white border-2 border-red-500 shadow-2xl h-1/3 rounded-2xl'
+        className='w-11/12 p-8 bg-white shadow-2xl flex-column h-2/5 rounded-2xl'
         showModal={showConfirmationModal}
         setShowModal={setShowConfirmationModal}
       >
-        lalala
+        <h1 className='font-bold text-gray-700'>
+          You're about to stop your habit
+        </h1>
+        <p className='mt-4 text-sm text-gray-700'>
+          You will lose your habit and its streaks. Are you sure?
+        </p>
+        <div className='absolute flex justify-end gap-2 bottom-8 right-8'>
+          <button
+            className='px-4 py-3 text-sm font-semibold text-white bg-gray-700 rounded'
+            onClick={() => setShowConfirmationModal(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className='px-4 py-3 text-sm font-semibold text-white bg-red-400 rounded'
+            onClick={() => {
+              // TODO: stop habit
+            }}
+          >
+            Confirm
+          </button>
+        </div>
       </Modal>
 
       <div className='grid p-8'>
