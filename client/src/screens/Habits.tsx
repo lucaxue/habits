@@ -20,7 +20,10 @@ export const Habits: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Modal {...{ showModal, setShowModal }}>
+      <Modal
+        className='w-11/12 bg-white shadow-2xl rounded-3xl h-2/3'
+        {...{ showModal, setShowModal }}
+      >
         {habit && (
           <HabitView
             habit={habit}
