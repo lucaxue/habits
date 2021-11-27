@@ -6,6 +6,9 @@ import { Habit } from '../utils/types';
 export const Habits: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
 
+  const [showModal, setShowModal] = useState(false);
+  const [habit, setHabit] = useState<Habit>();
+
   useEffect(() => {
     (async function getHabits() {
       const { data } = await axios.get<Habit[]>('api/habits');
@@ -15,6 +18,22 @@ export const Habits: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
+      {showModal && (
+        <>
+          <div
+            className='fixed z-20 w-full min-h-screen bg-gray-800 opacity-40'
+            onClick={() => setShowModal(false)}
+          />
+          <div className='fixed z-30 w-11/12 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-2xl top-1/2 left-1/2 rounded-3xl h-2/3'>
+            <div className='grid p-8'>
+              <h1 className='text-xl font-semibold text-gray-700'>
+                {habit?.name}
+              </h1>
+              <pre className='max-w-full'>{JSON.stringify(habit, null, 2)}</pre>
+            </div>
+          </div>
+        </>
+      )}
       <div className='fixed top-0 flex items-center w-full px-8 bg-gradient-to-br from-indigo-400 to-indigo-600 h-1/3 rounded-b-3xl'>
         <h1 className='text-4xl text-white'>
           Check your <strong>habits</strong>
@@ -29,6 +48,10 @@ export const Habits: React.FC = () => {
             .filter(h => h.frequency.type === 'daily')
             .map(habit => (
               <div
+                onClick={() => {
+                  setShowModal(true);
+                  setHabit(habit);
+                }}
                 key={habit.id}
                 className='flex items-center w-full px-8 py-4'
               >
