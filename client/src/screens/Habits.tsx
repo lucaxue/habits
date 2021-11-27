@@ -29,7 +29,7 @@ export const Habits: React.FC = () => {
             habit={habit}
             setHabit={(habit: Habit) => {
               setHabit(habit);
-              setHabits([...habits.filter(h => h.id !== habit.id), habit]);
+              setHabits([habit, ...habits.filter(h => h.id !== habit.id)]);
             }}
           />
         )}
