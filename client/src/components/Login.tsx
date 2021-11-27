@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('john@example.com');
   const [password, setPassword] = useState('password');
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -14,6 +16,7 @@ export const Login: React.FC = () => {
           onSubmit={async e => {
             e.preventDefault();
             await login(email, password, 'mobile');
+            navigate('/');
           }}
         >
           <h1 className='mx-auto mb-8 text-gray-700'>Login with email</h1>
