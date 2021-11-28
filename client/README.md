@@ -2,26 +2,37 @@
 
 ## Prerequisites
 
-### Web 
+### Web
 
-* yarn
-* node
+- yarn
+- node
 
 ### iOS
 
-* Xcode (iOS development)
-* gem
-* cocoapods
+- Xcode (iOS development)
+- gem
+- cocoapods
 
 ## Development
 
-* To run the web client, run:
-	```bash
-	yarn start
-	```
-* To run the iOS client, make sure you are running the web client first (to ensure live reloading), then run the following command:
+- Make a copy of the environment variables
 
-	```bash
-	npx cap run ios
-	```
-	Next, pick your iOS simulator and open your app.
+  ```bash
+  cp .env.example .env
+  ```
+
+- To run the web client, run the following command:
+
+  ```bash
+  yarn start
+  ```
+
+  The app should now be running on `localhost:3000`.
+
+- To run the iOS client, make sure are running the web client first (to ensure live reloading), then run the following command:
+
+  ```bash
+  npx cap run ios
+  ```
+
+  Next, pick your iOS simulator to open the native app.

@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
@@ -57,6 +60,15 @@
         ],
         "lint": [
             "./vendor/bin/php-cs-fixer fix -vvv --show-progress=dots"
+        ],
+        "test:unit": [
+            "./vendor/bin/phpspec --format=pretty run"
+        ],
+        "test:integration": [
+            "./vendor/bin/pest"
+        ],
+        "test": [
+            "./vendor/bin/phpspec --format=pretty run && ./vendor/bin/pest"
         ]
     },
     "extra": {
