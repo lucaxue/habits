@@ -67,12 +67,6 @@ export const Habits: React.FC = () => {
                   </p>
                   <p className='text-xs font-semibold text-gray-400 capitalize'>
                     {habit.frequency.type}
-                    {habit.frequency.days &&
-                      ' - ' +
-                        habit.frequency.days
-                          .map(d => WEEKDAYS.find(w => w.value === d)?.label)
-                          .map(w => w?.slice(0, 3))
-                          .join(', ')}
                   </p>
                 </div>
               </div>
