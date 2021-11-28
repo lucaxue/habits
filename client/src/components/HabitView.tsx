@@ -9,16 +9,23 @@ import { Modal } from './Modal';
 interface Props {
   habit: Habit;
   setHabit: (habit: Habit) => void;
+  deleteHabit: (habit: Habit) => void;
+  closeView: () => void;
 }
 
-export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
+export const HabitView: React.FC<Props> = ({
+  habit,
+  setHabit,
+  deleteHabit,
+  closeView,
+}) => {
   const [editing, setEditing] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const [name, setName] = useState(habit.name);
   const [frequency, setFrequency] = useState<Frequency>(habit.frequency);
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
+  const editHabit: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     const { data } = await axios.put<Habit>(`api/habits/${habit.id}`, {
       name,
@@ -26,6 +33,14 @@ export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
     });
     setHabit(data);
     setEditing(false);
+  };
+
+  const stopHabit: React.FormEventHandler<HTMLFormElement> = async e => {
+    e.preventDefault();
+    await axios.delete(`api/habits/${habit.id}`);
+    deleteHabit(habit);
+    setEditing(false);
+    closeView();
   };
 
   return (
@@ -36,28 +51,28 @@ export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
         showModal={showConfirmationModal}
         setShowModal={setShowConfirmationModal}
       >
-        <h1 className='font-bold text-gray-700'>
-          You're about to stop your habit
-        </h1>
-        <p className='mt-4 text-sm text-gray-700'>
-          You will lose your habit and its streaks. Are you sure?
-        </p>
-        <div className='absolute flex justify-end gap-2 bottom-8 right-8'>
-          <button
-            className='px-4 py-3 text-sm font-semibold text-white bg-gray-700 rounded'
-            onClick={() => setShowConfirmationModal(false)}
-          >
-            Cancel
-          </button>
-          <button
-            className='px-4 py-3 text-sm font-semibold text-white bg-red-400 rounded'
-            onClick={() => {
-              // TODO: stop habit
-            }}
-          >
-            Confirm
-          </button>
-        </div>
+        <form onSubmit={stopHabit}>
+          <h1 className='font-bold text-gray-700'>
+            You're about to stop your habit
+          </h1>
+          <p className='mt-4 text-sm text-gray-700'>
+            You will lose your habit and its streaks. Are you sure?
+          </p>
+          <div className='absolute flex justify-end gap-2 bottom-8 right-8'>
+            <button
+              className='px-4 py-3 text-sm font-semibold text-white bg-gray-700 rounded'
+              onClick={() => setShowConfirmationModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type='submit'
+              className='px-4 py-3 text-sm font-semibold text-white bg-red-400 rounded'
+            >
+              Confirm
+            </button>
+          </div>
+        </form>
       </Modal>
 
       <div className='grid p-8'>
@@ -84,8 +99,8 @@ export const HabitView: React.FC<Props> = ({ habit, setHabit }) => {
           </>
         ) : (
           <HabitForm
+            handleSubmit={editHabit}
             {...{
-              handleSubmit,
               frequency,
               setFrequency,
               name,

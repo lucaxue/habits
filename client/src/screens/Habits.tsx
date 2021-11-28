@@ -31,6 +31,10 @@ export const Habits: React.FC = () => {
               setHabit(habit);
               setHabits([habit, ...habits.filter(h => h.id !== habit.id)]);
             }}
+            deleteHabit={(habit: Habit) =>
+              setHabits(habits.filter(h => h.id !== habit.id))
+            }
+            closeView={() => setShowModal(false)}
           />
         )}
       </Modal>
