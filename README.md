@@ -50,7 +50,7 @@ For the UI / UX design, I have taken inspiration from the following sources:
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-2e2e2e?logo=tailwindcss)
 ![Capacitor](https://img.shields.io/badge/Capacitor-2e2e2e?logo=capacitor)
 
-This is my first time building a native iOS application, without any experience with native frameworks. There are many cross platform technologies, however, and the main two contestants for me were React Native and Capacitor JS.
+This is my first time building a native iOS application, without any experience with native frameworks. There are many cross platform technologies, however, and the main two contestants for me were [React Native](https://reactnative.dev) and [Capacitor JS](https://capacitorjs.com).
 
 After trying both out, I ended up sticking with Capacitor as I found it to be the least restrictive and more flexible choice for me.
 
