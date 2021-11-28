@@ -11,41 +11,6 @@ use HabitTracking\Domain\HabitId;
 use Illuminate\Support\Collection;
 use Tests\Support\HabitModelFactory;
 
-it("can retrieve all of a user's habits", function () {
-    $john = User::factory()->make(['id' => 1]);
-    $repository = new CollectionHabitRepository(
-        $habits = HabitModelFactory::count(10)->start([
-            'authorId' => $john->id,
-        ])
-    );
-
-    $retrievedHabits = (new HabitService($repository))->retrieveHabits($john->id);
-
-    expect($retrievedHabits)->toEqualCanonicalizing($habits);
-});
-
-it("can retrieve a user's habits for today", function () {
-    $john = User::factory()->make(['id' => 1]);
-    $repository = new CollectionHabitRepository(collect([
-        ...$todays = HabitModelFactory::count(5)->start([
-            'authorId' => $john->id,
-            'frequency' => new HabitFrequency('weekly', [
-                now()->dayOfWeek,
-            ]),
-        ]),
-        ...$tomorrows = HabitModelFactory::count(5)->start([
-            'authorId' => $john->id,
-            'frequency' => new HabitFrequency('weekly', [
-                now()->addDay()->dayOfWeek,
-            ]),
-        ]),
-    ]));
-
-    $retrievedHabits = (new HabitService($repository))->retrieveHabitsForToday($john->id);
-
-    expect($retrievedHabits)->toEqualCanonicalizing($todays);
-});
-
 it("can retrieve a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
     $repository = new CollectionHabitRepository(collect([
@@ -60,7 +25,7 @@ it("can retrieve a user's habit", function () {
     expect($retrievedHabit)->toBe($habit);
 });
 
-it("can start a user's habit", function () {
+it('can start a habit', function () {
     $john = User::factory()->make(['id' => 1]);
     $repository = new CollectionHabitRepository();
 
@@ -77,7 +42,7 @@ it("can start a user's habit", function () {
         ->frequency()->days()->toBe([1, 2, 3]);
 
     expect($repository)
-        ->all($john->id)
+        ->all()
         ->toContain($habit);
 });
 
@@ -201,27 +166,15 @@ class CollectionHabitRepository implements HabitRepository
     /**
      * @param null|Collection<Habit> $habits
      */
-    public function __construct(?Collection $habits = null)
+    public function __construct(? Collection $habits = null)
     {
         $this->habits = $habits ?? new Collection();
     }
 
-    /**
-     * @param int $authorId
-     * @param array $filters ['forToday' => bool]
-     * @return Collection<Habit>
-     */
-    public function all(int $authorId, array $filters = []) : Collection
+    /** @return Collection<Habit> */
+    public function all() : Collection
     {
-        return $this->habits->filter(function (Habit $h) use ($authorId, $filters) {
-            $belongsToAuthor = $h->authorId() === $authorId;
-
-            if (array_key_exists('forToday', $filters)) {
-                return $belongsToAuthor && $h->frequency()->includesToday();
-            }
-
-            return $belongsToAuthor;
-        });
+        return $this->habits;
     }
 
     /**
@@ -229,11 +182,15 @@ class CollectionHabitRepository implements HabitRepository
      * @return Habit|null
      * @throws HabitNotFound
      */
-    public function find(HabitId $id) : ?Habit
+    public function find(HabitId $id) : ? Habit
     {
-        return
-            $this->habits->first(fn (Habit $h) => $h->id()->equals($id)) ??
+        $habit = $this->habits->first(fn (Habit $h) => $h->id()->equals($id));
+
+        if ( ! $habit) {
             throw new HabitNotFound($id);
+        }
+
+        return $habit;
     }
 
     public function save(Habit $habit) : void

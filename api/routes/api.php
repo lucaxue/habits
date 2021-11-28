@@ -25,7 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', fn (Request $request) => $request->user());
 
     Route::prefix('habits')->group(function () {
-        Route::get('today', [HabitController::class, 'todayIndex']);
         Route::get('', [HabitController::class, 'index']);
         Route::get('{id}', [HabitController::class, 'show']);
         Route::post('', [HabitController::class, 'start']);
