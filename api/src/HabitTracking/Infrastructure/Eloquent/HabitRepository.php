@@ -7,28 +7,9 @@ use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
-use Illuminate\Support\Collection;
 
 class HabitRepository implements HabitRepositoryInterface
 {
-    public function all(
-        int $authorId,
-        array $filters = []
-    ) : Collection {
-
-        $query = EloquentHabit::where('author_id', $authorId);
-
-        if ($filters['forToday'] ?? false) {
-            $query->where(function ($query) {
-                $query
-                    ->whereJsonContains('frequency->days', [now()->dayOfWeek])
-                    ->orWhere('frequency->type', 'daily');
-            });
-        }
-
-        return $query->get()->map->toModel();
-    }
-
     public function find(HabitId $id) : ? Habit
     {
         $habit = EloquentHabit::find($id);

@@ -11,59 +11,6 @@ use Tests\Support\HabitModelFactory;
 
 uses(RefreshDatabase::class);
 
-it('retrieves all habits by its author', function () {
-    $habits = EloquentHabit::factory(10)->forAuthor(['id' => 1])->create();
-
-    $results = resolve(EloquentHabitRepository::class)->all(1);
-
-    expect($results)
-        ->toHaveCount(10)
-        ->each(fn ($r) => $r
-            ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($habits->pluck('id')));
-});
-
-it('retrieves all habits for today by its author', function () {
-    User::factory()->create(['id' => 1]);
-    $todays = EloquentHabit::factory(5)->create([
-        'frequency' => [
-            'type' => 'weekly',
-            'days' => [now()->dayOfWeek],
-        ],
-        'author_id' => 1,
-    ]);
-    $tomorrows = EloquentHabit::factory(5)->create([
-        'frequency' => [
-            'type' => 'weekly',
-            'days' => [now()->addDay()->dayOfWeek],
-        ],
-        'author_id' => 1,
-    ]);
-
-    $results = resolve(EloquentHabitRepository::class)->all(1, ['forToday' => true]);
-
-    expect($results)
-        ->toHaveCount(5)
-        ->each(fn ($r) => $r
-            ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($todays->pluck('id'))
-            ->id()->toString()->not->toBeIn($tomorrows->pluck('id')));
-});
-
-it("does not retrieve another author's habits", function () {
-    $mine = EloquentHabit::factory(10)->forAuthor(['id' => 1])->create();
-    $notMine = EloquentHabit::factory(10)->forAuthor(['id' => 2])->create();
-
-    $results = resolve(EloquentHabitRepository::class)->all(1);
-
-    expect($results)
-        ->toHaveCount(10)
-        ->each(fn ($r) => $r
-            ->toBeInstanceOf(Habit::class)
-            ->id()->toString()->toBeIn($mine->pluck('id'))
-            ->id()->toString()->not->toBeIn($notMine->pluck('id')));
-});
-
 it('finds a habit', function () {
     $habit = EloquentHabit::factory()->create();
 
