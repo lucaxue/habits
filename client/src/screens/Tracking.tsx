@@ -10,7 +10,7 @@ export const Tracking: React.FC = () => {
 
   useEffect(() => {
     (async function getHabits() {
-      const { data } = await axios.get<Habit[]>('api/habits/today');
+      const { data } = await axios.get<Habit[]>('api/habits?today=true');
       setHabits(data);
     })();
   }, []);
