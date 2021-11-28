@@ -1,36 +1,32 @@
 import React from 'react';
-import { Tracking } from './components/Tracking';
-import { Login } from './components/Login';
-import { useAuth } from './hooks/useAuth';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Habits } from './components/Habits';
-import { Start } from './components/Start';
-import { Profile } from './components/Profile';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Routes,
+  Route,
+} from 'react-router-dom';
+import { RequireAuth } from './components/RequireAuth';
+import { Tracking } from './screens/Tracking';
+import { Habits } from './screens/Habits';
+import { Start } from './screens/Start';
+import { Stats } from './screens/Stats';
+import { Profile } from './screens/Profile';
+import { Login } from './screens/Login';
+import { Register } from './screens/Register';
 
-export const App: React.FC = () => {
-  const { authenticated } = useAuth();
-
-  if (!authenticated) {
-    return <Login />;
-  }
-
-  return (
-    <Router>
-      <Routes>
+export const App: React.FC = () => (
+  <Router>
+    <Routes>
+      <Route element={<RequireAuth />}>
         <Route path='/tracking' element={<Tracking />} />
         <Route path='/habits' element={<Habits />} />
-        <Route path='/add' element={<Start />} />
-        <Route path='/profile' element={<Profile/>} />
-      </Routes>
-
-      <nav className='fixed bottom-0 w-full'>
-        <ul className='flex justify-between w-full p-4 border-2 border-red-500'>
-          <li><Link to='/tracking'>Tracking</Link></li>
-          <li><Link to='/habits'>Habits</Link></li>
-          <li><Link to='/add'>Add</Link></li>
-          <li><Link to='/profile'>Profile</Link></li>
-        </ul>
-      </nav>
-    </Router>
-  );
-};
+        <Route path='/start' element={<Start />} />
+        <Route path='/stats' element={<Stats />} />
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/' element={<Navigate to='/tracking' />} />
+      </Route>
+      <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register />} />
+    </Routes>
+  </Router>
+);
