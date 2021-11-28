@@ -1,6 +1,6 @@
 <?php
 
-namespace HabitTracking\Infrastructure\Eloquent;
+namespace HabitTracking\Infrastructure;
 
 use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 use HabitTracking\Domain\Exceptions\HabitNotFound;
@@ -8,7 +8,7 @@ use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
 use HabitTracking\Presentation\Habit as EloquentHabit;
 
-class HabitRepository implements HabitRepositoryInterface
+class EloquentHabitRepository implements HabitRepositoryInterface
 {
     public function find(HabitId $id) : ? Habit
     {
