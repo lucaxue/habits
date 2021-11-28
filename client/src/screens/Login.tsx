@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export const Login: React.FC = () => {
-  const [email, setEmail] = useState('john@example.com');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -24,12 +24,14 @@ export const Login: React.FC = () => {
           <input
             className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
             type='email'
+            placeholder='Email'
             value={email}
             onChange={({ target }) => setEmail(target.value)}
           />
           <input
             className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
             type='password'
+            placeholder='Password'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />

@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export const Register: React.FC = () => {
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('john@example.com');
-  const [password, setPassword] = useState('password');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('password');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -26,24 +26,28 @@ export const Register: React.FC = () => {
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='text'
+          placeholder='Name'
           value={name}
           onChange={e => setName(e.target.value)}
         />
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='email'
+          placeholder='Email'
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='password'
+          placeholder='Enter password'
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
         <input
           className='h-12 mb-2 text-gray-700 border border-gray-300 rounded-lg shadow'
           type='password'
+          placeholder='Confirm password'
           value={passwordConfirmation}
           onChange={e => setPasswordConfirmation(e.target.value)}
         />
