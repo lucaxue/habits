@@ -4,11 +4,6 @@ namespace HabitTracking\Infrastructure;
 
 use App\Http\Controllers\Controller;
 use HabitTracking\Application\HabitService;
-use HabitTracking\Domain\Exceptions\HabitAlreadyCompleted;
-use HabitTracking\Domain\Exceptions\HabitAlreadyIncompleted;
-use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
-use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthor;
-use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Presentation\HabitFinder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,15 +46,7 @@ class HabitController extends Controller
         string $id,
     ) : JsonResponse {
 
-        try {
-            $habit = $service->retrieveHabit($id, Auth::id());
-        }
-        catch (HabitNotFound $e) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-        catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        $habit = $service->retrieveHabit($id, Auth::id());
 
         return response()->json($habit);
     }
@@ -70,20 +57,12 @@ class HabitController extends Controller
         string $id
     ) : JsonResponse {
 
-        try {
-            $habit = $service->editHabit(
-                $id,
-                $request->get('name'),
-                $request->get('frequency'),
-                Auth::id()
-            );
-        }
-        catch (HabitNotFound $e) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-        catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        $habit = $service->editHabit(
+            $id,
+            $request->get('name'),
+            $request->get('frequency'),
+            Auth::id()
+        );
 
         return response()->json($habit);
     }
@@ -93,18 +72,7 @@ class HabitController extends Controller
         string $id,
     ) : JsonResponse {
 
-        try {
-            $habit = $service->markHabitAsComplete($id, Auth::id());
-        }
-        catch (HabitNotFound $e) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-        catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
-        }
-        catch (HabitAlreadyCompleted $e) {
-            return response()->json(null, JsonResponse::HTTP_BAD_REQUEST);
-        }
+        $habit = $service->markHabitAsComplete($id, Auth::id());
 
         return response()->json($habit);
     }
@@ -114,18 +82,7 @@ class HabitController extends Controller
         string $id,
     ) : JsonResponse {
 
-        try {
-            $habit = $service->markHabitAsIncomplete($id, Auth::id());
-        }
-        catch (HabitNotFound $e) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-        catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
-        }
-        catch (HabitAlreadyIncompleted $e) {
-            return response()->json($e::class, JsonResponse::HTTP_BAD_REQUEST);
-        }
+        $habit = $service->markHabitAsIncomplete($id, Auth::id());
 
         return response()->json($habit);
     }
@@ -135,21 +92,7 @@ class HabitController extends Controller
         string $id
     ) : JsonResponse {
 
-        try {
-            $service->stopHabit($id, Auth::id());
-        }
-        catch (HabitNotFound $e) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-        catch (HabitDoesNotBelongToAuthor $e) {
-            return response()->json(null, JsonResponse::HTTP_UNAUTHORIZED);
-        }
-        catch (HabitAlreadyStopped $e) {
-            return response()->json(
-                ['error' => ['message' => $e->getMessage()]],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
-        }
+        $service->stopHabit($id, Auth::id());
 
         return response()->json();
     }
