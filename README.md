@@ -2,7 +2,7 @@
 
 **Description**: Track your habits, one by one. A simple habit tracker application.
 
-**See**: [Video Demo]()
+**See**: [Video Demo](https://www.youtube.com/watch?v=_awmu98cxsI)
 
 ## Contents
 
