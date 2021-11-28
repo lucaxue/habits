@@ -36,8 +36,6 @@ export const Start: React.FC = () => {
           }}
         />
       </div>
-      <pre>{JSON.stringify({ name, frequency }, null, 2)}</pre>
-      <pre>{JSON.stringify(created, null, 2)}</pre>
     </div>
   );
 };
