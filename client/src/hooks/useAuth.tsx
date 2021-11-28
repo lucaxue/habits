@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React, { useState, useContext, createContext } from 'react';
+import { User } from '../utils/types';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 interface Auth {
-  user: { name: string } | null;
+  user: User | null;
   authenticated: boolean;
   register: (
     name: string,
@@ -39,13 +40,13 @@ export const AuthProvider: React.FC = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 
 interface AuthenticatedResponse {
-  user: { name: string };
+  user: User;
   token: string;
 }
 
 function useProvideAuth(): Auth {
   const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ name: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   async function register(
     name: string,
