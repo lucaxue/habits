@@ -1,15 +1,16 @@
 # Habits 📝
 
 **Description**: Track your habits, one by one. A simple habit tracker application.
+
 **See**: [Video Demo]()
 
 ## Contents
 
-- [Why?](#why?)
+- [Why?](#why)
 - [Desired Features](#desired-features)
 - [UI / UX Design](#ui--ux-design)
 - [Tech Stack](#tech-stack)
-- [Development Set Up](#development-set-up)
+- [Development Set Up](#development-setup)
 
 ## Why?
 
