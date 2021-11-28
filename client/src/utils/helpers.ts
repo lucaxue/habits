@@ -49,3 +49,41 @@ export function dates(days: number): {
       };
     });
 }
+
+export function daysBetween(a: Date, b: Date): number {
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / MS_PER_DAY);
+}
+
+export function durationFrom(initialDate: Date): {
+  amount: number;
+  unit: string;
+} {
+  const days = daysBetween(initialDate, new Date());
+
+  if (days > 365) {
+    const years = Math.floor(days / 365);
+    return {
+      amount: years,
+      unit: `year${years > 1 ? 's' : ''}`,
+    };
+  }
+
+  if (days > 30) {
+    const months = Math.floor(days / 30);
+    return {
+      amount: months,
+      unit: `month${months > 1 ? 's' : ''}`,
+    };
+  }
+
+  return {
+    amount: days,
+    unit: `day${days > 1 ? 's' : ''}`,
+  };
+}
