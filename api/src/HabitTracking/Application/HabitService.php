@@ -7,26 +7,12 @@ use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthor;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitFrequency;
 use HabitTracking\Domain\HabitId;
-use Illuminate\Support\Collection;
 
 class HabitService
 {
     public function __construct(
         private HabitRepository $repository
-    ) {
-    }
-
-    /** @return Collection<Habit> */
-    public function retrieveHabits(int $authorId) : Collection
-    {
-        return $this->repository->all($authorId);
-    }
-
-    /** @return Collection<Habit> */
-    public function retrieveHabitsForToday(int $authorId) : Collection
-    {
-        return $this->repository->all($authorId, ['forToday' => true]);
-    }
+    ) {}
 
     public function retrieveHabit(string $id, int $authorId) : Habit
     {
