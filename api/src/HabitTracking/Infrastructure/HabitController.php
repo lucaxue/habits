@@ -6,31 +6,34 @@ use App\Http\Controllers\Controller;
 use HabitTracking\Application\HabitService;
 use HabitTracking\Domain\Exceptions\HabitAlreadyCompleted;
 use HabitTracking\Domain\Exceptions\HabitAlreadyIncompleted;
+use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
 use HabitTracking\Domain\Exceptions\HabitDoesNotBelongToAuthor;
 use HabitTracking\Domain\Exceptions\HabitNotFound;
-use HabitTracking\Domain\Exceptions\HabitAlreadyStopped;
+use HabitTracking\Presentation\HabitFinder;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HabitController extends Controller
 {
     public function __construct(
         private HabitService $service,
-        private AuthManager $auth
-    ) {
-    }
+        private AuthManager $auth,
+    ) {}
 
-    public function index() : JsonResponse
-    {
-        $habits = $this->service->retrieveHabits($this->auth->id());
+    public function index(
+        HabitFinder $finder,
+        Request $request,
+    ) : JsonResponse {
 
-        return response()->json($habits);
-    }
+        $filters = ['author' => Auth::id()];
 
-    public function todayIndex() : JsonResponse
-    {
-        $habits = $this->service->retrieveHabitsForToday($this->auth->id());
+        if ($request->has('today')) {
+            $filters['today'] = true;
+        }
+
+        $habits = $finder->all($filters);
 
         return response()->json($habits);
     }

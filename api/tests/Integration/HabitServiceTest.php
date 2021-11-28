@@ -42,7 +42,7 @@ it('can start a habit', function () {
         ->frequency()->days()->toBe([1, 2, 3]);
 
     expect($repository)
-        ->all($john->id)
+        ->all()
         ->toContain($habit);
 });
 
@@ -169,6 +169,12 @@ class CollectionHabitRepository implements HabitRepository
     public function __construct(? Collection $habits = null)
     {
         $this->habits = $habits ?? new Collection();
+    }
+
+    /** @return Collection<Habit> */
+    public function all() : Collection
+    {
+        return $this->habits;
     }
 
     /**

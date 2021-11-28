@@ -4,8 +4,8 @@ use App\Models\User;
 use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
-use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
 use HabitTracking\Infrastructure\Eloquent\HabitRepository as EloquentHabitRepository;
+use HabitTracking\Presentation\Habit as EloquentHabit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\HabitModelFactory;
 

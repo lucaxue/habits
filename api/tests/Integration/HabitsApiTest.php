@@ -7,6 +7,7 @@ use HabitTracking\Domain\HabitStreak;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
+use function Pest\Laravel\json;
 use function Pest\Laravel\putJson;
 use Tests\Support\HabitFactory;
 
@@ -59,7 +60,7 @@ test('one can retrieve all their habits for today', function () {
         'frequency' => new HabitFrequency('weekly', [now()->dayOfWeek]), // <- today
     ]);
 
-    getJson('api/habits/today')
+    json('GET', 'api/habits', ['today' => true])
         ->assertOk()
         ->assertJsonCount(2)
         ->assertJsonFragment(['id' => $readBook->id()])

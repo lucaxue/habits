@@ -6,7 +6,7 @@ use HabitTracking\Domain\Contracts\HabitRepository as HabitRepositoryInterface;
 use HabitTracking\Domain\Exceptions\HabitNotFound;
 use HabitTracking\Domain\Habit;
 use HabitTracking\Domain\HabitId;
-use HabitTracking\Infrastructure\Eloquent\Habit as EloquentHabit;
+use HabitTracking\Presentation\Habit as EloquentHabit;
 
 class HabitRepository implements HabitRepositoryInterface
 {
