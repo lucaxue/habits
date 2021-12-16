@@ -79,3 +79,4 @@ jobs:
           DB_USER: root
           DB_PASSWORD: ''
         run: vendor/bin/pest
+        working-directory: api
