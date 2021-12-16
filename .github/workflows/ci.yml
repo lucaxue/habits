@@ -1,23 +1,38 @@
-name: Laravel
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
+  style-sniff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+        with:
+          php-version: '8.0'
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        working-directory: api
+      - name: Style sniff with PHPCSFixer
+        run: vendor/bin/php-cs-fixer fix -vvv --dry-run --show-progress=dots
+        working-directory: api
+
   unit-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
-      with:
-        php-version: '8.0'
-    - uses: actions/checkout@v2
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-      working-directory: api
-    - name: Execute PHPSpec Tests
-      run: vendor/bin/phpspec run --no-interaction
-      working-directory: api
+      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+        with:
+          php-version: '8.0'
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        working-directory: api
+      - name: Execute PHPSpec Tests
+        run: vendor/bin/phpspec run --no-interaction
+        working-directory: api
