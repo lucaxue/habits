@@ -117,6 +117,17 @@ it("can edit a user's habit", function () {
         ->toBe($habit);
 });
 
+it('can reset a habit', function () {
+    $repository = new CollectionHabitRepository(collect([
+        $habit = HabitModelFactory::completed(),
+    ]));
+
+    (new HabitService($repository))->resetHabit($habit->id());
+
+    expect($repository->find($habit->id()))
+        ->completed()->toBe(false);
+});
+
 it("can stop a user's habit", function () {
     $john = User::factory()->make(['id' => 1]);
     $repository = new CollectionHabitRepository(collect([

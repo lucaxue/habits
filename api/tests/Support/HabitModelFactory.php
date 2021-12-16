@@ -63,7 +63,7 @@ class HabitModelFactory
     }
 
     public static function completed(
-        array $overrides
+        array $overrides = []
     ) : Habit {
 
         $attributes = array_merge($overrides, [
@@ -75,7 +75,7 @@ class HabitModelFactory
     }
 
     public static function incompleted(
-        array $overrides
+        array $overrides = []
     ) : Habit {
 
         $attributes = array_merge($overrides, [
