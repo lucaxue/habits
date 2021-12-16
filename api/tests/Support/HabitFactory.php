@@ -2,6 +2,7 @@
 
 namespace Tests\Support;
 
+use App\Models\User;
 use HabitTracking\Domain\Contracts\HabitRepository;
 use HabitTracking\Domain\Habit;
 
@@ -11,7 +12,9 @@ class HabitFactory
         array $overrides = []
     ) : Habit {
 
-        $habit = HabitModelFactory::start($overrides);
+        $habit = HabitModelFactory::start(array_merge([
+            'authorId' => User::factory()->create()->id,
+        ], $overrides));
 
         resolve(HabitRepository::class)->save($habit);
 
@@ -22,7 +25,9 @@ class HabitFactory
         array $overrides = []
     ) : Habit {
 
-        $habit = HabitModelFactory::create($overrides);
+        $habit = HabitModelFactory::create(array_merge([
+            'authorId' => User::factory()->create()->id,
+        ], $overrides));
 
         resolve(HabitRepository::class)->save($habit);
 
@@ -33,7 +38,9 @@ class HabitFactory
         array $overrides = []
     ) : Habit {
 
-        $habit = HabitModelFactory::completed($overrides);
+        $habit = HabitModelFactory::completed(array_merge([
+            'authorId' => User::factory()->create()->id,
+        ], $overrides));
 
         resolve(HabitRepository::class)->save($habit);
 
@@ -44,7 +51,9 @@ class HabitFactory
         array $overrides = []
     ) : Habit {
 
-        $habit = HabitModelFactory::incompleted($overrides);
+        $habit = HabitModelFactory::incompleted(array_merge([
+            'authorId' => User::factory()->create()->id,
+        ], $overrides));
 
         resolve(HabitRepository::class)->save($habit);
 
@@ -73,18 +82,27 @@ class HabitFactory
         return new class($count) {
             public function __construct(
                 private int $count
-            ) {
-            }
+            ) {}
 
             /** @return Habit[] */
-            public function start(
-                array $overrides = []
-            ) : array {
-
+            public function start(array $overrides = []) : array
+            {
                 $habits = [];
 
                 for ($i = 0; $i < $this->count; $i++) {
                     $habits[] = HabitFactory::start($overrides);
+                }
+
+                return $habits;
+            }
+
+            /** @return Habit[] */
+            public function completed(array $overrides = []) : array
+            {
+                $habits = [];
+
+                for ($i = 0; $i < $this->count; $i++) {
+                    $habits[] = HabitFactory::completed($overrides);
                 }
 
                 return $habits;

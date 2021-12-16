@@ -79,6 +79,15 @@ class HabitService
         return $habit;
     }
 
+    public function resetHabit(string $id) : void
+    {
+        $habit = $this->repository->find(HabitId::fromString($id));
+
+        $habit->reset();
+
+        $this->repository->save($habit);
+    }
+
     public function editHabit(
         string $id,
         string $name,

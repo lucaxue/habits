@@ -18,7 +18,7 @@ class Habit implements \JsonSerializable
         private bool $stopped = false,
         private ? CarbonImmutable $lastCompleted = null,
     ) {
-        $this->streak = $streak ?? new HabitStreak();
+        $this->streak ??= new HabitStreak();
     }
 
     public static function start(
@@ -58,6 +58,11 @@ class Habit implements \JsonSerializable
 
         $this->name = $name;
         $this->frequency = $frequency;
+    }
+
+    public function reset() : void
+    {
+        $this->lastCompleted = null;
     }
 
     public function stop() : void

@@ -135,6 +135,38 @@ class HabitSpec extends ObjectBehavior
         $this->frequency()->shouldBe($frequency);
     }
 
+    public function it_can_be_reset()
+    {
+        $this->beConstructedThrough('start', [
+            HabitId::generate(),
+            3,
+            'Read a book',
+            new HabitFrequency('daily'),
+        ]);
+
+        $this->reset();
+
+        $this->completed()->shouldBe(false);
+    }
+
+    public function it_maintains_its_streak_when_reset()
+    {
+        $this->beConstructedThrough('start', [
+            HabitId::generate(),
+            3,
+            'Read a book',
+            new HabitFrequency('daily'),
+        ]);
+        $this->markAsComplete();
+        $this->completed()->shouldBe(true);
+        $this->streak()->days()->shouldBe(1);
+
+        $this->reset();
+
+        $this->completed()->shouldBe(false);
+        $this->streak()->days()->shouldBe(1);
+    }
+
     public function it_can_be_stopped()
     {
         $this->beConstructedThrough('start', [

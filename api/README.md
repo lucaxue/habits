@@ -31,6 +31,11 @@ This web API is built with [Laravel](https://laravel.com/docs/8.x), consult its 
     php artisan serve
     ```
 
+-   Run the scheduler with the following command:
+    ```bash
+    php artisan schedule:work
+    ```
+
 ### Test Suite
 
 For the test suite, [PHPSpec](http://phpspec.net/en/stable/manual/introduction.html) is used for the unit tests, and [Pest](https://pestphp.com) (which is a wrapper over PHPUnit) is used for the integration tests. Consult their appropriate documentations for more information.
