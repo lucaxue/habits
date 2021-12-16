@@ -19,7 +19,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
         working-directory: api
       - name: Style sniff with PHPCSFixer
-        run: vendor/bin/php-cs-fixer fix -vvv --dry-run --show-progress=dots
+        run: vendor/bin/php-cs-fixer fix -vvv --dry-run
         working-directory: api
 
   unit-tests:
@@ -34,7 +34,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
         working-directory: api
       - name: Execute PHPSpec Tests
-        run: vendor/bin/phpspec run --no-interaction
+        run: vendor/bin/phpspec run --format=pretty --no-interaction
         working-directory: api
 
   integration-tests:
