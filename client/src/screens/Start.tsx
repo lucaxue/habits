@@ -10,6 +10,7 @@ export const Start: React.FC = () => {
     days: null,
   });
 
+  // eslint-disable-next-line
   const [created, setCreated] = useState<Habit>();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
