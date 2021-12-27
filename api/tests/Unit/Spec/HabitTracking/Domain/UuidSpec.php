@@ -2,6 +2,7 @@
 
 namespace Spec\HabitTracking\Domain;
 
+use Assert\InvalidArgumentException;
 use HabitTracking\Domain\Uuid;
 use PhpSpec\ObjectBehavior;
 use Tests\Unit\Spec\CustomMatchers;
@@ -32,6 +33,16 @@ class UuidSpec extends ObjectBehavior
         $this->shouldHaveType(Uuid::class);
         $this->shouldBeAnInstanceOf(ConcreteUuid::class);
         $this->toString()->shouldBe($id);
+    }
+
+    public function it_guards_against_invalid_uuids()
+    {
+        $this->beAnInstanceOf(ConcreteUuid::class);
+
+        $this->beConstructedThrough('fromString', ['invalid uuid']);
+        $this
+            ->shouldThrow(InvalidArgumentException::class)
+            ->duringInstantiation();
     }
 
     public function it_can_determine_equality()

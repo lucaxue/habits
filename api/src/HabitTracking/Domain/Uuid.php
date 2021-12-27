@@ -7,8 +7,6 @@ use Illuminate\Support\Str;
 
 abstract class Uuid implements \JsonSerializable
 {
-    private string $id;
-
     public static function generate() : static
     {
         return new static(Str::uuid());
@@ -23,7 +21,7 @@ abstract class Uuid implements \JsonSerializable
     {
         return
             $this->toString() === $candidate->toString() &&
-            get_class($this) === get_class($candidate);
+            $this::class === $candidate::class;
     }
 
     public function toString() : string
@@ -41,9 +39,8 @@ abstract class Uuid implements \JsonSerializable
         return $this->toString();
     }
 
-    private function __construct(string $id)
+    private function __construct(private string $id)
     {
         Assertion::uuid($id);
-        $this->id = $id;
     }
 }
