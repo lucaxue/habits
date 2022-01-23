@@ -62,6 +62,10 @@ class Habit implements \JsonSerializable
 
     public function reset() : void
     {
+        if ( ! $this->completed()) {
+            $this->streak = new HabitStreak();
+        }
+
         $this->lastCompleted = null;
     }
 

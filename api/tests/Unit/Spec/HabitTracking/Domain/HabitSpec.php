@@ -149,7 +149,7 @@ class HabitSpec extends ObjectBehavior
         $this->completed()->shouldBe(false);
     }
 
-    public function it_maintains_its_streak_when_reset()
+    public function it_correctly_maintains_its_streak_when_reset()
     {
         $this->beConstructedThrough('start', [
             HabitId::generate(),
@@ -165,6 +165,11 @@ class HabitSpec extends ObjectBehavior
 
         $this->completed()->shouldBe(false);
         $this->streak()->days()->shouldBe(1);
+
+        $this->reset();
+
+        $this->completed()->shouldBe(false);
+        $this->streak()->days()->shouldBe(0);
     }
 
     public function it_can_be_stopped()
