@@ -67,7 +67,7 @@ For the test suite, [PHPSpec](http://phpspec.net/en/stable/manual/introduction.h
     composer sniff
     ```
 
--   To check the coding standard automatically fix the coding standard of the php codebase, run:
+-   To automatically fix the coding standard of the php codebase, run:
 
     ```bash
     composer lint
